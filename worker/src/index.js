@@ -38,6 +38,7 @@ async function route(req, env, url) {
   if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireAdmin(req, env));
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireAdmin(req, env));
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
+  if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
   if (m === "GET" && p === "/") return json({ ok: true, service: "lds-api" });
   throw new HttpError(404, "not found");
 }
@@ -101,8 +102,14 @@ async function setUser(env, sid, data) {
   await env.DB.prepare("INSERT INTO users (sid, data, updated) VALUES (?, ?, ?) ON CONFLICT(sid) DO UPDATE SET data = excluded.data, updated = excluded.updated")
     .bind(sid, JSON.stringify(data), Date.now()).run();
 }
+const isOwner = (env, sid) => String(env.OWNER_STEAM_IDS || "").split(",").map(s => s.trim()).includes(sid);
+async function requireOwner(req, env) {
+  const sid = await auth(req, env);
+  if (!isOwner(env, sid)) throw new HttpError(403, "head admin only");
+  return sid;
+}
 async function isAdmin(env, sid) {
-  if (String(env.OWNER_STEAM_IDS || "").split(",").map(s => s.trim()).includes(sid)) return true;
+  if (isOwner(env, sid)) return true;
   const db = await kvGet(env, "db");
   return Array.isArray(db?.adminIds) && db.adminIds.includes(sid);
 }
@@ -162,20 +169,20 @@ async function steamProfile(env, sid) {
 // ---------- data ----------
 // what a pilot may set on their own profile; name and avatar always come from Steam
 const PROFILE_KEYS = ["team", "num", "car", "about", "regs", "regAt", "created", "declined"];
-const publicUser = u => ({ steamId: u.steamId, name: u.name, avatar: u.avatar, team: u.team ?? null, num: u.num ?? null, car: u.car ?? null,
-  about: u.about ?? null, regs: u.regs ?? [], regAt: u.regAt ?? {}, created: u.created ?? null });
+const publicUser = (u, env) => ({ steamId: u.steamId, name: u.name, avatar: u.avatar, team: u.team ?? null, num: u.num ?? null, car: u.car ?? null,
+  about: u.about ?? null, regs: u.regs ?? [], regAt: u.regAt ?? {}, created: u.created ?? null, owner: isOwner(env, u.steamId) });
 
 async function getState(env, url) {
   const v = (await kvGet(env, "version")) ?? 0;
   if (url.searchParams.get("v") === String(v)) return json({ v }); // nothing changed: cheap answer
   const [db, live, rows] = await Promise.all([kvGet(env, "db"), kvGet(env, "live"), env.DB.prepare("SELECT data FROM users").all()]);
-  return json({ v, db, live, users: rows.results.map(r => publicUser(JSON.parse(r.data))) });
+  return json({ v, db, live, users: rows.results.map(r => publicUser(JSON.parse(r.data), env)) });
 }
 
 async function getMe(env, sid) {
   const u = await getUser(env, sid);
   if (!u) throw new HttpError(401, "sign in required");
-  return json({ user: u, admin: await isAdmin(env, sid) });
+  return json({ user: u, admin: await isAdmin(env, sid), owner: isOwner(env, sid) });
 }
 
 async function putMe(req, env, sid) {
@@ -207,15 +214,43 @@ async function putLive(req, env) {
   return json({ ok: true });
 }
 
+const RUNNING = ["qualifying", "top32", "top16", "top8", "top4", "final"];
 async function postProtest(req, env, sid) {
   const body = await readJson(req, 10_000), u = await getUser(env, sid);
   const text = String(body.text || "").trim().slice(0, 500), against = String(body.against || "").slice(0, 40), tour = Number(body.tour);
   if (!u || !text || !against || !Number.isInteger(tour)) throw new HttpError(400, "bad protest");
-  const db = (await kvGet(env, "db")) || {};
+  const [db, live] = [(await kvGet(env, "db")) || {}, (await kvGet(env, "live")) || {}];
+  // only while that stage is running, only by a pilot entered in it, one open protest per opponent
+  if (!RUNNING.includes(live.statuses?.[tour])) throw new HttpError(409, "stage is not running");
+  const st = (db.tours || []).find(x => x.id === tour);
+  if (!(u.regs || []).includes(tour) && !st?.add?.includes(u.name)) throw new HttpError(403, "not in this stage");
   const list = Array.isArray(db.protests) ? db.protests : [];
+  if (list.some(p => p.tour === tour && p.from === u.name && p.against === against && p.status === "new")) throw new HttpError(409, "already filed");
   list.push({ id: Math.max(0, ...list.map(p => p.id || 0)) + 1, tour, from: u.name, against, text, status: "new", verdict: "" });
   db.protests = list;
   await kvSet(env, "db", db);
+  await bump(env);
+  return json({ ok: true });
+}
+
+// head admin: set another pilot's number, or remove the pilot (their profile is deleted; signing in again starts a fresh one)
+async function ownerUser(req, env, ownerSid) {
+  const body = await readJson(req, 1_000), sid = String(body.sid || "");
+  if (!/^\d{17}$/.test(sid) || sid === ownerSid) throw new HttpError(400, "bad pilot");
+  const u = await getUser(env, sid);
+  if (!u) throw new HttpError(404, "no such pilot");
+  if (body.kick === true) {
+    await env.DB.prepare("DELETE FROM users WHERE sid = ?").bind(sid).run();
+    const db = await kvGet(env, "db");
+    if (Array.isArray(db?.adminIds) && db.adminIds.includes(sid)) { db.adminIds = db.adminIds.filter(x => x !== sid); await kvSet(env, "db", db); }
+  } else {
+    const num = body.num;
+    if (!(Number.isInteger(num) && num >= 1 && num <= 999)) throw new HttpError(400, "bad number");
+    const rows = await env.DB.prepare("SELECT sid, data FROM users").all();
+    if (rows.results.some(r => r.sid !== sid && JSON.parse(r.data).num === num)) throw new HttpError(409, "number taken");
+    u.num = num;
+    await setUser(env, sid, u);
+  }
   await bump(env);
   return json({ ok: true });
 }

@@ -29,6 +29,7 @@ ok((await call("/api/me")).status === 401, "no token: 401");
 ok((await call("/api/me", { token: "junk.junk" })).status === 401, "bad token: 401");
 ok((await (await call("/api/me", { token: owner })).json()).admin === true, "owner is admin");
 ok((await (await call("/api/me", { token: pilot })).json()).admin === false, "pilot is not admin");
+ok((await (await call("/api/me", { token: owner })).json()).owner === true, "owner is head admin");
 
 // a pilot edits only their own profile; name stays the Steam name
 r = await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ num: 55, regs: [203], name: "Hacker", about: { ru: "x".repeat(200) } }) });
@@ -43,10 +44,26 @@ ok((await call("/api/live", { method: "PUT", token: pilot, body: "{}" })).status
 ok((await call("/api/db", { method: "PUT", token: owner, body: JSON.stringify({ db: { settings: { maxStage: 40 }, protests: [] } }) })).ok, "owner writes league data");
 ok((await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: { onTrack: "Test Pilot" }, scores: {} }) })).ok, "owner writes live data");
 
-// protest from a pilot lands in the league data under the pilot's Steam name
-ok((await call("/api/protest", { method: "POST", token: pilot, body: JSON.stringify({ tour: 203, against: "Someone", text: "contact" }) })).ok, "pilot files protest");
+// protests: only while the stage runs, only by its pilots, once per opponent; it lands under the pilot's Steam name
+const protest = (tour, token = pilot) => call("/api/protest", { method: "POST", token, body: JSON.stringify({ tour, against: "Someone", text: "contact" }) });
+ok((await protest(203)).status === 409, "no protest before the stage runs");
+await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: { onTrack: "Test Pilot" }, scores: {}, statuses: { 203: "qualifying", 204: "qualifying" } }) });
+ok((await protest(204)).status === 403, "no protest from a pilot not in the stage");
+ok((await protest(203)).ok, "pilot files protest");
+ok((await protest(203)).status === 409, "duplicate protest refused");
 st = await (await call("/api/state")).json();
 ok(st.db.settings.maxStage === 40 && st.db.protests.at(-1).from === "Test Pilot" && st.live.bc.onTrack === "Test Pilot", "state has db, protest and live");
+
+// head admin: numbers and removals; others can't
+const ownerCall = (body, token = owner) => call("/api/owner/user", { method: "POST", token, body: JSON.stringify(body) });
+ok((await ownerCall({ sid: OWNER, num: 7 }, pilot)).status === 403, "pilot cannot use head admin tools");
+ok((await ownerCall({ sid: PILOT, num: 0 })).status === 400, "bad number refused");
+ok((await ownerCall({ sid: PILOT, num: 12 })).ok, "head admin sets a number");
+st = await (await call("/api/state")).json();
+ok(st.users.find(u => u.steamId === PILOT).num === 12 && st.users.find(u => u.steamId === OWNER).owner === true, "number saved, owner flagged");
+ok((await ownerCall({ sid: PILOT, kick: true })).ok, "head admin removes a pilot");
+ok((await call("/api/me", { token: pilot })).status === 401, "removed pilot is signed out");
+st = await (await call("/api/state")).json();
 
 // cheap poll when nothing changed
 ok(Object.keys(await (await call("/api/state?v=" + st.v)).json()).join() === "v", "unchanged state answers with version only");

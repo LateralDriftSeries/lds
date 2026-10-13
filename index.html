@@ -93,7 +93,7 @@ nav a:hover::after, nav a[aria-current]::after { transform: scaleX(1) }
 .steam svg { width: 18px; height: 18px }
 
 /* footer stays at the bottom: body is a column, main takes the free space */
-body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column }
 main { flex: 1 0 auto; width: 100%; padding-block: 3rem 5rem; display: grid; gap: 3rem; align-content: start }
 
 /* home */
@@ -1718,7 +1718,15 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 /* background number: translucent digits must not overlap, or the overlap shows as a darker patch */
 .pp-bgnum { letter-spacing: .02em !important }
 /* Steam avatars */
-.ava.has-img, .pp-ava.has-img { background-size: cover; background-position: center; color: transparent }
+.has-img:not(.tlogo) { background-size: cover; background-position: center; color: transparent !important }
+.r-numv { margin-left: .5rem; font-size: .8em; font-weight: 600; color: var(--accent) }
+.grp { display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; padding: 0 .3rem; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font: 700 .75rem/1 var(--f-body); vertical-align: middle }
+.grp-limits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem }
+.grp-limits .fieldlabel > span { display: flex; align-items: center; gap: .5rem }
+@media (max-width: 640px) { .grp-limits { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.my-prot { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem }
+.my-prot li { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; padding: .6rem .8rem; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2) }
 </style>
 
 <div class="bg" aria-hidden="true"><canvas id="lava"></canvas><div class="lava-shade"></div></div>
@@ -1785,17 +1793,21 @@ const I18N = {
     howCarT: "Заполните профиль", howCarD: "Машина, двигатель, КПП, мощность и стартовый номер от 1 до 999.",
     howRegT: "Запишитесь на этап", howRegD: "Регистрация открывается заранее и закрывается перед стартом этапа.",
     howRaceT: "Квалификация и парные", howRaceD: "Две попытки в квалификации, затем сетка Топ 32 вплоть до финала.",
-    partners: "Партнёры", partnersTitle: "Нас поддерживают", faqTitle: "Вопросы <em>и ответы</em>", faqText: "Не нашли ответ — напишите организаторам, поможем.",
+    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
+    roleOwner: "Главный администратор", ownerOnly: "Номера и исключение пилотов — только у главного администратора.", kick: "Выгнать", kickSure: "Точно выгнать?", kicked: "Пилот исключён",
+    addTestPilot: "+ Тестовый пилот", testTag: "тест", delStage: "Удалить этап", group: "Группа", groupLimits: "Группы этапа", groupsHint: "Сколько пилотов может быть в каждой группе. Группу пилоту назначают в таблице ниже.",
+    groupFull: "Группа заполнена — увеличьте лимит или выберите другую.", protestOnlyRider: "Протест может подать только участник этапа.", myProtests: "Мои протесты", protestDup: "Протест на этого пилота уже на рассмотрении.",
+    protestClosed: "Протест можно подать только во время этапа.", faqTitle: "Вопросы <em>и ответы</em>", faqText: "Не нашли ответ — напишите организаторам, поможем.",
     faq: [["Сколько стоит участие?", "Участие бесплатное. Нужны лицензионная CarX Drift Racing Online 2 и аккаунт Steam."],
-      ["Какие машины разрешены?", "Любые машины из игры в пределах лимита мощности из спортивного регламента."],
-      ["Как проходит судейство?", "Три судьи оценивают угол, траекторию и стиль. В парных заездах решение принимается большинством голосов."],
+      ["Какие машины разрешены?", "Любые машины из игры в пределах лимита из спортивного регламента."],
+      ["Как проходит судейство?", "Три судьи оценивают угол, траекторию и стиль. В парных заездах решение принимается большинством голосов судей."],
       ["Можно выступать без команды?", "Да. Личный зачёт не зависит от команды, а вступить в команду или создать свою можно в профиле в любой момент."],
-      ["Где смотреть этапы?", "Этапы транслируются на Twitch — ссылка в подвале сайта."]],
+      ["Где смотреть этапы?", "Этапы транслируются на Twitch — ссылка в нижней шапке сайта."]],
     cmpTitle: "Сравнение пилотов", cmpRating: "Рейтинг", cmpPlace: "Место в сезоне", cmpMedals: "Подиумы", cmpWins: "Победы",
     contactL: "Связь с организаторами", contactT: "Есть вопрос, идея или хотите стать партнёром лиги? Напишите нам.",
     statDone: "Этапов позади", myProfile: "Мой профиль", publicView: "Как видят другие", thisIsYou: "Это ваш публичный профиль — так его видят другие участники.", editProfile: "Редактировать",
     backShort: "Назад", noPilot: "Такого участника нет.", qualResults: "Результаты квалификаций", noQual: "Пока нет завершённых этапов с результатами.", noMedalsPub: "Подиумов пока нет.",
-    noTeamPub: "Выступает без команды.", teamsLead: "Команды лиги: состав и очки сезона. Откройте команду, чтобы посмотреть профили пилотов.", statRaced: "Этапов проехано", bestRun: "Лучшая попытка", createOrJoin: "Создать или вступить",
+    noTeamPub: "Выступает без команды.", teamsLead: "Команды лиги: состав и очки сезона. Откройте команду, чтобы посмотреть профили пилотов.", statRaced: "Этапов пройдено", bestRun: "Лучшая попытка", createOrJoin: "Создать или вступить",
     teamWord: "Команда", teamPlace: "Место команды", rosterL: "Состав", rosterTitle: "Пилоты <em>команды</em>", noMembers: "В команде пока нет пилотов.", pointsShort: "очк.", fullTable: "Полная таблица",
     aTracks: "Трассы", aTracksHint: "Сложность от 1 до 5 видна на странице «Трассы». Нажмите на деление, чтобы изменить.", diff1: "Лёгкая", diff2: "Простая", diff3: "Средняя", diff4: "Сложная", diff5: "Экстремальная",
     champShort: "Онлайн-чемпионат по дрифту",
@@ -1894,12 +1906,16 @@ const I18N = {
     howCarT: "Set up your profile", howCarD: "Car, engine, gearbox, power and a race number from 1 to 999.",
     howRegT: "Sign up for a round", howRegD: "Registration opens in advance and closes before the round starts.",
     howRaceT: "Qualify and battle", howRaceD: "Two qualifying runs, then a Top 32 bracket all the way to the final.",
-    partners: "Partners", partnersTitle: "Backed by", faqTitle: "Questions <em>&amp; answers</em>", faqText: "Can't find an answer? Message the organisers.",
+    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
+    roleOwner: "Head admin", ownerOnly: "Numbers and removing drivers are for the head admin only.", kick: "Remove", kickSure: "Really remove?", kicked: "Driver removed",
+    addTestPilot: "+ Test driver", testTag: "test", delStage: "Delete round", group: "Group", groupLimits: "Round groups", groupsHint: "How many drivers each group can take. Assign a driver's group in the table below.",
+    groupFull: "The group is full — raise the limit or pick another group.", protestOnlyRider: "Only drivers entered in the round can file a protest.", myProtests: "My protests", protestDup: "A protest against this driver is already under review.",
+    protestClosed: "Protests can only be filed while the round is running.", faqTitle: "Questions <em>&amp; answers</em>", faqText: "Can't find an answer? Message the organisers.",
     faq: [["How much does it cost?", "Taking part is free. You need a licensed copy of CarX Drift Racing Online 2 and a Steam account."],
-      ["Which cars are allowed?", "Any in-game car within the power limit of the sporting rules."],
-      ["How is judging done?", "Three judges score angle, line and style. Tandem battles are decided by majority vote."],
+      ["Which cars are allowed?", "Any in-game car within the limit of the sporting rules."],
+      ["How is judging done?", "Three judges score angle, line and style. Tandem battles are decided by a majority of the judges' votes."],
       ["Can I race without a team?", "Yes. The driver standings don't depend on teams, and you can join or create a team from your profile at any time."],
-      ["Where can I watch?", "Rounds are streamed on Twitch; the link is in the footer."]],
+      ["Where can I watch?", "Rounds are streamed on Twitch; the link is in the bottom bar."]],
     cmpTitle: "Head to head", cmpRating: "Rating", cmpPlace: "Season place", cmpMedals: "Podiums", cmpWins: "Wins",
     contactL: "Contact the organisers", contactT: "Got a question, an idea or want to partner with the league? Write to us.",
     statDone: "Rounds completed", myProfile: "My profile", publicView: "Public view", thisIsYou: "This is your public profile, as other participants see it.", editProfile: "Edit",
@@ -1994,7 +2010,7 @@ let OWN_TEAM = 99; // on the hosted site: an id derived from the creator's Steam
 // hosted site: pilots, league data and live judging come from the API; without it the page runs on demo data in this browser
 const API = String(window.LDS_API || "").replace(/\/+$/, ""), HOSTED = !!API;
 let token = null; try { token = HOSTED ? localStorage.getItem("lds_token") : null; } catch {}
-let meAdmin = false, USERS = [];
+let meAdmin = false, meOwner = false, USERS = [];
 const teamIdOf = sid => 1e6 + Number(String(sid).slice(-6));
 
 // deterministic pseudo-random run scores so the grid stays stable between renders
@@ -2027,8 +2043,10 @@ const currentTour = () => seasonTours(curSeason()).find(x => x.status !== "done"
 const sanctionsOf = name => SANCTIONS[name] || [];
 const isBanned = name => sanctionsOf(name).some(s => s.type === "ban");
 // stage participants as [pilot, rosterIndex]; the index seeds example scores
-const regCount = x => HOSTED ? PILOTS.filter(p => p.regs?.includes(x.id)).length : x.count;
-const stageRows = x => roster().map((p, i) => [p, i]).filter(([p]) => !x.out.includes(p.name) && (p.mine ? S.regs.includes(x.id) : !HOSTED || p.regs?.includes(x.id))
+const regCount = x => HOSTED ? stageRows(x).filter(([p]) => !p.mine).length : x.count;
+// in a stage: registered, or entered by an admin (x.add); test drivers only by an admin
+const entered = (x, p) => x.add?.includes(p.name) || (!p.test && (p.mine ? S.regs.includes(x.id) : !HOSTED || p.regs?.includes(x.id)));
+const stageRows = x => roster().map((p, i) => [p, i]).filter(([p]) => !x.out.includes(p.name) && entered(x, p)
   && !isBanned(p.name) && !sanctionsOf(p.name).some(s => s.type === "dq" && s.tour === x.id));
 S.scores ??= {};
 const DATA_VER = 3;
@@ -2056,6 +2074,15 @@ const ACHIEVEMENTS = S.db?.achievements || []; // [icon, id, [ruTitle, ruDesc], 
 const TRACK_DIFF = S.db?.trackDiff || {}; // admin overrides of track difficulty, by track name
 const isAdminName = name => ADMINS.includes(name) || (HOSTED && meAdmin && name === S.user?.name);
 const isAdmin = () => !!S.user && isAdminName(S.user.name);
+// head admin: the SteamIDs in the server's OWNER_STEAM_IDS (demo: the first admin); only they change numbers and remove drivers
+const isOwnerName = name => HOSTED ? USERS.some(u => u.name === name && u.owner) || (meOwner && name === S.user?.name) : ADMINS[0] === name;
+const isOwner = () => isAdmin() && isOwnerName(S.user.name);
+// qualifying groups of a stage
+const GROUPS = ["A", "B", "C", "D"];
+const groupOf = (x, name) => x.groups?.[name] || "";
+const gmaxOf = x => ({ A: 10, B: 10, C: 10, D: 10, ...x.gmax });
+const groupCount = (x, g) => stageRows(x).filter(([p]) => groupOf(x, p.name) === g).length;
+const grpTag = (x, name) => groupOf(x, name) ? `<span class="grp">${groupOf(x, name)}</span>` : "";
 const adminCount = () => roster().filter(p => isAdminName(p.name)).length;
 const t = k => I18N[S.lang][k] ?? k;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -2070,7 +2097,7 @@ const teamById = id => allTeams().find(x => x.id === id);
 const logo = tm => /^data:image\/(webp|jpeg|png);base64,/.test(tm.img || "")
   ? `<span class="tlogo has-img" style="background-image:url(${tm.img})" role="img" aria-label="${esc(tm.tag)}"></span>`
   : `<span class="tlogo">${esc(tm.tag)}</span>`;
-const me = () => S.user && { name: S.user.name, avatar: S.user.avatar, rating: HOSTED ? 0 : S.myRating ?? ME_RATING, team: S.team, num: S.num, car: S.car.car, mine: true };
+const me = () => S.user && { name: S.user.name, avatar: S.user.avatar, about: S.about, setup: S.car, rating: HOSTED ? 0 : S.myRating ?? ME_RATING, team: S.team, num: S.num, car: S.car.car, mine: true };
 const roster = () => [...PILOTS, ...(me() ? [me()] : [])].map(p => ({ ...p, pts: Math.round(p.rating * 34.5) }));
 // admin-entered score wins, otherwise a generated example; k = 0 for run 1, 1 for run 2
 const runOf = (tid, p, i, k) => { const o = S.scores[`${tid}:${p.name}`]; return o && k in o ? o[k] : score(tid * 100 + i + k * 50); };
@@ -2086,12 +2113,13 @@ function login() {
   S.user = { name: "LateralFan", steamId: "76561198" + String(Date.now()).slice(-9) }; save();
 }
 function logout() {
-  if (HOSTED) { token = null; meAdmin = false; try { localStorage.removeItem("lds_token"); } catch {} Object.assign(S, { team: null, num: null, regs: [], regAt: {}, created: null, declined: [], about: {}, car: clone(DEFAULT.car) }); }
+  if (HOSTED) { token = null; meAdmin = meOwner = false; try { localStorage.removeItem("lds_token"); } catch {} Object.assign(S, { team: null, num: null, regs: [], regAt: {}, created: null, declined: [], about: {}, car: clone(DEFAULT.car) }); }
   S.user = null; save(); location.hash = "#home";
 }
 // only Steam's own image hosts, so a profile can't point the page at an arbitrary address
 const avaStyle = url => /^https:\/\/(avatars\.(steamstatic|akamai\.steamstatic|cloudflare\.steamstatic)\.com|steamcdn-a\.akamaihd\.net)\//.test(url || "") ? `style="background-image:url('${esc(url)}')"` : "";
 
+const pAva = (p, cls, tag = "span") => { const st = avaStyle(p.avatar); return `<${tag} class="${cls}${st ? " has-img" : ""}" ${st}>${esc(p.name[0])}</${tag}>`; };
 function header(route) {
   const link = (h, k) => `<a href="#${h}" ${route === h || (h === "tournaments" && route.startsWith("t-")) || (h === "teams" && /^(tm|p)-/.test(route)) ? 'aria-current="page"' : ""}>${t(k)}</a>`;
   return `<a class="logo" href="#home" aria-label="Lateral Drift Series"><span class="lg-mark">LDS</span><span class="lg-word">Lateral Drift Series</span></a>
@@ -2131,11 +2159,11 @@ const CROWN = '<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path d
 function leaderboard() {
   const top = lbTab === "teams"
     ? allTeams().map(tm => ({ ava: tm.tag, name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: teamPts(tm) }))
-    : roster().map(p => { const tm = teamById(p.team); return { ava: p.name[0], name: p.name, sub: [tm ? tm.name : t("freeAgent"), p.car].join(" · "), pts: p.pts }; });
+    : roster().map(p => { const tm = teamById(p.team); return { ava: p.name[0], img: p.avatar, name: p.name, sub: [tm ? tm.name : t("freeAgent"), p.car].join(" · "), pts: p.pts }; });
   const podium = top.sort((a, b) => b.pts - a.pts).slice(0, 3);
   return `<div class="lb-grid">${podium.map((r, i) => `<article class="lb-card panel place-${i + 1}" data-place="${i + 1}">
       <div class="lb-top"><span class="lb-place">${i + 1}</span><span class="label acc">${t(["lbFirst", "lbSecond", "lbThird"][i])}</span>${i === 0 ? CROWN : ""}</div>
-      <div class="lb-who"><span class="lb-ava">${esc(r.ava)}</span><div class="stack" style="gap:.3rem;min-width:0"><b>${esc(r.name)}</b><span class="lb-sub">${esc(r.sub)}</span></div></div>
+      <div class="lb-who">${r.img ? pAva({ name: r.ava, avatar: r.img }, "lb-ava") : `<span class="lb-ava">${esc(r.ava)}</span>`}<div class="stack" style="gap:.3rem;min-width:0"><b>${esc(r.name)}</b><span class="lb-sub">${esc(r.sub)}</span></div></div>
       <div class="lb-pts"><span class="label">${t("totalPts")}</span><b>${r.pts}</b></div></article>`).join("")}</div>`;
 }
 // start time of a stage: parsed from the admin-editable "DD.MM.YYYY HH:MM" (Moscow time), falling back to the built-in date
@@ -2158,7 +2186,6 @@ function home() {
   return `<section class="hero6">
     <div class="h6-top"><span>${t("champShort")}</span></div>
     <div class="h6-stage">
-      <span class="h6-code" aria-hidden="true">35.6762°N · 139.6503°E</span><span class="h6-code r" aria-hidden="true">LDS / S${pad(curSeason())}${nx ? ` — E${pad(nx.stage)}` : ""}</span>
       <h1 class="h6-title" aria-label="Lateral Drift Series"><span class="w" data-t="Lateral">Lateral</span><em>drift</em><span class="w" data-t="Series">Series</span></h1>
       <i class="cross c1" aria-hidden="true"></i><i class="cross c2" aria-hidden="true"></i><i class="cross c3" aria-hidden="true"></i><i class="cross c4" aria-hidden="true"></i>
     </div>
@@ -2184,7 +2211,7 @@ function home() {
   </section>
 
   <section class="reveal stack sec">
-    <div class="sec-head"><span class="label idx">02 — ${t("season")}</span><h2>${t("seasonLine")}</h2><a class="more" href="#tournaments">${t("allStages")}</a></div>
+    <div class="sec-head"><span class="label idx">02 — ${t("seasonCal")}</span><h2>${t("seasonLine")}</h2><a class="more" href="#tournaments">${t("allStages")}</a></div>
     <div class="cal">${stages.map(x => { const st = x.status === "done" ? "done" : x === cur ? "cur" : "later";
       return `<a class="cal-card ${st}" href="#t-${x.id}"><span class="cal-n">${pad(x.stage)}</span><span class="cal-body"><b>${esc(x.track)}</b><span class="note">${esc(x.dates)}</span>${st === "cur" ? tourPill(x) : st === "done" ? `<span class="label">${t("done")}</span>` : ""}</span></a>`; }).join("")}</div>
   </section>
@@ -2213,12 +2240,12 @@ const TRACKS = {
   "Ebisu Minami": { diff: 3, path: "M49 34 C52 37 61 44 66 51 C71 57 74 66 77 73 C81 80 85 89 88 95 C92 102 94 107 100 112 C105 118 116 123 122 129 C127 134 129 139 133 146 C137 152 140 160 144 168 C148 175 151 184 155 190 C160 197 166 202 172 207 C179 212 187 214 194 218 C202 222 209 226 217 229 C224 233 231 238 239 240 C247 243 256 246 267 246 C278 246 295 243 306 240 C317 238 326 234 334 229 C341 225 348 219 351 213 C353 206 352 197 351 190 C349 184 345 177 339 173 C334 170 324 167 317 168 C311 169 304 174 300 179 C297 184 298 191 295 196 C292 200 289 204 284 207 C278 210 270 213 261 213 C253 213 238 208 233 207",
     ru: "Классика японского дрифта: короткий круг, бетонные стены и плотные связки.", en: "Japanese drift classic: a short lap, concrete walls and tight linked corners." },
   "Kami Road": { diff: 5, path: "M99 46 C103 45 113 41 120 39 C127 37 133 34 139 34 C146 34 154 36 159 38 C164 40 165 42 168 45 C171 48 174 51 177 54 C180 57 182 60 185 64 C187 67 189 69 190 74 C191 79 193 87 192 94 C191 100 186 108 184 113 C181 118 179 120 176 123 C174 126 171 129 168 132 C165 136 162 139 159 142 C156 145 154 147 151 152 C148 156 142 164 140 170 C137 177 136 182 136 189 C136 195 139 203 141 208 C143 213 145 215 148 218 C150 221 153 224 156 227 C159 230 162 232 166 235 C169 237 171 239 176 241 C181 243 189 246 195 246 C202 246 209 245 215 242 C222 240 230 236 235 233 C240 230 240 229 245 226 C250 222 259 217 263 213 C268 210 269 208 273 205 C278 202 287 199 291 196 C296 194 299 192 301 191",
-    ru: "Узкая горная дорога со стенами по обе стороны. Ошибка здесь почти всегда стоит заезда.", en: "A narrow mountain pass walled on both sides. A mistake here almost always costs the run." },
+    ru: "Узкая горная дорога со стенами и отбойниками по обе стороны. Ошибка здесь почти всегда стоит заезда.", en: "A narrow mountain pass with walls and barriers on both sides. A mistake here almost always costs the run." },
   "Fuji Speedway": { diff: 3, path: "M163 34 C166 38 175 49 180 57 C185 65 188 73 191 80 C195 87 202 91 203 97 C204 103 200 108 197 114 C194 120 189 126 186 131 C183 137 180 143 180 149 C180 154 183 161 186 166 C189 171 192 174 197 177 C202 180 209 180 214 183 C220 186 228 190 232 194 C235 199 236 205 237 212 C238 218 239 229 237 235 C235 240 230 245 226 246 C222 247 216 245 214 240 C212 235 214 224 214 217 C214 211 216 204 214 200 C212 196 206 193 203 194 C200 195 199 201 197 206 C195 211 192 220 191 223",
     ru: "Скоростная секция с перекладками и шпилькой на финише.", en: "A fast section with transitions and a hairpin at the finish." },
   "South Port": { diff: 4, path: "M172 69 C171 68 168 65 163 62 C158 59 150 54 144 51 C138 48 131 46 124 44 C118 41 111 38 105 36 C98 35 92 33 85 34 C79 35 72 38 66 42 C61 46 55 53 52 59 C50 65 50 73 52 80 C54 86 60 92 66 97 C71 102 79 104 86 108 C93 112 101 116 107 119 C112 122 113 124 117 127 C120 129 122 133 125 136 C127 139 129 141 131 146 C133 151 136 160 137 166 C138 173 137 179 139 185 C141 192 144 199 148 205 C152 211 158 217 163 222 C169 227 176 230 183 233 C189 235 196 236 203 237 C209 238 215 237 222 238 C229 238 235 239 242 240 C248 241 255 242 261 243 C268 244 274 245 281 245 C287 245 294 246 300 246 C307 246 313 246 320 246 C326 246 334 245 338 245 C343 244 346 243 348 243",
     ru: "Портовая трасса: затяжная дуга на входе, разворот и длинный быстрый выход.", en: "A harbour layout: a long sweeper in, a turnaround and a long fast exit." },
-"ADM Raceway": { kind: "trackCircuit", len: 1.9, zones: 3, diff: 2, path: "M172 69 C171 68 168 65 163 62 C158 59 150 54 144 51 C138 48 131 46 124 44 C118 41 111 38 105 36 C98 35 92 33 85 34 C79 35 72 38 66 42 C61 46 55 53 52 59 C50 65 50 73 52 80 C54 86 60 92 66 97 C71 102 79 104 86 108 C93 112 101 116 107 119 C112 122 113 124 117 127 C120 129 122 133 125 136 C127 139 129 141 131 146 C133 151 136 160 137 166 C138 173 137 179 139 185 C141 192 144 199 148 205 C152 211 158 217 163 222 C169 227 176 230 183 233 C189 235 196 236 203 237 C209 238 215 237 222 238 C229 238 235 239 242 240 C248 241 255 242 261 243 C268 244 274 245 281 245 C287 245 294 246 300 246 C307 246 313 246 320 246 C326 246 334 245 338 245 C343 244 346 243 348 243", z: [[190, 60], [330, 150], [140, 230]],
+"ADM Raceway": { diff: 2, path: "M58 72 C92 48 150 36 212 38 C270 40 322 52 342 86 C358 114 344 146 308 156 C272 166 236 150 204 160 C170 170 150 196 160 222 C170 244 206 250 248 246 C290 242 322 232 346 214",
     ru: "Быстрый автодром с длинной первой связкой: проверка скорости входа и плавности перекладки.", en: "A fast circuit with a long opening sequence that tests entry speed and smooth transitions." },
   "Dominion Raceway": { diff: 2, path: "M287 59 C290 63 294 67 297 70 C300 74 301 75 302 77 C303 80 304 81 305 84 C306 86 307 87 307 89 C308 91 308 93 309 95 C309 97 309 99 309 101 C309 103 308 105 308 108 C308 110 307 112 306 114 C306 116 305 118 304 120 C303 123 302 125 301 127 C299 129 298 132 296 134 C295 137 293 139 291 142 C289 144 287 147 284 150 C282 153 279 156 276 159 C273 162 271 165 266 169 C261 174 252 182 246 189 C239 195 231 203 225 208 C220 212 217 214 214 217 C210 220 207 223 204 225 C201 227 199 229 196 231 C193 233 191 234 188 236 C186 237 183 238 181 240 C178 241 176 242 174 242 C171 243 169 244 167 245 C165 245 163 245 161 246 C159 246 157 246 154 246 C152 246 150 246 149 245 C147 245 145 245 143 244 C141 243 139 242 137 241 C135 240 133 239 131 238 C129 236 127 235 124 232 C121 230 117 225 113 221 C110 217 106 213 103 210 C100 206 99 205 98 203 C97 200 96 199 95 196 C94 194 93 193 93 191 C92 189 92 187 91 185 C91 183 91 181 91 179 C91 177 92 175 92 172 C92 170 93 168 94 166 C94 164 95 162 96 160 C97 157 98 155 99 153 C101 151 102 148 104 146 C105 143 107 141 109 138 C111 136 113 133 116 130 C118 127 121 124 124 121 C127 118 129 115 134 111 C139 106 148 98 154 91 C161 85 169 77 175 72 C180 68 183 66 186 63 C190 60 193 57 196 55 C199 53 201 51 204 49 C207 47 209 46 212 44 C214 43 217 42 219 40 C222 39 224 38 226 38 C229 37 231 36 233 35 C235 35 237 35 239 34 C241 34 243 34 246 34 C248 34 250 34 251 35 C253 35 255 35 257 36 C259 37 261 38 263 39 C265 40 267 41 269 42 C271 44 273 45 276 48 C279 50 283 55 287 59Z",
     ru: "Овал: держать угол на постоянной дуге и дистанцию в парных заездах.", en: "An oval: hold the angle on a constant arc and the gap in tandems." },
@@ -2277,7 +2304,7 @@ addEventListener("scroll", () => document.querySelector("header")?.classList.tog
 
 const tcard = (x, i, cur) => `<a class="tcard panel ${cur ? "current" : ""} ${x.season !== curSeason() ? "archived" : x.status === "done" ? "past" : ""}" href="#t-${x.id}" style="--i:${i}">
     <div class="row" style="justify-content:space-between">${x.season !== curSeason() ? `<span class="pill plain s-done">${t("archive")}</span>` : tourPill(x)}${cur ? `<span class="curtag">${t("currentStage")}</span>` : ""}</div>
-    <span class="label">${t("stage")} ${x.stage} / 6</span>
+    <span class="label">${t("stage")} ${x.stage} / ${seasonTours(x.season).length}</span>
     <h3>${esc(x.track)}</h3>
     <span class="mono muted">${esc(x.dates)}</span>
     <span class="go"><span>${cur && x.status === "reg" ? t("reg") : t("details")}</span><i>→</i></span>
@@ -2314,12 +2341,12 @@ function tournament(id) {
                         : `<button class="btn" data-act="reg" data-id="${id}">${t("register")}</button>`;
   }
   return `<a class="back" href="#tournaments">${t("back")}</a>
-  <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / 6 · <span class="mono">${esc(x.dates)}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
+  <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(x.dates)}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
   ${`<section class="stack"><h3>${t("qual")}</h3>
   <div class="tablebox panel"><table>
-    <thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("try1")}</th><th>${t("try2")}</th><th>${t("best")}</th></tr></thead>
-    <tbody>${rows.map((p, i) => `<tr class="${p.mine ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}</td>
+    <thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("group")}</th><th>${t("try1")}</th><th>${t("try2")}</th><th>${t("best")}</th></tr></thead>
+    <tbody>${rows.map((p, i) => `<tr class="${p.mine ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}</td><td>${grpTag(x, p.name) || '<span class="muted">—</span>'}</td>
       <td class="mono">${cell(p.a)}</td><td class="mono">${cell(p.b)}</td><td class="mono best">${p.best < 0 ? "—" : p.best.toFixed(1)}</td></tr>`).join("")}</tbody>
   </table></div></section>`}
   ${runs ? (() => {
@@ -2329,12 +2356,17 @@ function tournament(id) {
       <div class="tablebox panel"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
       <tbody>${tr.map((r, i) => `<tr><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${r.pts.toFixed(1)}</td></tr>`).join("")}</tbody></table></div></section>`;
   })() : ""}
-  ${runs && S.user && x.season === curSeason() ? `<section class="box panel"><h3>${t("fileProtest")}</h3><p class="note">${t("protestHint")}</p>
-    <form class="stack" id="protestform" data-tour="${x.id}">
+  ${S.user && (protestOpen(x) || myProtests(x).length) ? `<section class="box panel"><h3>${t("fileProtest")}</h3><p class="note">${t("protestHint")}</p>
+    ${!protestOpen(x) ? `<p class="note">${t("protestClosed")}</p>` : !rows.some(p => p.mine) ? `<p class="note">${t("protestOnlyRider")}</p>` : `<form class="stack" id="protestform" data-tour="${x.id}">
       <label class="fieldlabel" for="pagainst">${t("against")}<select class="field" id="pagainst">${rows.filter(p => !p.mine).map(p => `<option>${esc(p.name)}</option>`).join("")}</select></label>
       <label class="fieldlabel" for="ptext">${t("protestText")}<textarea id="ptext" maxlength="500" required></textarea></label>
-      <div class="row"><button class="btn sm">${t("send")}</button><span class="note" role="status">${protestMsg}</span></div></form></section>` : ""}`;
+      <div class="row"><button class="btn sm">${t("send")}</button><span class="note" role="status">${protestMsg}</span></div></form>`}
+    ${myProtests(x).length ? `<div class="stack" style="gap:.5rem"><span class="label">${t("myProtests")}</span><ul class="my-prot">${myProtests(x).map(q => `<li><b>→ ${esc(q.against)}</b>
+      <span class="pill plain ${q.status === "accepted" ? "s-reg" : q.status === "rejected" ? "err" : ""}">${t(q.status)}</span>${q.verdict ? `<span class="note">${t("verdict")}: ${esc(q.verdict)}</span>` : ""}</li>`).join("")}</ul></div>` : ""}</section>` : ""}`;
 }
+// protests: only while the current stage is running (qualifying … final), only by its drivers
+const protestOpen = x => x === currentTour() && !["soon", "reg", "done"].includes(x.status);
+const myProtests = x => S.user ? PROTESTS.filter(q => q.tour === x.id && q.from === S.user.name) : [];
 let protestMsg = "";
 
 let query = "";
@@ -2344,14 +2376,14 @@ const pHref = name => `#p-${encodeURIComponent(name)}`;
 const rItems = () => rTab === "teams"
   ? allTeams().map(tm => ({ id: "t" + tm.id, href: `#tm-${tm.id}`, ava: logo(tm), name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: teamPts(tm), mine: tm.id === S.team }))
       .sort((a, b) => b.pts - a.pts)
-  : roster().sort((a, b) => b.pts - a.pts).map(p => ({ id: p.name, href: pHref(p.name), ava: `<span class="r-ava">${esc(p.name[0])}</span>`, name: p.name,
+  : roster().sort((a, b) => b.pts - a.pts).map(p => ({ id: p.name, href: pHref(p.name), ava: pAva(p, "r-ava"), name: p.name,
       sub: [teamById(p.team)?.name || t("freeAgent"), p.car].join(" · "), num: p.num, pts: p.pts, mine: p.mine }));
 function rRows() {
   const all = rItems(), max = all[0]?.pts || 1, q = query.trim().toLowerCase();
   const list = all.map((r, k) => ({ ...r, place: k + 1 })).filter(r => !q || r.name.toLowerCase().includes(q) || String(r.num ?? "").startsWith(q));
   return list.slice(0, 20).map((r, k) => `<li class="r-row ${r.mine ? "mine" : ""} ${r.place <= 3 ? `top p${r.place}` : ""}" style="--i:${k}"><a href="${r.href}">
       <span class="r-pos">${pad(r.place)}</span>${r.ava}
-      <span class="r-name"><b>${esc(r.name)}</b><span class="note">${esc(r.sub)}</span></span>
+      <span class="r-name"><b>${esc(r.name)}${r.num ? `<span class="r-numv mono">#${r.num}</span>` : ""}</b><span class="note">${esc(r.sub)}</span></span>
       <span class="r-bar" aria-hidden="true"><i style="--w:${(r.pts / max).toFixed(3)}"></i></span>
       <span class="r-ptsv">${r.pts}</span></a></li>`).join("") || `<li class="note">${t("nothing")}</li>`;
 }
@@ -2382,7 +2414,7 @@ const descBlock = tm => tm.owner
 
 let selTeam = null;
 // ---- teams: card grid in the home-page style; each card opens the team page, members open public driver profiles ----
-const avStack = tm => `<span class="av-stack" aria-hidden="true">${membersOf(tm).slice(0, 4).map(p => `<i>${esc(p.name[0])}</i>`).join("")}</span>`;
+const avStack = tm => `<span class="av-stack" aria-hidden="true">${membersOf(tm).slice(0, 4).map(p => pAva(p, "", "i")).join("")}</span>`;
 const tmStatus = tm => `<span class="tm-status ${tm.closed ? "closed" : ""}">${t(tm.closed ? "teamClosedL" : "teamOpenL")}</span>`;
 const tmCard = (tm, link = true, i = 0) => { const tag = link ? "a" : "div";
   return `<${tag} class="tm-card"${link ? ` href="#tm-${tm.id}"` : ""} style="--i:${i}">
@@ -2410,7 +2442,7 @@ function teamPage(id) {
     ${statRow([[`#${rank}`, "teamPlace"], [teamPts(tm), "points"], [`${ms.length}/${maxTeam()}`, "drivers"]])}
   </section>
   <section class="stack sec"><div class="sec-head"><span class="label idx">01 — ${t("rosterL")}</span><h2>${t("rosterTitle")}</h2></div>
-    ${ms.length ? `<div class="pl-grid">${ms.map((p, i) => `<a class="pl-card" href="${pHref(p.name)}" style="--i:${i}"><span class="pl-ava">${esc(p.name[0])}</span>
+    ${ms.length ? `<div class="pl-grid">${ms.map((p, i) => `<a class="pl-card" href="${pHref(p.name)}" style="--i:${i}">${pAva(p, "pl-ava")}
       <span class="stack" style="gap:.2rem;min-width:0"><b>${esc(p.name)}${i === 0 ? ' <span class="cap" title="Captain">C</span>' : ""}</b><span class="note">${esc(p.car || "—")}</span></span>
       <span class="pl-right"><span class="pl-num">${p.num ? "#" + p.num : ""}</span><span class="note">${p.pts} ${t("pointsShort")}</span></span></a>`).join("")}</div>` : `<p class="note">${t("noMembers")}</p>`}
   </section>`;
@@ -2499,9 +2531,137 @@ const TEAM_RULES = [
   ["Замены участников", "Замена участника после начала этапа допускается только с разрешения организаторов и в случаях, предусмотренных регламентом."],
   ["Наказание команды", "За серьёзные или систематические нарушения к команде могут быть применены предупреждение, штрафные санкции или дисквалификация."],
 ];
-// Editable rules. Defaults stay as authored HTML; once an admin edits, the rules are kept as plain text with light markup:
+// English defaults, already in the editable text form
+const RULES_EN = () => [
+  ["General information", `LDS (Lateral Drift Series) is a professional CarX Drift Racing Online 2 championship for drivers who want to compete in a fair and organised setting. Whatever their level, every participant gets the chance to show their skills, gain experience and become part of a competitive community.
+
+The main goal of the championship is to run quality competitions where the result depends only on the driver's skill. To achieve this we use one set of rules, a clear round format and objective judging.
+
+Every LDS round is a full competition: drivers fight not only for the round win but also for championship points that make up the season standings.
+
+All runs follow these rules. The judging panel scores performances by the published criteria; judges' decisions are binding for all participants.
+
+The rules may be changed or extended when needed. All changes are published before they take effect and become binding for everyone.
+
+By registering for the championship, a driver confirms they have read the rules, accepts them and agrees to treat organisers, judges and other participants with respect.`],
+  ["Exterior rules", `## 2.1 Body
+**2.1.1 Not allowed:**
+- 2.1.1.1 Removing two paired parts of the car at the same time.
+- 2.1.1.2 Removing the boot lid and doors.
+- 2.1.1.3 Removing the bonnet.
+- 2.1.1.4 Removing the front and rear bumpers.
+- 2.1.1.5 Removing the headlights.
+
+**2.1.2 Allowed:**
+- 2.1.2.1 Running without a spoiler.
+- 2.1.2.2 Removing the mirrors.
+- 2.1.2.3 Fully editing the interior.
+
+## 2.2 Livery
+**2.2.1 Not allowed:**
+- 2.2.1.1 Liveries with obscene language in any language.
+- 2.2.1.2 Pornographic, erotic or sexual images.
+- 2.2.1.3 Material promoting extremism, terrorism, nazism, racism, discrimination or hatred.
+- 2.2.1.4 Political slogans, symbols and campaign material.
+- 2.2.1.5 Liveries insulting, bullying or humiliating other participants, teams, organisers or third parties.
+- 2.2.1.6 Using another team's livery without its owners' permission.
+- 2.2.1.7 Liveries that make the car hard to identify, including plain single-colour wraps that hide the driver's number.
+- 2.2.1.8 Cheat or modified textures that give a visual advantage or are not in the official game. Third-party visual mods may lead to disqualification.
+
+The organisers may ban any livery that breaks the championship rules.
+
+## 2.3 Number and banner
+**2.3.1** The banner has 4 elements: a black strip, the CarX logo (white), the LDS logo (white) and the driver's number (white).
+
+**2.3.2** There are only two numbers: on the banner and on the rear window. The rear window number is a black rectangle with the driver's number inside it (white). The number is assigned in the round table after registration.
+
+! **Warning.** If the marshal finds a body or number/banner violation, you get 5 minutes to fix it. Not fixed in time — disqualification from the event. Fixed — you move to the end of the qualifying / battle queue.`],
+  ["Technical rules", `## 3.1 Suspension
+**3.1.1** Heavily lowered suspension is not allowed.
+
+**3.1.2** Heavily raised suspension is not allowed.
+
+**3.1.3** Wheels may stick out of the arches by no more than 5% of the tyre width; tyres must not clip through the arch textures, static or in motion.
+
+## 3.2 Specifications
+| Parameter | From | To |
+| Front wheel | 235/40 R18 | 265/35 R18 |
+| Rear wheel | 265/35 R18 |
+| Rear tyre pressure | 0.6 bar | 2.5 bar |
+| Tyre type | semi-slick |
+| Car weight, kg | 1185 | 1550 |
+| Engine power, hp | ${SETTINGS.hpMin} | ${SETTINGS.hpMax} |`],
+  ["Judging", `Round judging panel: angle judge, line judge, style judge, extra judges, a marshal and a streamer-commentator. Judging coordinator: **@kt_anzou**.
+
+## 4.1 Judging criteria
+**4.1.1 Line.** The car's path through the course while drifting: clipping points and transition zones. Judges score how precisely the car follows the set line; a good line shows planning, control and understanding of the track.
+
+**4.1.2 Angle.** The drift angle through the section; it makes the run look spectacular. Judges score how optimal and stable the angle is. Too much or too little angle gets in the chaser's way and costs points.
+
+**4.1.3 Style.** A subjective score of how the driver handles the car: smoothness, aggression, originality and control — everything that makes a run memorable.
+
+## 4.2 Competition format
+- 4.2.1 Game version — standard.
+- 4.2.2 Type — two-stage event: groups compete separately, winners move on to the final stage.
+- 4.2.3 Driver split — 4 groups of 10 drivers.
+- 4.2.4 Bracket — Single Elimination.
+- 4.2.5 Final — 4 winners.
+- 4.2.6 Venue — private online room.
+- 4.2.7 Room limit — 5 drivers + judges in qualifying, 4 drivers + judges in battles.
+- 4.2.8 Qualifying runs — two, except for technical issues.
+
+A separate judging brief is published before every round: track information, scoring and rules.`],
+  ["Points", `Drivers and teams earn points every round. At the end of the season the teams and drivers with the most points are awarded.
+
+## 5.1 Drivers
+| Round place | Points | Qualifying | Bonus |
+| 1 | 100 | 1 | +20 |
+| 2 | 80 | 2 | +15 |
+| 3 | 60 | 3 | +10 |
+| 4 | 50 | 4 | +5 |
+| 5–8 | 40 |  |  |
+| 9–16 | 25 |  |  |
+| 17–32 | 10 |  |  |
+| Did not qualify | 0 |  |  |
+
+**Round difficulty factor:** easy ×1.0, medium ×1.2, hard ×1.5. For example, 1st place on a hard round is worth 150 points.
+
+## 5.2 Teams
+Team points come from the team table and add up for the team's two best drivers in the round. The qualifying bonus counts only for one driver's best place (+20 / +15 / +10 / +5). The total is multiplied by the round difficulty factor.
+
+| Round place | Team points |
+| 1 | 70 |
+| 2 | 60 |
+| 3 | 45 |
+| 4 | 30 |
+| 5–8 | 15 |
+| 9–16 | 5 |
+| 17–32 | 2 |
+| Below top 32 | 0 |`],
+  ["Prize fund and awards", `**6.1 General.** Round winners and podium finishers, and the season champions, receive awards and prizes. The prize fund and its terms are published before the season or round starts; sponsors and partners may increase it.
+
+**6.2 Season awards.** Drivers in places 1–4 of the driver standings and teams in places 1–4 of the team standings are awarded.
+
+**6.3 Prize payout.** Cash prizes are paid in the way and time set by the organisers; the winner provides payment details. If the winner cannot be reached for 20 calendar days after the results are announced, the payout may be cancelled. On disqualification the prize passes to the next driver in the final classification.
+
+**6.4 Loss of prizes.** The organiser may cancel a participant's results and awards for breaking the rules; prizes received are returned on the organisers' request.
+
+**6.5 Prize split.** The season's total prize fund and amounts per place will be announced separately.`],
+];
+const TEAM_RULES_EN = [
+  ["Team line-up", "The team standings count only if the team founder has filed the team entry for the round. Up to 32 teams per round and 4 drivers per team."],
+  ["Team responsibility", "The founder and members of a team are fully responsible for following the team rules."],
+  ["Conduct", "Insults, provocation, spam and improper behaviour towards other participants, judges or organisers are not allowed."],
+  ["Respecting judges' decisions", "All team members respect the judging panel's decisions. Disputes are discussed only in the way set by the organisers."],
+  ["Driver changes", "Replacing a driver after the round has started is allowed only with the organisers' permission and in cases covered by the rules."],
+  ["Team penalties", "Serious or repeated violations may bring the team a warning, penalties or disqualification."],
+];
+// Editable rules: several regulations per language, each a list of sections in plain text with light markup:
 // "## heading", "- list item", "! warning", "| cell | cell |" table rows (first row = header), "**bold**", blank line = new paragraph.
-let rulesDoc = S.db?.rules || null;
+// shape: { version, ru: [{ title, items: [{ title, text }] }], en: [...] }; older saves had { sections, team } in Russian only
+const migrateRules = d => !d ? null : d.ru ? d : { version: d.version || "1.1",
+  ru: [{ title: I18N.ru.pilotRules, items: d.sections || [] }, { title: I18N.ru.teamRules, items: d.team || [] }], en: defaultRulesDoc().en };
+let rulesDoc = null; // set after defaultRulesDoc is defined
 const inlineMd = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 function textToHtml(text) {
   const out = [], lines = String(text || "").split(/\r?\n/);
@@ -2511,8 +2671,10 @@ function textToHtml(text) {
     if (list.length) out.push(`<ul>${list.map(l => `<li>${inlineMd(l)}</li>`).join("")}</ul>`), list = [];
     if (table.length) {
       const rows = table.map(r => r.replace(/^\||\|$/g, "").split("|").map(c => c.trim()));
+      // a short row stretches its last cell, so every row's line runs the full width of the table
+      const w = rows[0].length, cells = r => r.map((c, j) => `<td${j === r.length - 1 && r.length < w ? ` colspan="${w - r.length + 1}"` : ""}>${inlineMd(c)}</td>`).join("");
       out.push(`<div class="tablebox"><table><thead><tr>${rows[0].map(c => `<th>${inlineMd(c)}</th>`).join("")}</tr></thead><tbody>${
-        rows.slice(1).map(r => `<tr>${r.map(c => `<td>${inlineMd(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`);
+        rows.slice(1).map(r => `<tr>${cells(r)}</tr>`).join("")}</tbody></table></div>`);
       table = [];
     }
   };
@@ -2530,7 +2692,7 @@ function textToHtml(text) {
   return out.join("");
 }
 console.assert(textToHtml("## A\n- x\n- **y**\n\n| a | b |\n| 1 | 2 |\n! w <i>").includes("<h4>A</h4><ul><li>x</li><li><b>y</b></li></ul><div class=\"tablebox\"><table><thead><tr><th>a</th><th>b</th>")
-  && textToHtml("! w <i>").includes("&lt;i&gt;"), "textToHtml");
+  && textToHtml("! w <i>").includes("&lt;i&gt;") && textToHtml("| a | b | c |\n| 1 | 2 |").includes('<td colspan="2">2</td>'), "textToHtml");
 // turns the authored default HTML into the editable text form (browser only: uses DOMParser)
 function htmlToText(html) {
   if (typeof DOMParser === "undefined") return String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
@@ -2544,48 +2706,69 @@ function htmlToText(html) {
     return inline(el);
   }).join("\n\n");
 }
-const defaultRulesDoc = () => ({ version: "1.1", sections: RULES.map(([title, html]) => ({ title, text: htmlToText(html) })), team: TEAM_RULES.map(([title, text]) => ({ title, text })) });
-const ruleSections = () => rulesDoc ? rulesDoc.sections.map(s => [esc(s.title), textToHtml(s.text)]) : RULES;
-const teamRuleItems = () => rulesDoc ? rulesDoc.team.map(s => [esc(s.title), textToHtml(s.text)]) : TEAM_RULES.map(([h, txt]) => [h, `<p>${txt}</p>`]);
-const rulesEyebrow = () => rulesDoc ? `Lateral Drift Series · ${S.lang === "en" ? "Version" : "Версия"} ${esc(rulesDoc.version)}` : t("rulesEyebrow");
+const items = (list, toText) => list.map(([title, body]) => ({ title, text: toText(body) }));
+const defaultRulesDoc = () => ({ version: "1.1",
+  ru: [{ title: I18N.ru.pilotRules, items: items(RULES, htmlToText) }, { title: I18N.ru.teamRules, items: items(TEAM_RULES, x => x) }],
+  en: [{ title: I18N.en.pilotRules, items: items(RULES_EN(), x => x) }, { title: I18N.en.teamRules, items: items(TEAM_RULES_EN, x => x) }] });
+rulesDoc = migrateRules(S.db?.rules);
+// the page language picks the rules; an empty English set falls back to Russian
+const rulesFor = lang => { const d = rulesDoc || defaultRulesDoc(); return lang === "en" && d.en?.length ? d.en : d.ru; };
+const rulesEyebrow = () => `Lateral Drift Series · ${S.lang === "en" ? "Version" : "Версия"} ${esc((rulesDoc || defaultRulesDoc()).version)}`;
 
-const rules = () => `<div class="doc-head"><span class="label acc">${rulesEyebrow()}</span><h1>${t("rulesTitle")}</h1>${t("rulesLang") ? `<p class="note">${t("rulesLang")}</p>` : ""}</div>
+function rules() {
+  const docs = rulesFor(S.lang), fallback = S.lang === "en" && docs === rulesFor("ru");
+  // the first regulation reads as numbered chapters, the others as framed panels
+  const body = (s, di, k) => di === 0
+    ? `<section id="r${di}-${k}"><h3>${k + 1}. ${esc(s.title)}</h3>${textToHtml(s.text)}</section>`
+    : `<div class="stack" id="r${di}-${k}" style="gap:.3rem;scroll-margin-top:96px"><h4>${esc(s.title)}</h4>${textToHtml(s.text)}</div>`;
+  return `<div class="doc-head"><span class="label acc">${rulesEyebrow()}</span><h1>${t("rulesTitle")}</h1>${fallback ? `<p class="note">${t("rulesLang")}</p>` : ""}</div>
   <div class="doc">
-    <aside class="toc" aria-label="Contents"><span class="sep">${t("pilotRules")}</span>${ruleSections().map(([h], i) => `<button data-goto="r${i + 1}">${i + 1}. ${h}</button>`).join("")}
-      <span class="sep">${t("teamRules")}</span>${teamRuleItems().map(([h], i) => `<button data-goto="tr${i + 1}">${h}</button>`).join("")}</aside>
+    <aside class="toc" aria-label="Contents">${docs.map((d, di) => `<span class="sep">${esc(d.title)}</span>${d.items.map((s, k) =>
+      `<button data-goto="r${di}-${k}">${di === 0 ? `${k + 1}. ` : ""}${esc(s.title)}</button>`).join("")}`).join("")}</aside>
     <div class="prose">
-      ${ruleSections().map(([h, body], i) => `<section id="r${i + 1}"><h3>${i + 1}. ${h}</h3>${body}</section>`).join("")}
-      <section class="teamrules panel" id="tr"><span class="label acc">Lateral Drift Series</span><h3>${t("teamRules")}</h3>
-        ${teamRuleItems().map(([h, body], i) => `<div class="stack" id="tr${i + 1}" style="gap:.3rem;scroll-margin-top:96px"><h4>${h}</h4>${body}</div>`).join("")}</section>
+      ${docs.map((d, di) => di === 0 ? d.items.map((s, k) => body(s, di, k)).join("")
+        : `<section class="teamrules panel"><span class="label acc">Lateral Drift Series</span><h3>${esc(d.title)}</h3>${d.items.map((s, k) => body(s, di, k)).join("")}</section>`).join("")}
     </div>
   </div>`;
+}
 
-// admin: rules editor
+// admin: rules editor, one language at a time
+let rLang = "ru";
 function adminRules() {
-  const d = rulesDoc || defaultRulesDoc();
-  const block = (kind, s, i, n) => `<div class="box panel rule-ed">
+  const d = rulesDoc || defaultRulesDoc(), docs = d[rLang] || [];
+  const btns = (act, di, k, n) => `<div class="row" style="gap:.2rem;align-self:end">
+          <button class="btn text sm" data-act="${act}Move" data-id="${di}" data-k="${k}" data-v="-1" ${(k ?? di) === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button>
+          <button class="btn text sm" data-act="${act}Move" data-id="${di}" data-k="${k}" data-v="1" ${(k ?? di) === n - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button>
+          <button class="btn text sm danger" data-act="${act}Del" data-id="${di}" data-k="${k}">${pending === `${act}-${rLang}-${di}-${k}` ? t("delSure") : t("del")}</button></div>`;
+  const block = (s, di, k, n) => `<div class="box panel rule-ed">
       <div class="row" style="justify-content:space-between;gap:.6rem">
-        <label class="fieldlabel" style="flex:1;min-width:14rem">${kind === "sections" ? `${t("sectionN")} ${i + 1}` : t("itemTitle")}<input class="field" data-a="rule:${kind}:${i}:title" value="${esc(s.title)}" maxlength="80"></label>
-        <div class="row" style="gap:.2rem;align-self:end">
-          <button class="btn text sm" data-act="ruleMove" data-kind="${kind}" data-id="${i}" data-v="-1" ${i === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button>
-          <button class="btn text sm" data-act="ruleMove" data-kind="${kind}" data-id="${i}" data-v="1" ${i === n - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button>
-          <button class="btn text sm danger" data-act="ruleDel" data-kind="${kind}" data-id="${i}">${pending === `r-${kind}-${i}` ? t("delSure") : t("del")}</button></div></div>
-      <textarea class="field rule-text" data-a="rule:${kind}:${i}:text" rows="${kind === "sections" ? 12 : 4}" aria-label="${esc(s.title)}">${esc(s.text)}</textarea></div>`;
+        <label class="fieldlabel" style="flex:1;min-width:14rem">${t("sectionN")} ${k + 1}<input class="field" data-a="rule:${di}:${k}:title" value="${esc(s.title)}" maxlength="80"></label>
+        ${btns("rule", di, k, n)}</div>
+      <textarea class="field rule-text" data-a="rule:${di}:${k}:text" rows="${di === 0 ? 12 : 4}" aria-label="${esc(s.title)}">${esc(s.text)}</textarea></div>`;
   return `<div class="head"><h2>${t("aRules")}</h2><button class="btn text danger" data-act="rulesReset">${pending === "rules" ? t("resetSure") : t("rulesReset")}</button></div>
     <div class="box panel"><p class="note">${t("rulesHelp")}</p>
-      <label class="fieldlabel" style="max-width:12rem">${t("rulesVersion")}<input class="field" data-a="rule:version" value="${esc(d.version)}" maxlength="12"></label>
-      <a class="btn line sm" href="#rules" style="justify-self:start">${t("rulesTitle")} →</a></div>
-    <div class="head"><h3>${t("sportRules")}</h3><button class="btn line sm" data-act="ruleAdd" data-kind="sections">${t("addSection")}</button></div>
-    ${d.sections.map((s, i) => block("sections", s, i, d.sections.length)).join("")}
-    <div class="head"><h3>${t("teamRules")}</h3><button class="btn line sm" data-act="ruleAdd" data-kind="team">${t("addItem")}</button></div>
-    ${d.team.map((s, i) => block("team", s, i, d.team.length)).join("")}`;
+      <div class="row" style="gap:1rem;align-items:end">
+        <label class="fieldlabel" style="max-width:12rem">${t("rulesVersion")}<input class="field" data-a="rule:version" value="${esc(d.version)}" maxlength="12"></label>
+        <div class="seg2" role="tablist" aria-label="${t("rulesLangL")}">${["ru", "en"].map(l => `<button role="tab" data-act="rLang" data-v="${l}" aria-selected="${rLang === l}">${l.toUpperCase()}</button>`).join("")}</div>
+        <a class="btn line sm" href="#rules">${t("rulesTitle")} →</a></div>
+      ${rLang === "en" && !docs.length ? `<p class="note">${t("rulesEnEmpty")}</p>` : ""}</div>
+    ${docs.map((doc, di) => `<section class="stack rule-doc" style="gap:.8rem">
+      <div class="box panel"><div class="row" style="justify-content:space-between;gap:.6rem">
+        <label class="fieldlabel" style="flex:1;min-width:14rem">${t("regTitle")} ${di + 1}<input class="field" data-a="rule:${di}:-1:title" value="${esc(doc.title)}" maxlength="80"></label>
+        ${btns("doc", di, undefined, docs.length)}</div></div>
+      ${doc.items.map((s, k) => block(s, di, k, doc.items.length)).join("")}
+      <div><button class="btn line sm" data-act="ruleAdd" data-id="${di}">${t("addSection")}</button></div></section>`).join("")}
+    <div><button class="btn" data-act="docAdd">${t("addReg")}</button></div>`;
 }
 // first edit copies the defaults into an editable document
 const editRules = () => (rulesDoc ??= defaultRulesDoc());
-function ruleEdit(kind, i, field, v) {
+const editDocs = () => (editRules()[rLang] ??= []);
+function ruleEdit(di, k, field, v) {
   const d = editRules();
-  if (kind === "version") d.version = String(v).trim().slice(0, 12) || d.version;
-  else if (d[kind]?.[+i] && (field === "title" || field === "text")) d[kind][+i][field] = field === "title" ? (String(v).trim().slice(0, 80) || d[kind][+i].title) : String(v).slice(0, 20000);
+  if (di === "version") { d.version = String(v).trim().slice(0, 12) || d.version; return dbSave(); }
+  const doc = editDocs()[+di], it = +k < 0 ? doc : doc?.items[+k];
+  if (!it || (field !== "title" && field !== "text")) return;
+  it[field] = field === "title" ? (String(v).trim().slice(0, 80) || it.title) : String(v).slice(0, 20000);
   dbSave(field !== "text"); // titles change the contents list, text edits don't need a redraw
 }
 
@@ -2715,18 +2898,19 @@ const psec = (title, body, extra = "") => `<section class="psec panel"><div clas
 const qualOf = name => TOURS.filter(x => x.status === "done").sort((a, b) => b.season - a.season || b.stage - a.stage)
   .map(x => { const rows = bcRows(x), i = rows.findIndex(r => r.name === name); return i < 0 || rows[i].best < 0 ? null : { x, place: i + 1, of: rows.length, best: rows[i].best, a: rows[i].a, b: rows[i].b }; })
   .filter(Boolean);
+// garage: the full setup comes from the pilot's profile; demo pilots only have a car
+const carSpec = p => { const c = p.setup || { car: p.car }; return [["car", c.car], ["engine", c.engine], ["gearbox", c.gearbox], ["hpLong", c.hp && `${c.hp} ${t("hp")}`]]; };
 function pilotHero(p, own) {
   const all = roster().sort((a, b) => b.pts - a.pts), place = all.findIndex(z => z.name === p.name) + 1, q = qualOf(p.name), tm = teamById(p.team);
-  const bio = own ? (S.about?.ru || "").slice(0, ABOUT_MAX) : ""; // older bios were longer
-  // garage: the full setup is known for the signed-in driver, other drivers only have a car
-  const garage = (p.mine ? [["car", S.car.car], ["engine", S.car.engine], ["gearbox", S.car.gearbox], ["hpLong", S.car.hp]] : [["car", p.car]]).filter(([, v]) => v);
+  const bio = ((own ? S.about : p.about)?.ru || "").slice(0, ABOUT_MAX); // older bios were longer
+  const garage = carSpec(p).filter(([, v]) => v);
   return `<section class="pp-hero">
     <span class="pp-bgnum" aria-hidden="true" data-t="${p.num ?? ""}">${p.num ?? ""}</span>
-    <span class="pp-role ${isAdminName(p.name) ? "admin" : ""}">${t(isAdminName(p.name) ? "roleAdmin" : "pilot")}</span>
-    <div class="pp-main"><span class="pp-ava ${p.avatar ? "has-img" : ""}" ${avaStyle(p.avatar)}>${esc(p.name[0])}</span>
+    <span class="pp-role ${isAdminName(p.name) ? "admin" : ""}">${t(isOwnerName(p.name) ? "roleOwner" : isAdminName(p.name) ? "roleAdmin" : "pilot")}</span>
+    <div class="pp-main">${pAva(p, "pp-ava")}
       <div class="pp-who"><h1>${esc(p.name)}</h1>
         <div class="pp-chips">${p.num ? `<span class="chip4 acc">#${p.num}</span>` : ""}${tm ? `<a class="chip4" href="#tm-${tm.id}">${logo(tm)}${esc(tm.name)}</a>` : `<span class="chip4">${t("freeAgent")}</span>`}${own ? `<span class="chip4">Steam ID ${esc(S.user.steamId)}</span>` : ""}</div>
-        ${own ? `<p class="pp-bio ${bio ? "" : "muted"}">${bio ? esc(bio) : t("noBio")}</p>` : ""}</div></div>
+        ${own || bio ? `<p class="pp-bio ${bio ? "" : "muted"}">${bio ? esc(bio) : t("noBio")}</p>` : ""}</div></div>
     ${garage.length ? `<dl class="pp-car">${garage.map(([k, v]) => `<div><dt>${t(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
     ${statRow([[place ? `#${place}` : "—", "cmpPlace"], [p.pts, "points"], [q.length, "statRaced"]])}
   </section>`;
@@ -2739,11 +2923,11 @@ function pilotPage(name) {
   const p = roster().find(z => z.name === name);
   if (!p) return `<div class="box panel empty"><p class="muted">${t("noPilot")}</p><div><a class="btn line" href="#teams">${t("teams")}</a></div></div>`;
   const tm = teamById(p.team);
-  const spec = [["car", p.car], ...(p.mine ? [["engine", S.car.engine], ["gearbox", S.car.gearbox], ["hpLong", S.car.hp && `${S.car.hp} ${t("hp")}`]] : [])];
+  const spec = carSpec(p);
   return `<button class="back linkbtn" data-act="goBack">← ${t("backShort")}</button>
   ${pilotHero(p, false)}
   ${p.mine ? `<div class="note-bar"><span>${t("thisIsYou")}</span><a class="btn line sm" href="#profile">${t("editProfile")}</a></div>` : ""}
-  <details class="psec panel ach-box" open><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achCount(p.name)}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achBlock(p.name)}</details>
+  <details class="psec panel ach-box"><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achCount(p.name)}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achBlock(p.name)}</details>
   <div class="pp-grid">
     <div class="stack" style="gap:1.2rem">
       ${psec(t("qualResults"), qualBlock(p.name))}
@@ -2851,7 +3035,7 @@ function adminSeasons() {
     <div class="box panel"><div class="cols" style="gap:1rem">
       <label class="fieldlabel">${t("seasonNameCol")}<input class="field" data-a="season:${s.id}:name" value="${esc(s.name)}" maxlength="40"></label>
       <label class="fieldlabel">${t("status")}${sel(`season:${s.id}:status`, ["plan", "live", "done"], s.status, t("status"), "field")}</label></div></div>
-    <div class="head"><h3>${t("aStagesOf")}</h3>${stages.length < 6 ? `<button class="btn line sm" data-act="addStage" data-id="${s.id}">${t("addStage")}</button>` : ""}</div>
+    <div class="head"><h3>${t("aStagesOf")}</h3>${stages.length < 12 ? `<button class="btn line sm" data-act="addStage" data-id="${s.id}">${t("addStage")}</button>` : ""}</div>
     <div class="tablebox panel"><table><thead><tr><th>${t("stage")}</th><th>${t("track")}</th><th>${t("dates")}</th><th>${t("status")}</th><th>${t("drivers")}</th><th></th></tr></thead><tbody>${
       stages.map(z => `<tr class="clickrow" data-qt="${z.id}" tabindex="0"><td class="n">${z.stage}</td><td>${esc(z.track)}</td><td class="mono muted">${esc(z.dates)}</td><td>${tourPill(z)}</td>
         <td class="mono muted">${stageRows(z).length}</td><td class="acc" style="text-align:right">${t("configure")} →</td></tr>`).join("")}</tbody></table></div>
@@ -2870,15 +3054,20 @@ function adminTour(x) {
       <label class="fieldlabel">${t("dates")}<input class="field" data-a="tour:${x.id}:dates" value="${esc(x.dates)}" maxlength="40"></label>
       <label class="fieldlabel">${t("startAt")}<input class="field" data-a="tour:${x.id}:start" value="${esc(x.start)}" maxlength="40"></label>
 </div></div>
-    <div class="box panel"><h3>${t("stageStatus")}</h3>${stepper(x)}</div>`;
+    <div class="box panel"><h3>${t("stageStatus")}</h3>${stepper(x)}</div>
+    <div><button class="btn text danger" data-act="delStage" data-id="${x.id}">${pending === `st${x.id}` ? t("delSure") : t("delStage")}</button></div>`;
   if (aSub === "qual") {
     const inp = (p, i, k) => { const v = scoreOf(x, p, i, k); return `<input class="ai" type="number" min="0" max="100" step="0.1" data-a="score:${x.id}:${k}:${i}" value="${v ?? ""}" aria-label="${esc(p.name)} ${k + 1}">`; };
     body = `<p class="note">${t("qualHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("try1")}</th><th>${t("try2")}</th></tr></thead><tbody>${
       stageRows(x).map(([p, i]) => `<tr><td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}</td><td>${inp(p, i, 0)}</td><td>${inp(p, i, 1)}</td></tr>`).join("")}</tbody></table></div>`;
   }
-  if (aSub === "pilots") body = `<p class="note">${t("pilotsHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("inStage")}</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("team")}</th></tr></thead><tbody>${
-    roster().map((p, i) => [p, i]).filter(([p]) => !p.mine || S.regs.includes(x.id)).map(([p, i]) => `<tr><td><input type="checkbox" data-a="out:${x.id}:${i}" ${x.out.includes(p.name) ? "" : "checked"} aria-label="${t("inStage")}: ${esc(p.name)}"></td>
-      <td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}${isBanned(p.name) ? ` <span class="pill plain err" style="font-size:.65rem">${t("ban")}</span>` : ""}</td><td class="muted">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</td></tr>`).join("")}</tbody></table></div>`;
+  if (aSub === "pilots") { const inRows = new Set(stageRows(x).map(([p]) => p.name)), gm = gmaxOf(x);
+    body = `<div class="box panel"><div class="stack" style="gap:.3rem"><h3>${t("groupLimits")}</h3><p class="note" style="margin:0">${t("groupsHint")}</p></div>
+      <div class="grp-limits">${GROUPS.map(g => `<label class="fieldlabel"><span><span class="grp">${g}</span> ${groupCount(x, g)} / ${gm[g]}</span><input class="field" type="number" min="1" max="64" data-a="gmax:${x.id}:${g}" value="${gm[g]}" aria-label="${t("group")} ${g}"></label>`).join("")}</div></div>
+    <p class="note">${t("pilotsHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("inStage")}</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("team")}</th><th>${t("group")}</th></tr></thead><tbody>${
+    roster().map((p, i) => `<tr><td><input type="checkbox" data-a="out:${x.id}:${i}" ${inRows.has(p.name) ? "checked" : ""} aria-label="${t("inStage")}: ${esc(p.name)}"></td>
+      <td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}${p.test ? ` <span class="label">${t("testTag")}</span>` : ""}${isBanned(p.name) ? ` <span class="pill plain err" style="font-size:.65rem">${t("ban")}</span>` : ""}</td><td class="muted">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</td>
+      <td><select class="ai" data-a="grp:${x.id}:${i}" ${inRows.has(p.name) ? "" : "disabled"} aria-label="${t("group")} ${esc(p.name)}"><option value="">—</option>${GROUPS.map(g => `<option ${groupOf(x, p.name) === g ? "selected" : ""}>${g}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table></div>`; }
   if (aSub === "teams") body = `<p class="note">${t("teamsHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("teamScore")}</th><th></th><th>${t("team")}</th><th>${t("onStage")}</th></tr></thead><tbody>${
     allTeams().map(tm => `<tr><td><input type="checkbox" data-a="tout:${x.id}:${tm.id}" ${x.teamsOut.includes(tm.id) ? "" : "checked"} aria-label="${t("teamScore")}: ${esc(tm.name)}"></td>
       <td>${logo(tm)}</td><td>${esc(tm.name)}</td><td class="mono muted">${stageRows(x).filter(([p]) => p.team === tm.id).length}/${maxTeam()}</td></tr>`).join("")}</tbody></table></div>`;
@@ -2887,14 +3076,18 @@ function adminTour(x) {
 
 const sanctionLabel = s => s.type === "dq" ? `${t("dq")} · ${t("stage")} ${TOURS.find(x => x.id === s.tour)?.stage ?? "?"}` : t(s.type);
 function adminPilots() {
-  return `<h2>${t("aSanctions")}</h2><p class="note">${t("dqNote")}</p>
+  const own = isOwner();
+  return `<div class="head"><div class="stack" style="gap:.3rem"><h2>${t("aSanctions")}</h2><p class="note" style="margin:0">${t("dqNote")}${own ? "" : ` ${t("ownerOnly")}`}</p></div>
+      <button class="btn line" data-act="addTest">${t("addTestPilot")}</button></div>
     <div class="tablebox panel"><table><thead><tr><th>${t("numCol")}</th><th>${t("pilot")}</th><th>${t("sanctions")}</th><th></th></tr></thead><tbody>${roster().map((p, i) => {
-      const key = p.mine ? "me" : i;
-      return `<tr class="${p.mine ? "mine" : ""}"><td><input class="ai" type="number" min="1" max="999" data-a="pilot:${key}:num" value="${p.num ?? ""}" aria-label="${t("numCol")} ${esc(p.name)}"></td>
-        <td>${esc(p.name)}<div class="note">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</div></td>
+      const key = p.mine ? "me" : i, kickKey = `kick-${p.name}`;
+      const extra = p.test ? `<button class="btn text danger sm" data-act="delTest" data-name="${esc(p.name)}">${pending === kickKey ? t("delSure") : t("del")}</button>`
+        : own && !p.mine ? `<button class="btn text danger sm" data-act="kick" data-name="${esc(p.name)}">${pending === kickKey ? t("kickSure") : t("kick")}</button>` : "";
+      return `<tr class="${p.mine ? "mine" : ""}"><td>${own || p.test ? `<input class="ai" type="number" min="1" max="999" data-a="pilot:${key}:num" value="${p.num ?? ""}" aria-label="${t("numCol")} ${esc(p.name)}">` : `<span class="n">${p.num ?? "—"}</span>`}</td>
+        <td>${esc(p.name)}${p.test ? ` <span class="label">${t("testTag")}</span>` : ""}<div class="note">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</div></td>
         <td style="white-space:normal"><div class="row" style="gap:.35rem">${sanctionsOf(p.name).map((s, j) => `<span class="chip-s ${s.type}">${sanctionLabel(s)}<button data-act="delSanction" data-name="${esc(p.name)}" data-id="${j}" aria-label="${t("del")}">×</button></span>`).join("") || '<span class="muted">—</span>'}</div></td>
         <td><div class="row" style="flex-wrap:nowrap;gap:.35rem"><select class="ai" id="sanc-${i}" aria-label="${t("sanctions")} ${esc(p.name)}">${["warn", "dq", "ban"].map(s => `<option value="${s}">${t(s)}</option>`).join("")}</select>
-          <button class="btn line sm" data-act="giveSanction" data-id="${i}">${t("give")}</button></div></td></tr>`; }).join("")}</tbody></table></div>`;
+          <button class="btn line sm" data-act="giveSanction" data-id="${i}">${t("give")}</button>${extra}</div></td></tr>`; }).join("")}</tbody></table></div>`;
 }
 const adminTeams = () => `<h2>${t("aTeams")}</h2><div class="tablebox panel"><table><thead><tr><th></th><th>${t("team")}</th><th>${t("drivers")}</th><th>${t("teamDesc")}</th><th></th></tr></thead><tbody>${allTeams().map(tm => `<tr>
     <td>${logo(tm)}</td><td>${esc(tm.name)}</td><td class="mono muted">${membersOf(tm).length}/${maxTeam()}</td>
@@ -2960,7 +3153,31 @@ function adminEdit([kind, id, f, k], v) {
     }
     return dbSave();
   }
-  if (kind === "out" || kind === "tout") {
+  if (kind === "out") {
+    // checked = takes part: un-exclude, and enter by hand when the pilot didn't register; unchecked = excluded
+    const x = TOURS.find(z => z.id === +id), name = roster()[+f]?.name;
+    if (!x || !name) return;
+    const drop = l => { const at = l.indexOf(name); if (at >= 0) l.splice(at, 1); };
+    x.add ??= [];
+    if (v) { drop(x.out); if (!stageRows(x).some(([p]) => p.name === name)) x.add.push(name); }
+    else { drop(x.add); x.out.push(name); }
+    return dbSave();
+  }
+  if (kind === "grp") {
+    const x = TOURS.find(z => z.id === +id), name = roster()[+f]?.name;
+    if (!x || !name || (v && !GROUPS.includes(v))) return;
+    if (v && v !== groupOf(x, name) && groupCount(x, v) >= gmaxOf(x)[v]) { adminMsg = t("groupFull"); return render(); }
+    x.groups = { ...x.groups };
+    if (v) x.groups[name] = v; else delete x.groups[name];
+    return dbSave();
+  }
+  if (kind === "gmax") {
+    const x = TOURS.find(z => z.id === +id), n = Math.round(Number(v));
+    if (!x || !GROUPS.includes(f) || !(n >= 1 && n <= 64)) return render();
+    x.gmax = { ...x.gmax, [f]: n };
+    return dbSave();
+  }
+  if (kind === "tout") {
     // checkbox checked = takes part; unchecked = listed in out / teamsOut
     const x = TOURS.find(z => z.id === +id), list = kind === "out" ? x.out : x.teamsOut, key = kind === "out" ? roster()[+f]?.name : +f;
     if (key == null) return;
@@ -2986,6 +3203,7 @@ function adminEdit([kind, id, f, k], v) {
   }
   if (kind === "pilot") {
     const idx = id === "me" ? -1 : +id, p = PILOTS[idx], n = Number(v);
+    if (!p?.test && !isOwner()) return render(); // real pilots' numbers: head admin only
     if (f === "rating") {
       if (v === "" || !Number.isFinite(n)) return render();
       const r = Math.min(100, Math.max(0, Math.round(n)));
@@ -2995,6 +3213,7 @@ function adminEdit([kind, id, f, k], v) {
       const used = new Set([...PILOTS.filter((_, i) => i !== idx).map(q => q.num), ...(idx !== -1 && S.num ? [S.num] : [])]);
       if (!Number.isInteger(n) || n < 1 || n > 999) { adminMsg = t("numBad"); return render(); }
       if (used.has(n)) { adminMsg = `${t("numDup")}: ${n}`; return render(); }
+      if (p && HOSTED && !p.test) { ownerCall({ sid: p.steamId, num: n }); return render(); }
       if (p) p.num = n; else S.num = n;
     }
     return dbSave();
@@ -3091,8 +3310,8 @@ const accessRows = () => { const q = accessQuery.trim().toLowerCase();
   return roster().filter(p => !q || p.name.toLowerCase().includes(q)).sort((a, b) => isAdminName(b.name) - isAdminName(a.name) || a.name.localeCompare(b.name)).map(p => {
     const adm = isAdminName(p.name), key = `role-${p.name}`, tm = teamById(p.team);
     return `<tr><td><b>${esc(p.name)}</b>${p.mine ? ` <span class="label acc">${t("youTag")}</span>` : ""}</td><td class="muted">${tm ? esc(tm.name) : "—"}</td>
-      <td>${adm ? `<span class="pill plain s-live">${t("roleAdmin")}</span>` : `<span class="muted">${t("rolePilot")}</span>`}</td>
-      <td style="text-align:right"><button class="btn ${adm ? "text danger" : "line"} sm" data-act="${adm ? "revokeAdmin" : "grantAdmin"}" data-name="${esc(p.name)}">${pending === key ? t("confirmBtn") : adm ? t("revokeAdmin") : t("grantAdmin")}</button></td></tr>`; }).join("")
+      <td>${adm ? `<span class="pill plain s-live">${t(isOwnerName(p.name) ? "roleOwner" : "roleAdmin")}</span>` : `<span class="muted">${t("rolePilot")}</span>`}</td>
+      <td style="text-align:right">${isOwnerName(p.name) ? "" : `<button class="btn ${adm ? "text danger" : "line"} sm" data-act="${adm ? "revokeAdmin" : "grantAdmin"}" data-name="${esc(p.name)}">${pending === key ? t("confirmBtn") : adm ? t("revokeAdmin") : t("grantAdmin")}</button>`}</td></tr>`; }).join("")
     || `<tr><td colspan="4" class="muted">${t("nothing")}</td></tr>`; };
 const adminAccess = () => `<div class="head"><div class="stack" style="gap:.4rem"><h2>${t("aAccess")}</h2><p class="note">${t("accessHint")}</p></div><span class="label">${t("adminsN")}: ${adminCount()}</span></div>
   <input class="search" id="accq" type="search" placeholder="${t("search")}" value="${esc(accessQuery)}" aria-label="${t("search")}">
@@ -3100,6 +3319,7 @@ const adminAccess = () => `<div class="head"><div class="stack" style="gap:.4rem
 // granting and revoking both take a second click; the last admin can't be removed so the panel never locks everyone out
 function setAdmin(name, on) {
   if (!name) return;
+  if (!on && isOwnerName(name)) return;
   if (!on && isAdminName(name) && adminCount() <= 1) { adminMsg = t("lastAdmin"); return render(); }
   confirmTwice(`role-${name}`, () => {
     const i = ADMINS.indexOf(name);
@@ -3140,9 +3360,49 @@ function delSeason(id) {
 }
 function addStage(sid) {
   const n = seasonTours(sid).length + 1;
-  if (n > 6) return;
-  TOURS.push(tour(sid, n, "—", "—", "—", null, "reg", 0));
+  if (n > 12) return;
+  let tid = sid * 100 + 1; while (TOURS.some(z => z.id === tid)) tid++; // a deleted stage frees its id
+  TOURS.push({ ...tour(sid, n, "—", "—", "—", null, "reg", 0), id: tid });
   dbSave();
+}
+function delStage(id) {
+  const x = TOURS.find(z => z.id === id);
+  if (!x) return;
+  confirmTwice(`st${id}`, () => {
+    TOURS.splice(TOURS.indexOf(x), 1);
+    seasonTours(x.season).forEach((z, i) => z.stage = i + 1);
+    Object.keys(S.scores).forEach(k => { if (k.startsWith(`${id}:`)) delete S.scores[k]; }); // a reused id starts clean
+    aTour = 0; dbSave();
+  });
+}
+// head admin on the hosted site: numbers and removals of other pilots go through the server, which checks the role
+function ownerCall(body) {
+  api("/api/owner/user", { method: "POST", body: JSON.stringify(body) })
+    .then(() => { apiV = null; toast(t(body.kick ? "kicked" : "saved")); }, e => toast(e.message === "409" ? t("numDup") : t("netErr")));
+}
+function kickPilot(name) {
+  const i = PILOTS.findIndex(p => p.name === name);
+  if (!isOwner() || i < 0) return;
+  confirmTwice(`kick-${name}`, () => {
+    if (HOSTED) return ownerCall({ sid: PILOTS[i].steamId, kick: true });
+    PILOTS.splice(i, 1); dbSave(); toast(t("kicked"));
+  });
+}
+function addTestPilot() {
+  let n = 1; while (PILOTS.some(p => p.name === `Test ${n}`)) n++;
+  const name = `Test ${n}`, used = new Set([...taken(), S.num]), cur = currentTour(); let num = 900; while (used.has(num) && num < 999) num++;
+  PILOTS.push({ name, rating: 0, team: null, num, car: "", test: true, regs: [] });
+  if (cur) (cur.add ??= []).push(name); // ready to judge in the running stage
+  dbSave();
+}
+function delTestPilot(name) {
+  const i = PILOTS.findIndex(p => p.name === name && p.test);
+  if (i < 0) return;
+  confirmTwice(`kick-${name}`, () => {
+    PILOTS.splice(i, 1);
+    TOURS.forEach(x => { x.add = (x.add || []).filter(z => z !== name); x.out = x.out.filter(z => z !== name); if (x.groups) delete x.groups[name]; });
+    dbSave();
+  });
 }
 function giveSanction(i) {
   const p = roster()[i], type = document.getElementById(`sanc-${i}`)?.value;
@@ -3321,7 +3581,7 @@ function judgeIsland(x) {
         <div class="row" style="justify-content:space-between"><span class="note">${t("best")}: <b class="acc mono">${fmt(p.best)}</b></span>
           <button class="btn line sm" data-act="nextPilot" data-id="${x.id}">${t("nextPilot")} →</button></div>` : `<p class="note">${t("pickToScore")}</p>`}
       <div class="row" style="justify-content:space-between"><span class="label">${t("regOrder")}</span><button class="btn text sm danger" data-act="clearScores" data-id="${x.id}">${pending === `cs${x.id}` ? t("clearSure") : t("clearScores")}</button></div>
-      <ol class="mini-grid">${regRows(x).map(([q]) => rows.find(r => r.name === q.name)).map((r, k) => `<li><button class="${r.name === st.onTrack ? "on" : ""}" data-act="onTrack" data-id="${x.id}" data-name="${esc(r.name)}" aria-pressed="${r.name === st.onTrack}"><span class="mono muted">${k + 1}</span><span class="n">${r.num ?? "—"}</span><span>${esc(r.name)}</span><b class="mono" style="text-align:right">${fmt(r.best)}</b></button></li>`).join("")}</ol>
+      <ol class="mini-grid">${regRows(x).map(([q]) => rows.find(r => r.name === q.name)).map((r, k) => `<li><button class="${r.name === st.onTrack ? "on" : ""}" data-act="onTrack" data-id="${x.id}" data-name="${esc(r.name)}" aria-pressed="${r.name === st.onTrack}"><span class="mono muted">${k + 1}</span><span class="n">${r.num ?? "—"}</span><span>${esc(r.name)} ${grpTag(x, r.name)}</span><b class="mono" style="text-align:right">${fmt(r.best)}</b></button></li>`).join("")}</ol>
     </section>
     <section class="box panel"><div class="head"><h3>${t("battleJudge")}</h3><button class="btn line sm" data-act="bcSwap" ${live ? "" : "disabled"}>${t("swap")}</button></div>
       <div class="cols" style="gap:.8rem;grid-template-columns:repeat(2,minmax(0,1fr))">
@@ -3348,7 +3608,7 @@ function reloadState(raw) {
   syncInto(SEASONS, n.db?.seasons, DEF_SEASONS); syncInto(SPONSORS, n.db?.sponsors, DEF_SPONSORS); syncInto(PROTESTS, n.db?.protests, DEF_PROTESTS);
   Object.assign(SETTINGS, clone(DEF_SETTINGS), n.db?.settings);
   Object.keys(SANCTIONS).forEach(k => delete SANCTIONS[k]); Object.assign(SANCTIONS, n.db?.sanctions);
-  rulesDoc = n.db?.rules || null;
+  rulesDoc = migrateRules(n.db?.rules);
   syncInto(ADMINS, n.db?.admins, []);
   syncInto(ACHIEVEMENTS, n.db?.achievements, DEF_ACH);
   Object.keys(TRACK_DIFF).forEach(k => delete TRACK_DIFF[k]); Object.assign(TRACK_DIFF, n.db?.trackDiff);
@@ -3399,7 +3659,7 @@ async function api(path, opt = {}) {
   return r.json();
 }
 const meBody = () => JSON.stringify({ team: S.team, num: S.num, car: S.car, about: S.about || {}, regs: S.regs, regAt: S.regAt || {}, created: S.created, declined: S.declined || [] });
-const dbBody = () => S.db ? JSON.stringify({ ...S.db, pilots: undefined, adminIds: USERS.filter(u => ADMINS.includes(u.name)).map(u => u.steamId) }) : "";
+const dbBody = () => S.db ? JSON.stringify({ ...S.db, pilots: undefined, testPilots: PILOTS.filter(p => p.test), adminIds: USERS.filter(u => ADMINS.includes(u.name)).map(u => u.steamId) }) : "";
 function pushRemote() {
   if (!HOSTED || !token || !S.user) return;
   clearTimeout(pushTimer); pushing = true;
@@ -3415,8 +3675,8 @@ function pushRemote() {
     pushing = false; apiV = null; // re-read once our write is in
   }, 400);
 }
-function applyMe({ user, admin }) {
-  meAdmin = !!admin; OWN_TEAM = teamIdOf(user.steamId);
+function applyMe({ user, admin, owner }) {
+  meAdmin = !!admin; meOwner = !!owner; OWN_TEAM = teamIdOf(user.steamId);
   S.user = { name: user.name, steamId: user.steamId, avatar: user.avatar || "" };
   Object.assign(S, { team: user.team ?? null, num: user.num ?? null, car: { ...DEFAULT.car, ...user.car }, about: user.about || {}, regs: user.regs || [],
     regAt: user.regAt || {}, created: user.created || null, declined: user.declined || [] });
@@ -3429,7 +3689,8 @@ function applyRemote(st) {
   TOURS.forEach(x => { const v = st.live?.statuses?.[x.id]; if (STATUSES.includes(v)) x.status = v; });
   USERS = st.users || [];
   PILOTS.splice(0, PILOTS.length, ...USERS.filter(u => u.steamId !== S.user?.steamId).map(u => ({ name: u.name, steamId: u.steamId, avatar: u.avatar, rating: 0,
-    team: u.team ?? null, num: u.num ?? null, car: u.car?.car || "", regs: u.regs || [], regAt: u.regAt || {}, created: u.created || null })));
+    team: u.team ?? null, num: u.num ?? null, car: u.car?.car || "", setup: u.car || null, about: u.about || null, regs: u.regs || [], regAt: u.regAt || {}, created: u.created || null })),
+    ...clone(st.db?.testPilots || []).map(p => ({ ...p, test: true })));
   sentDb = dbBody(); sentLive = liveBody();
   try { lastRaw = JSON.stringify(S); localStorage.setItem("lds", lastRaw); } catch {}
 }
@@ -3505,7 +3766,7 @@ document.addEventListener("click", e => {
     document.querySelectorAll(".picklist").forEach((l, i) => l.scrollTop = tops[i]); return; }
   const el = e.target.closest("[data-lang],[data-act],[data-num],[data-sel],[data-goto],[data-tab],[data-qt],[data-sub],[data-season]");
   if (!el) return;
-  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "delAch", "clearScores", "ruleDel", "rulesReset", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
+  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
   if (el.dataset.tab || el.dataset.season || el.dataset.qt || el.dataset.sub) admAnim = true;
   if (el.dataset.tab) { aTab = el.dataset.tab; aSeason = 0; aTour = 0; adminMsg = ""; return render(); }
   if (el.dataset.season) { aSeason = +el.dataset.season; aTour = 0; return render(); }
@@ -3531,9 +3792,13 @@ document.addEventListener("click", e => {
       TRACK_DIFF[n] = v; dbSave(); toast(t("saved")); },
     vote: () => judgeSet(id, "vote", el.dataset.v, +el.dataset.j),
     onTrack: () => judgeSet(id, "onTrack", el.dataset.name),
-    ruleAdd: () => { const d = editRules(), k = el.dataset.kind; if (!d[k]) return; d[k].push({ title: k === "sections" ? t("newSection") : t("newItem"), text: "" }); dbSave(); },
-    ruleDel: () => { const k = el.dataset.kind; confirmTwice(`r-${k}-${id}`, () => { editRules()[k]?.splice(id, 1); dbSave(); }); },
-    ruleMove: () => { const list = editRules()[el.dataset.kind], j = id + +el.dataset.v; if (!list || j < 0 || j >= list.length) return; [list[id], list[j]] = [list[j], list[id]]; dbSave(); },
+    rLang: () => { rLang = el.dataset.v === "en" ? "en" : "ru"; render(); },
+    docAdd: () => { editDocs().push({ title: t("newReg"), items: [] }); dbSave(); },
+    docDel: () => confirmTwice(`doc-${rLang}-${id}-undefined`, () => { editDocs().splice(id, 1); dbSave(); }),
+    docMove: () => { const list = editDocs(), j = id + +el.dataset.v; if (j < 0 || j >= list.length) return; [list[id], list[j]] = [list[j], list[id]]; dbSave(); },
+    ruleAdd: () => { editDocs()[id]?.items.push({ title: t("newSection"), text: "" }); dbSave(); },
+    ruleDel: () => { const k = +el.dataset.k; confirmTwice(`rule-${rLang}-${id}-${k}`, () => { editDocs()[id]?.items.splice(k, 1); dbSave(); }); },
+    ruleMove: () => { const list = editDocs()[id]?.items, k = +el.dataset.k, j = k + +el.dataset.v; if (!list || j < 0 || j >= list.length) return; [list[k], list[j]] = [list[j], list[k]]; dbSave(); },
     rulesReset: () => confirmTwice("rules", () => { rulesDoc = null; dbSave(); }),
     setStatus: () => { if (el.dataset.v) adminEdit(["tour", String(id), "status"], el.dataset.v); },
     resetVotes: () => judgeSet(id, "votes"),
@@ -3547,7 +3812,8 @@ document.addEventListener("click", e => {
       S.bc = { ...b, leader: b.chaser, chaser: b.leader, votes: b.votes.map(v => flip[v] || v) };
       save();
     },
-    newSeason, delSeason: () => delSeason(id), addStage: () => addStage(id),
+    newSeason, delSeason: () => delSeason(id), addStage: () => addStage(id), delStage: () => delStage(id),
+    addTest: () => { if (isAdmin()) addTestPilot(); }, delTest: () => { if (isAdmin()) delTestPilot(el.dataset.name); }, kick: () => kickPilot(el.dataset.name),
     giveSanction: () => giveSanction(id), delSanction: () => delSanction(el.dataset.name, id),
     newSponsor: () => { SPONSORS.push({ name: "Новый спонсор", role: SPONSORS.some(s => s.role === "general") ? "partner" : "general", url: "" }); dbSave(); },
     newAch: () => { if (!isAdmin()) return; ACHIEVEMENTS.push(["🏁", "c" + Date.now().toString(36), [t("achNewRu"), ""], ["", ""]]); dbSave(); },
@@ -3581,8 +3847,9 @@ document.addEventListener("submit", e => {
     else { pick = v; confirmNum(); }
   }
   if (e.target.id === "protestform" && S.user) {
-    const text = document.getElementById("ptext").value.trim().slice(0, 500), against = document.getElementById("pagainst").value;
-    if (!text || !against) return;
+    const text = document.getElementById("ptext").value.trim().slice(0, 500), against = document.getElementById("pagainst").value, x = TOURS.find(z => z.id === +e.target.dataset.tour);
+    if (!text || !against || !x || !protestOpen(x)) return;
+    if (myProtests(x).some(q => q.against === against && q.status === "new")) { protestMsg = t("protestDup"); return render(); }
     protestMsg = t("protestSent");
     if (HOSTED && !isAdmin()) { api("/api/protest", { method: "POST", body: JSON.stringify({ tour: +e.target.dataset.tour, against, text }) }).then(() => { apiV = null; }, () => toast(t("netErr"))); return render(); }
     PROTESTS.push({ id: Math.max(0, ...PROTESTS.map(p => p.id)) + 1, tour: +e.target.dataset.tour, from: S.user.name, against, text, status: "new", verdict: "" });
