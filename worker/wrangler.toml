@@ -1,0 +1,16 @@
+name = "lds-api"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+[vars]
+# the GitHub Pages address of the site, e.g. "https://yourname.github.io" (several: comma separated)
+SITE_ORIGIN = "https://YOUR-NAME.github.io"
+# your own SteamID64 (17 digits): this account is always an admin
+OWNER_STEAM_IDS = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lds"
+database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
+
+# secrets (not in this file):  npx wrangler secret put SESSION_SECRET   /   npx wrangler secret put STEAM_API_KEY
