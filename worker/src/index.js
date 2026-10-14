@@ -35,8 +35,8 @@ async function route(req, env, url) {
     if (m === "GET") return getMe(env, sid);
     if (m === "PUT") return putMe(req, env, sid);
   }
-  if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireAdmin(req, env));
-  if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireAdmin(req, env));
+  if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireRole(req, env, ["owner", "admin", "tech"]));
+  if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
   if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
   if (m === "GET" && p === "/") return json({ ok: true, service: "lds-api" });
@@ -108,15 +108,19 @@ async function requireOwner(req, env) {
   if (!isOwner(env, sid)) throw new HttpError(403, "head admin only");
   return sid;
 }
-async function isAdmin(env, sid) {
-  if (isOwner(env, sid)) return true;
-  const db = await kvGet(env, "db");
-  return Array.isArray(db?.adminIds) && db.adminIds.includes(sid);
+// roles: owner (OWNER_STEAM_IDS), then what the head admin set in db.roleIds (older saves: db.adminIds = admins)
+const ROLES = ["admin", "judge", "streamer", "tech"];
+async function roleOf(env, sid, db) {
+  if (isOwner(env, sid)) return "owner";
+  db ??= await kvGet(env, "db");
+  const r = db?.roleIds?.[sid];
+  if (ROLES.includes(r)) return r;
+  return Array.isArray(db?.adminIds) && db.adminIds.includes(sid) ? "admin" : "";
 }
-async function requireAdmin(req, env) {
-  const sid = await auth(req, env);
-  if (!(await isAdmin(env, sid))) throw new HttpError(403, "admins only");
-  return sid;
+async function requireRole(req, env, allowed) {
+  const sid = await auth(req, env), role = await roleOf(env, sid);
+  if (!allowed.includes(role)) throw new HttpError(403, "not allowed for this role");
+  return { sid, role };
 }
 
 // ---------- Steam sign-in ----------
@@ -182,7 +186,8 @@ async function getState(env, url) {
 async function getMe(env, sid) {
   const u = await getUser(env, sid);
   if (!u) throw new HttpError(401, "sign in required");
-  return json({ user: u, admin: await isAdmin(env, sid), owner: isOwner(env, sid) });
+  const role = await roleOf(env, sid);
+  return json({ user: u, admin: role === "owner" || role === "admin", owner: role === "owner", role });
 }
 
 async function putMe(req, env, sid) {
@@ -198,11 +203,15 @@ async function putMe(req, env, sid) {
   return json({ ok: true });
 }
 
-async function putDb(req, env) {
+// admins write the league data, but only the head admin changes roles; a technical assistant writes only the rules
+async function putDb(req, env, { role }) {
   const body = await readJson(req, MAX_DB);
-  if (!body || typeof body.db !== "object") throw new HttpError(400, "db required");
-  await kvSet(env, "db", body.db);
-  if (body.live && typeof body.live === "object") await kvSet(env, "live", body.live);
+  if (!body || typeof body.db !== "object" || !body.db) throw new HttpError(400, "db required");
+  const stored = (await kvGet(env, "db")) || {};
+  const next = role === "tech" ? { ...stored, rules: body.db.rules ?? stored.rules } : body.db;
+  if (role !== "owner") for (const k of ["roleIds", "adminIds", "roles"]) next[k] = stored[k];
+  await kvSet(env, "db", next);
+  if (role !== "tech" && body.live && typeof body.live === "object") await kvSet(env, "live", body.live);
   await bump(env);
   return json({ ok: true });
 }
@@ -242,7 +251,11 @@ async function ownerUser(req, env, ownerSid) {
   if (body.kick === true) {
     await env.DB.prepare("DELETE FROM users WHERE sid = ?").bind(sid).run();
     const db = await kvGet(env, "db");
-    if (Array.isArray(db?.adminIds) && db.adminIds.includes(sid)) { db.adminIds = db.adminIds.filter(x => x !== sid); await kvSet(env, "db", db); }
+    if (db && (db.adminIds?.includes?.(sid) || db.roleIds?.[sid])) { // a removed pilot loses any role
+      if (Array.isArray(db.adminIds)) db.adminIds = db.adminIds.filter(x => x !== sid);
+      if (db.roleIds) delete db.roleIds[sid];
+      await kvSet(env, "db", db);
+    }
   } else {
     const num = body.num;
     if (!(Number.isInteger(num) && num >= 1 && num <= 999)) throw new HttpError(400, "bad number");

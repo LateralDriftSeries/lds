@@ -1720,6 +1720,149 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 /* Steam avatars */
 .has-img:not(.tlogo) { background-size: cover; background-position: center; color: transparent !important }
 .r-numv { margin-left: .5rem; font-size: .8em; font-weight: 600; color: var(--accent) }
+/* sponsors in the bottom bar */
+.f-sps { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.1rem }
+.f-sp { display: inline-flex; align-items: center; gap: .5rem; color: var(--soft); text-decoration: none; font-size: .82rem; font-weight: 600 }
+a.f-sp:hover { color: var(--text) }
+.f-sp-logo { width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--line)); border-radius: 4px; background: #0b0b0d; overflow: hidden; font: 800 .55rem var(--f-body); color: var(--accent) }
+.f-sp-logo img { width: 100%; height: 100%; object-fit: contain; padding: 2px }
+/* partners on the home page */
+.spons { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: color-mix(in srgb, var(--panel) 60%, transparent) }
+.sp-card { display: grid; justify-items: center; align-content: center; gap: .5rem; padding: 2rem 1rem; text-align: center; text-decoration: none; color: var(--text); border-right: 1px solid var(--line); margin-right: -1px; transition: background .25s }
+a.sp-card:hover { background: color-mix(in srgb, var(--accent) 6%, transparent) }
+.sp-card .sp-logo { margin-bottom: .6rem }
+.sp-card b { font-size: .95rem }
+.sp-logo { width: 64px; height: 64px; display: grid; place-items: center; border: 1.5px solid var(--accent); border-radius: 6px; background: #0b0b0d; overflow: hidden; font: 800 .9rem var(--f-body); color: var(--accent) }
+.sp-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6px }
+.sp-you .sp-logo { border: 1.5px dashed var(--line-2, var(--line)); color: var(--muted); font-size: 1.2rem; background: none }
+.sp-you b, .sp-you .label { color: var(--muted) } .sp-you:hover b { color: var(--text) }
+/* sponsors editor */
+.sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
+.sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
+.sp-ed-logo { display: grid; justify-items: center; gap: .5rem; width: 8rem } .sp-ed-logo .sp-logo { width: 96px; height: 96px }
+.sp-ed-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem }
+@media (max-width: 640px) { .sp-eds { grid-template-columns: 1fr } .sp-ed, .sp-ed-fields { grid-template-columns: 1fr } .sp-ed-logo { width: auto } }
+/* small avatar in tables */
+.t-ava { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: .55rem; vertical-align: middle; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); font-size: .7rem; font-weight: 700; color: var(--soft) }
+/* bracket */
+.br-box > summary { cursor: pointer; list-style: none } .br-box > summary::-webkit-details-marker { display: none }
+.br-box[open] > summary { margin-bottom: 1rem }
+.br-box[open] .ach-chev { transform: rotate(180deg) } .br-box > summary:hover .ach-chev { border-color: var(--accent) }
+/* five equal columns that always fit the width; every match sits in an equal slot, so a pair's two slots meet exactly
+   at the centre of the next round's match and the connector lines join */
+.bracket { --g: 1.4rem; --ln: var(--line-2, #3a3a40); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--g) }
+.bracket.b2 { grid-template-columns: repeat(2, minmax(0, 1fr)) } .bracket.b3 { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+.br-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem }
+.br-group { border: 1px solid var(--line); border-radius: 12px; padding: .9rem 1rem 1rem; background: color-mix(in srgb, var(--bg) 40%, transparent) }
+.br-gh { display: flex; justify-content: space-between; align-items: baseline; gap: .8rem; margin-bottom: .8rem }
+.br-gh b { font-size: .95rem } .br-gh .note { font-size: .72rem }
+.br-play { margin-top: 1rem }
+.br-third { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px dashed var(--line) }
+.br-third .bs::before { display: none } /* no line into it: it is fed by the semifinal losers, not the final */
+@media (max-width: 760px) { .br-groups { grid-template-columns: 1fr } }
+.br-col { display: flex; flex-direction: column; gap: .7rem; min-width: 0 }
+.br-col > .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.br-ms { flex: 1; display: flex; flex-direction: column }
+.bs { flex: 1; position: relative; display: flex; align-items: center; padding: .3rem 0; min-width: 0 }
+.br-col:not(:last-child) .bs::after { content: ""; position: absolute; left: 100%; width: calc(var(--g) / 2); height: 50%; border-right: 1px solid var(--ln); pointer-events: none }
+.br-col:not(:last-child) .bs:nth-child(odd)::after { top: 50%; border-top: 1px solid var(--ln) }
+.br-col:not(:last-child) .bs:nth-child(even)::after { bottom: 50%; border-bottom: 1px solid var(--ln) }
+.br-col:not(:first-child) .bs::before { content: ""; position: absolute; right: 100%; top: 50%; width: calc(var(--g) / 2); border-top: 1px solid var(--ln); pointer-events: none }
+.bm { position: relative; width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2) }
+@media (max-width: 760px) { .bracket { --g: .6rem } .bm-seed, .bm-ava { display: none !important } .bm-p { grid-template-columns: minmax(0, 1fr) auto; gap: .2rem; padding: .22rem .3rem; font-size: .62rem; min-height: 1.6rem }
+  .br-col > .label { font-size: .5rem !important } .bm-pick { width: 1.1rem; height: 1.1rem; font-size: .55rem } }
+.bm.live { border-color: var(--accent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent) }
+.bm-p { display: grid; grid-template-columns: 1.3rem 22px minmax(0, 1fr) auto; align-items: center; gap: .45rem; padding: .32rem .5rem; font-size: .8rem; min-height: 2.1rem }
+.bm-p + .bm-p { border-top: 1px solid var(--line) }
+.bm-p.win { background: color-mix(in srgb, var(--accent) 12%, transparent); font-weight: 700 }
+.bm-p.win .bm-n { color: var(--text) } .bm-p.lose { opacity: .45 } .bm-p.empty { color: var(--muted); font-style: italic }
+.bm-seed { color: var(--muted); font-size: .68rem; text-align: right }
+.bm-ava { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--panel); font-size: .62rem; font-weight: 700; color: var(--soft) }
+.bm-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.bm-pick { border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 6px; width: 1.6rem; height: 1.4rem; cursor: pointer; font-size: .7rem }
+.bm-pick[aria-pressed="true"], .bm-pick:hover { border-color: var(--accent); color: var(--accent) }
+.br-pairs { display: grid; gap: .35rem; max-height: 12rem; overflow: auto }
+.br-isl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; max-height: 22rem; overflow: auto }
+.br-isl-g { display: grid; gap: .3rem; align-content: start; padding: .6rem; border: 1px solid var(--line); border-radius: 10px }
+.br-isl-g > b { font-size: .8rem; margin-bottom: .1rem }
+.br-isl-g button, .br-done { display: grid; gap: .1rem; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: .4rem .6rem; color: var(--text); font: inherit; font-size: .8rem }
+.br-isl-g button { cursor: pointer } .br-isl-g button:hover, .br-isl-g button.on { border-color: var(--accent) }
+.br-done { opacity: .6 } .br-done b { color: var(--accent) }
+.br-isl-g button.br-bye { border-style: dashed }
+.br-confirm { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem; padding: .7rem .8rem; border: 1px solid var(--accent); border-radius: 10px; background: color-mix(in srgb, var(--accent) 10%, transparent) }
+tr.out-br td { opacity: .45 }
+tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
+@media (max-width: 640px) { .br-isl { grid-template-columns: 1fr } }
+.br-pairs button { display: flex; align-items: center; gap: .5rem; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: .45rem .7rem; color: var(--text); font: inherit; font-size: .85rem; cursor: pointer }
+.br-pairs button:hover, .br-pairs button.on { border-color: var(--accent) }
+/* achievements editor */
+.ach-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr)); gap: 1rem }
+.ach-ed { display: grid; gap: .9rem }
+.ach-ed-top { display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) minmax(0, 1fr) auto; gap: .6rem; align-items: end }
+.ach-ed-top .ach-ic-in { text-align: center; font-size: 1.3rem; padding-inline: .2rem }
+.ach-ed-desc { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem }
+.ach-ed-who { display: grid; gap: .5rem; padding-top: .8rem; border-top: 1px solid var(--line) }
+@media (max-width: 640px) { .ach-eds { grid-template-columns: 1fr } .ach-ed-top, .ach-ed-desc { grid-template-columns: 1fr } }
+/* rules page: regulations as blocks */
+.prose .teamrules { display: grid; gap: 1.4rem }
+.rule-block { gap: .4rem; scroll-margin-top: 96px }
+.rule-block + .rule-block { padding-top: 1.2rem; border-top: 1px solid var(--line) }
+/* rules editor */
+.rule-ed2 { display: grid; grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr); gap: 1.2rem; align-items: start }
+.rt { padding: .9rem; display: grid; gap: 1rem; position: sticky; top: 88px; max-height: calc(100vh - 110px); overflow: auto }
+.rt-doc { display: grid; gap: .3rem }
+.rt, .rt-doc, .rt ol { grid-template-columns: minmax(0, 1fr) } /* long titles truncate instead of pushing the controls out */
+.rt ol { list-style: none; margin: 0 0 0 .7rem; padding: 0 0 0 .5rem; display: grid; gap: 2px; border-left: 1px solid var(--line) }
+.rt-row { display: flex; align-items: center; gap: .15rem; border-radius: 8px; transition: background .2s }
+.rt-row:hover { background: var(--panel-2) }
+.rt-row.on { background: color-mix(in srgb, var(--accent) 16%, transparent) }
+.rt-row.doc .rt-name { font-weight: 700; color: var(--text) }
+.rt-name { flex: 1; min-width: 0; text-align: left; background: none; border: 0; color: var(--soft); padding: .4rem .5rem; cursor: pointer; font: inherit; font-size: .86rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.rt-row.on .rt-name { color: var(--text) }
+.rt-ctl { display: flex; flex: none; transition: opacity .2s }
+.rt-row:not(:hover):not(:focus-within):not(.on) .rt-ctl { opacity: 0 }
+.rt-ctl button { background: none; border: 0; color: var(--muted); cursor: pointer; padding: .25rem .3rem; font: inherit; font-size: .8rem; border-radius: 6px }
+.rt-ctl button:hover:not(:disabled) { color: var(--accent) } .rt-ctl button:disabled { opacity: .3; cursor: default }
+.rt-ctl button.danger:hover { color: var(--err, #e5484d) }
+.rt-add { justify-self: start; margin-left: 1.2rem; background: none; border: 0; color: var(--accent); cursor: pointer; font: 600 .8rem var(--f-body); padding: .2rem .3rem }
+.rule-pane { display: grid; gap: .9rem }
+.md-bar { display: flex; flex-wrap: wrap; gap: .35rem }
+.md-bar button { background: var(--panel-2); border: 1px solid var(--line); color: var(--soft); border-radius: 8px; padding: .35rem .7rem; font: 600 .78rem var(--f-body); cursor: pointer }
+.md-bar button:hover { border-color: var(--accent); color: var(--text) }
+.rule-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; align-items: stretch }
+.rule-split .rule-text { min-height: 28rem; resize: vertical; font: 400 .85rem/1.55 ui-monospace, Consolas, monospace }
+.rule-prev { border: 1px solid var(--line); border-radius: 10px; padding: 1rem; background: var(--panel-2); max-height: 34rem; overflow: auto; display: grid; gap: .6rem; align-content: start }
+@media (max-width: 1100px) { .rule-split { grid-template-columns: 1fr } .rule-prev { max-height: none } }
+@media (max-width: 900px) { .rule-ed2 { grid-template-columns: 1fr } .rt { position: static; max-height: none } }
+/* read-only admin views (judge, streamer): controls are shown but inert, except inside the judges island for judges */
+.adm-main.ro :is(input, select, textarea, .btn) { pointer-events: none; opacity: .55 }
+.adm-main.ro .rw :is(input, select, textarea, .btn), .adm-main.ro .rw .seg button, .adm-main.ro .rw .mini-grid button { pointer-events: auto; opacity: 1 }
+.adm-main td select.ai { min-width: 9.5rem }
+/* stages table: compact, no sideways scroll */
+.stage-tbl { width: 100%; table-layout: auto }
+.stage-tbl td, .stage-tbl th { padding-inline: .7rem }
+.stage-tbl .st-track { display: block; font-weight: 600 }
+.stage-tbl td .note { display: block; font-size: .75rem; margin-top: .1rem; white-space: nowrap }
+.stage-tbl .st-cap { white-space: nowrap } .stage-tbl .st-cap > * { vertical-align: middle } .stage-tbl .st-cap .muted { margin: 0 .35rem }
+.stage-tbl .st-cap input { width: 4.4rem }
+.stage-tbl .st-go { width: 2rem; text-align: right; color: var(--accent); font-size: 1.1rem; transition: transform .2s }
+.stage-tbl tr:hover .st-go { transform: translateX(3px) }
+@media (max-width: 640px) { .stage-tbl td .note { white-space: normal } .stage-tbl td select.ai { min-width: 0; width: 100% } }
+/* admin spacing: calmer rhythm between blocks, roomier panels, aligned headers */
+.adm { gap: 2.4rem }
+.adm-side { padding: .9rem; border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--panel) 70%, transparent) }
+.adm-side > .note { margin: -.4rem 0 .6rem; padding-left: .1rem }
+.adm-main { gap: 1.5rem !important; min-width: 0 }
+.adm-main > .note.err:empty { display: none }
+.adm-main h2 { margin: 0 }
+.adm-main .head { margin: 0; gap: 1rem; align-items: center }
+.adm-main .box { padding: 1.3rem 1.4rem; gap: 1rem }
+.adm-main .tabs { margin-top: -.3rem }
+.adm-main .tablebox td, .adm-main .tablebox th { padding-block: .7rem }
+.adm-main .pl-num input { width: 4.6rem }
+.set-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1rem }
+.chip4.sanc { border-color: color-mix(in srgb, #e5a33a 50%, var(--line)); color: #e5a33a }
+.chip4.sanc.dq, .chip4.sanc.ban { border-color: color-mix(in srgb, var(--err, #e5484d) 55%, var(--line)); color: var(--err, #e5484d) }
 .grp { display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; padding: 0 .3rem; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
   background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font: 700 .75rem/1 var(--f-body); vertical-align: middle }
 .grp-limits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem }
@@ -1793,7 +1936,17 @@ const I18N = {
     howCarT: "Заполните профиль", howCarD: "Машина, двигатель, КПП, мощность и стартовый номер от 1 до 999.",
     howRegT: "Запишитесь на этап", howRegD: "Регистрация открывается заранее и закрывается перед стартом этапа.",
     howRaceT: "Квалификация и парные", howRaceD: "Две попытки в квалификации, затем сетка Топ 32 вплоть до финала.",
-    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
+    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
+    spHint: "Спонсоры показываются на главной под лидерами сезона. Логотип: PNG, JPG или WebP до 5 МБ, он впишется в квадрат целиком.", bracketTitle: "Сетка топ-32", brPreview: "Предварительно — по текущей квалификации", bye: "Без соперника", brSetWin: "Отметить победителя",
+    brRecorded: "Результат записан в сетку", brPairs: "Пары сетки", brReseed: "Пересобрать из квалификации", brEditHint: "Сетка заполняется сама из судейского острова. Здесь можно исправить ошибку: ✓ отмечает победителя пары, повторный клик снимает.",
+    stageFirst: "Лидер этапа", stageNote: "Очки активного этапа: место в сетке, бонус за квалификацию и коэффициент сложности трассы. Когда начинается следующий этап, рейтинг обнуляется.",
+    stageTeamNote: "Очки команд за активный этап: два лучших пилота и бонус за квалификацию. Обнуляется со следующим этапом.",
+    noAch: "Достижений пока нет.", noAchAdmin: "Достижений нет. Создайте первое — потом его можно выдать пилотам.", achAdminHint2: "Создавайте свои достижения и выдавайте их пилотам вручную.", achHolders: "Получили", achGiven: "Достижение выдано", mdBar: "Форматирование", mdH: "Заголовок", mdList: "Список", mdBold: "Жирный", mdWarn: "Предупреждение", mdTable: "Таблица", mdCol: "Столбец",
+    rulePreview: "Как увидят пилоты", pickSection: "Выберите раздел слева или добавьте новый.", regName: "Название регламента", roleJudge: "Судья", roleStreamer: "Стример", roleTech: "Технический помощник", roleNone: "Без роли",
+    accessHint2: "Главный администратор — полный доступ к сайту. Администратор — вся админ-панель. Судья — только судейский остров. Стример — пульт трансляции и просмотр сезонов. Технический помощник — регламент. Роли выдаёт только главный администратор.",
+    rolesOwnerOnly: "Менять роли может только главный администратор.", noPanelRole: "У вашей роли нет доступа к этому разделу.", maxPilotsCol: "Мест", warnShort: "Предупреждения",
+    autoDq: "3 предупреждения — выдан DQ с этапа", autoBan: "2 DQ — выдан бан", sancAuto: "авто", sancRule: "3 предупреждения = DQ с этапа, 2 DQ = бан: регистрация на этапы закрыта.",
+    setGeneral: "Общие", setSocials: "Соцсети", setTracks: "Трассы", maxStageDefL: "Мест на этап по умолчанию", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
     roleOwner: "Главный администратор", ownerOnly: "Номера и исключение пилотов — только у главного администратора.", kick: "Выгнать", kickSure: "Точно выгнать?", kicked: "Пилот исключён",
     addTestPilot: "+ Тестовый пилот", testTag: "тест", delStage: "Удалить этап", group: "Группа", groupLimits: "Группы этапа", groupsHint: "Сколько пилотов может быть в каждой группе. Группу пилоту назначают в таблице ниже.",
     groupFull: "Группа заполнена — увеличьте лимит или выберите другую.", protestOnlyRider: "Протест может подать только участник этапа.", myProtests: "Мои протесты", protestDup: "Протест на этого пилота уже на рассмотрении.",
@@ -1906,7 +2059,17 @@ const I18N = {
     howCarT: "Set up your profile", howCarD: "Car, engine, gearbox, power and a race number from 1 to 999.",
     howRegT: "Sign up for a round", howRegD: "Registration opens in advance and closes before the round starts.",
     howRaceT: "Qualify and battle", howRaceD: "Two qualifying runs, then a Top 32 bracket all the way to the final.",
-    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
+    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
+    spHint: "Sponsors show on the home page under the season leaders. Logo: PNG, JPG or WebP up to 5 MB, fitted whole into a square.", bracketTitle: "Top 32 bracket", brPreview: "Preview — from the current qualifying", bye: "Bye", brSetWin: "Mark the winner",
+    brRecorded: "Result saved to the bracket", brPairs: "Bracket pairs", brReseed: "Rebuild from qualifying", brEditHint: "The bracket fills itself from the judges’ island. Fix mistakes here: ✓ marks a pair’s winner, a second click clears it.",
+    stageFirst: "Round leader", stageNote: "Points for the active round: bracket place, qualifying bonus and the track difficulty factor. The rating resets when the next round starts.",
+    stageTeamNote: "Team points for the active round: two best drivers and the qualifying bonus. Resets with the next round.",
+    noAch: "No achievements yet.", noAchAdmin: "No achievements. Create the first one, then hand it to drivers.", achAdminHint2: "Create your own achievements and hand them to drivers.", achHolders: "Awarded to", achGiven: "Achievement given", mdBar: "Formatting", mdH: "Heading", mdList: "List", mdBold: "Bold", mdWarn: "Warning", mdTable: "Table", mdCol: "Column",
+    rulePreview: "What drivers will see", pickSection: "Pick a section on the left or add a new one.", regName: "Regulation name", roleJudge: "Judge", roleStreamer: "Streamer", roleTech: "Technical assistant", roleNone: "No role",
+    accessHint2: "Head admin — full access to the site. Admin — the whole admin panel. Judge — the judges’ island only. Streamer — the broadcast panel and read-only seasons. Technical assistant — the rules. Only the head admin hands out roles.",
+    rolesOwnerOnly: "Only the head admin can change roles.", noPanelRole: "Your role has no access to this section.", maxPilotsCol: "Spots", warnShort: "Warnings",
+    autoDq: "3 warnings — DQ from the round given", autoBan: "2 DQs — ban given", sancAuto: "auto", sancRule: "3 warnings = DQ from the round, 2 DQs = ban: round registration is closed.",
+    setGeneral: "General", setSocials: "Socials", setTracks: "Tracks", maxStageDefL: "Default spots per round", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
     roleOwner: "Head admin", ownerOnly: "Numbers and removing drivers are for the head admin only.", kick: "Remove", kickSure: "Really remove?", kicked: "Driver removed",
     addTestPilot: "+ Test driver", testTag: "test", delStage: "Delete round", group: "Group", groupLimits: "Round groups", groupsHint: "How many drivers each group can take. Assign a driver's group in the table below.",
     groupFull: "The group is full — raise the limit or pick another group.", protestOnlyRider: "Only drivers entered in the round can file a protest.", myProtests: "My protests", protestDup: "A protest against this driver is already under review.",
@@ -2010,7 +2173,7 @@ let OWN_TEAM = 99; // on the hosted site: an id derived from the creator's Steam
 // hosted site: pilots, league data and live judging come from the API; without it the page runs on demo data in this browser
 const API = String(window.LDS_API || "").replace(/\/+$/, ""), HOSTED = !!API;
 let token = null; try { token = HOSTED ? localStorage.getItem("lds_token") : null; } catch {}
-let meAdmin = false, meOwner = false, USERS = [];
+let meAdmin = false, meOwner = false, meRole = "", USERS = [];
 const teamIdOf = sid => 1e6 + Number(String(sid).slice(-6));
 
 // deterministic pseudo-random run scores so the grid stays stable between renders
@@ -2063,28 +2226,78 @@ if (S.dataVer !== DATA_VER) {
 }
 // admin edits mutate the objects above; this stores them with the rest of the state
 const dbSave = (rerender = true) => {
-  S.db = { teams: TEAMS, pilots: PILOTS, tours: TOURS, seasons: SEASONS, sponsors: SPONSORS, protests: PROTESTS, settings: SETTINGS, sanctions: SANCTIONS, rules: rulesDoc, admins: ADMINS, trackDiff: TRACK_DIFF, achievements: ACHIEVEMENTS };
+  S.db = { teams: TEAMS, pilots: PILOTS, tours: TOURS, seasons: SEASONS, sponsors: SPONSORS, protests: PROTESTS, settings: SETTINGS, sanctions: SANCTIONS, rules: rulesDoc, roles: ROLES, trackDiff: TRACK_DIFF, achievements: ACHIEVEMENTS, awards: AWARDS };
   rerender ? save() : persist();
 };
 // shortcut: roles live with the rest of the demo data in this browser; a real site checks roles on the server
-const ADMINS = S.db?.admins || [];
-// old demo switch: turn a self-enabled admin into a granted one, once
-if (S.user?.admin) { if (!ADMINS.includes(S.user.name)) ADMINS.push(S.user.name); delete S.user.admin; }
-const ACHIEVEMENTS = S.db?.achievements || []; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc]]; admin edits them
+// roles by pilot name: owner (head admin, demo only — on the hosted site it comes from the server), admin, judge, streamer, tech
+// older saves kept a plain list of admins; its first entry was the head admin
+const ROLES = S.db?.roles || Object.fromEntries((S.db?.admins || []).map((n, i) => [n, i ? "admin" : "owner"]));
+if (S.user?.admin) { ROLES[S.user.name] ??= "owner"; delete S.user.admin; }
+const ROLE_LIST = ["admin", "judge", "streamer", "tech"];
+const PERMS = { owner: ["edit", "judge", "bc", "rules", "seasons", "roles"], admin: ["edit", "judge", "bc", "rules", "seasons"],
+  judge: ["judge", "seasons"], streamer: ["bc", "seasons"], tech: ["rules"] };
+const ACHIEVEMENTS = S.db?.achievements || [], AWARDS = S.db?.awards || {}; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc]]; admin edits them
 const TRACK_DIFF = S.db?.trackDiff || {}; // admin overrides of track difficulty, by track name
-const isAdminName = name => ADMINS.includes(name) || (HOSTED && meAdmin && name === S.user?.name);
-const isAdmin = () => !!S.user && isAdminName(S.user.name);
-// head admin: the SteamIDs in the server's OWNER_STEAM_IDS (demo: the first admin); only they change numbers and remove drivers
-const isOwnerName = name => HOSTED ? USERS.some(u => u.name === name && u.owner) || (meOwner && name === S.user?.name) : ADMINS[0] === name;
-const isOwner = () => isAdmin() && isOwnerName(S.user.name);
+// head admin: the SteamIDs in the server's OWNER_STEAM_IDS on the hosted site; only they change numbers, remove drivers and hand out roles
+function roleOf(name) {
+  if (!name) return "";
+  if (!HOSTED) return ROLES[name] || "";
+  if (USERS.some(u => u.name === name && u.owner) || (meOwner && name === S.user?.name)) return "owner";
+  if (name === S.user?.name && meRole) return meRole; // the server's word on the signed-in pilot's own role
+  const r = ROLES[name] === "owner" ? "admin" : ROLES[name];
+  return r || (meAdmin && name === S.user?.name ? "admin" : "");
+}
+const can = p => !!S.user && (PERMS[roleOf(S.user.name)] || []).includes(p);
+const hasPanel = () => !!S.user && !!roleOf(S.user.name);
+const isAdminName = name => ["owner", "admin"].includes(roleOf(name));
+const isAdmin = () => can("edit");
+const isOwnerName = name => roleOf(name) === "owner";
+const isOwner = () => !!S.user && isOwnerName(S.user.name);
+const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", tech: "roleTech" }[r] || "pilot");
+// which permission an admin-panel edit needs, by the first part of its data-a / its data-act
+const KIND_PERM = { rule: "rules", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
+const ACT_PERM = { brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
+  docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", newAch: "edit", delAch: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", setStatus: "edit", resetDemo: "edit" };
+const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
 const groupOf = (x, name) => x.groups?.[name] || "";
 const gmaxOf = x => ({ A: 10, B: 10, C: 10, D: 10, ...x.gmax });
 const groupCount = (x, g) => stageRows(x).filter(([p]) => groupOf(x, p.name) === g).length;
 const grpTag = (x, name) => groupOf(x, name) ? `<span class="grp">${groupOf(x, name)}</span>` : "";
-const adminCount = () => roster().filter(p => isAdminName(p.name)).length;
+
 const t = k => I18N[S.lang][k] ?? k;
+// automatic translation of what people write (team descriptions, bios, protests, untranslated badges) while the page is in English:
+// Claude through the page's `sample` capability where the viewer offers it, otherwise Google's public translate endpoint; cached per browser
+const TR = (() => { try { return JSON.parse(localStorage.getItem("lds_tr") || "{}"); } catch { return {}; } })();
+const trQueue = new Set(), trFailed = new Set(); let trTimer = 0, trBusy = false;
+const tr = s => {
+  if (S.lang !== "en" || !s || !/[А-Яа-яЁё]/.test(s)) return s;
+  if (TR[s]) return TR[s];
+  if (!trFailed.has(s)) { trQueue.add(s); clearTimeout(trTimer); trTimer = setTimeout(runTr, 60); }
+  return s;
+};
+async function runTr() {
+  if (trBusy) return; trBusy = true;
+  const list = [...trQueue].slice(0, 40); list.forEach(s => trQueue.delete(s));
+  let out = null;
+  try {
+    const sample = window.claude ? await window.claude.use("sample") : null;
+    if (sample) out = await sample.json(`Translate each Russian string in this JSON array into natural English for a drift racing league website. Keep names, numbers, emoji and punctuation. Reply with only a JSON array of the same length, in the same order.\n${JSON.stringify(list)}`, { modelTier: "quick" });
+  } catch {}
+  if (!Array.isArray(out) || out.length !== list.length)
+    out = await Promise.all(list.map(s => fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ru&tl=en&dt=t&q=${encodeURIComponent(s)}`)
+      .then(r => r.json()).then(j => j[0].map(p => p[0]).join("")).catch(() => null)));
+  let got = 0;
+  list.forEach((s, i) => { if (typeof out[i] === "string" && out[i].trim()) { TR[s] = out[i]; got++; } else trFailed.add(s); }); // a failure isn't retried this visit
+  try { localStorage.setItem("lds_tr", JSON.stringify(TR)); } catch {}
+  trBusy = false;
+  if (trQueue.size) runTr();
+  // redraw with the translations, but never under someone's fingers: the next redraw picks them up
+  if (got && S.lang === "en" && !document.activeElement?.matches?.("input, textarea, select")) render();
+}
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const ME_RATING = 34;
 // bracket phases (top32 … final) are "in progress": orange, glowing, blinking dot
@@ -2102,7 +2315,8 @@ const roster = () => [...PILOTS, ...(me() ? [me()] : [])].map(p => ({ ...p, pts:
 // admin-entered score wins, otherwise a generated example; k = 0 for run 1, 1 for run 2
 const runOf = (tid, p, i, k) => { const o = S.scores[`${tid}:${p.name}`]; return o && k in o ? o[k] : score(tid * 100 + i + k * 50); };
 // reg and qualifying stages show only scores the judges entered; running and finished stages fall back to generated examples
-const scoreOf = (x, p, i, k) => x.status === "soon" || x.status === "reg" || x.status === "qualifying" ? (S.scores[`${x.id}:${p.name}`]?.[k] ?? null) : runOf(x.id, p, i, k);
+// the hosted site never invents scores: only what the judges entered
+const scoreOf = (x, p, i, k) => HOSTED || x.status === "soon" || x.status === "reg" || x.status === "qualifying" ? (S.scores[`${x.id}:${p.name}`]?.[k] ?? null) : runOf(x.id, p, i, k);
 const taken = () => new Set(PILOTS.map(p => p.num));
 const membersOf = tm => roster().filter(p => p.team === tm.id).sort((a, b) => (b.mine && tm.owner) - (a.mine && tm.owner) || b.rating - a.rating);
 const STEAM_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-9.96 9.04l5.35 2.21a2.8 2.8 0 0 1 1.6-.5l2.39-3.46v-.05a3.78 3.78 0 1 1 3.78 3.78h-.09l-3.4 2.43a2.83 2.83 0 0 1-5.6.56L2.3 14.4A10 10 0 1 0 12 2Zm-4.28 15.17-1.22-.5a2.12 2.12 0 1 0 1.16-2.9l1.27.52a1.56 1.56 0 1 1-1.2 2.88Zm9.5-7.930a2.52 2.52 0 1 0-2.52 2.52 2.52 2.52 0 0 0 2.52-2.52Zm-4.4 0a1.89 1.89 0 1 1 1.88 1.9 1.89 1.89 0 0 1-1.88-1.9Z"/></svg>`;
@@ -2113,7 +2327,7 @@ function login() {
   S.user = { name: "LateralFan", steamId: "76561198" + String(Date.now()).slice(-9) }; save();
 }
 function logout() {
-  if (HOSTED) { token = null; meAdmin = meOwner = false; try { localStorage.removeItem("lds_token"); } catch {} Object.assign(S, { team: null, num: null, regs: [], regAt: {}, created: null, declined: [], about: {}, car: clone(DEFAULT.car) }); }
+  if (HOSTED) { token = null; meAdmin = meOwner = false; meRole = ""; try { localStorage.removeItem("lds_token"); } catch {} Object.assign(S, { team: null, num: null, regs: [], regAt: {}, created: null, declined: [], about: {}, car: clone(DEFAULT.car) }); }
   S.user = null; save(); location.hash = "#home";
 }
 // only Steam's own image hosts, so a profile can't point the page at an arbitrary address
@@ -2123,7 +2337,7 @@ const pAva = (p, cls, tag = "span") => { const st = avaStyle(p.avatar); return `
 function header(route) {
   const link = (h, k) => `<a href="#${h}" ${route === h || (h === "tournaments" && route.startsWith("t-")) || (h === "teams" && /^(tm|p)-/.test(route)) ? 'aria-current="page"' : ""}>${t(k)}</a>`;
   return `<a class="logo" href="#home" aria-label="Lateral Drift Series"><span class="lg-mark">LDS</span><span class="lg-word">Lateral Drift Series</span></a>
-  <nav>${link("tournaments", "tournaments")}${link("tracks", "tracks")}${link("rating", "rating")}${link("teams", "teams")}${link("rules", "rules")}${isAdmin() ? link("admin", "admin") : ""}</nav>
+  <nav>${link("tournaments", "tournaments")}${link("tracks", "tracks")}${link("rating", "rating")}${link("teams", "teams")}${link("rules", "rules")}${hasPanel() ? link("admin", "admin") : ""}</nav>
   <div class="right">
     <div class="lang" role="group" aria-label="Language">
       <button data-lang="ru" aria-pressed="${S.lang === "ru"}">RU</button>|<button data-lang="en" aria-pressed="${S.lang === "en"}">EN</button>
@@ -2133,8 +2347,11 @@ function header(route) {
   </div>`;
 }
 
-const footer = () => `<div class="fline"><div class="l"><a class="flogo" href="#home">LDS</a><span>${t("copyright")}</span></div>
-    <div class="r">${generalSponsor() ? `<span>${t("sponsor")}: <strong>${esc(generalSponsor())}</strong></span>` : ""}<a href="#tracks">${t("tracks")}</a><a href="#rules">${t("rules")}</a>
+// bottom bar: only the general sponsor (logo + name, linked when it has a site) in place of the copyright line
+const footSponsors = () => SPONSORS.filter(s => s.role === "general").map(s => { const href = safeUrl(s.url), tag = href !== "#" ? "a" : "span";
+  return `<${tag} class="f-sp"${tag === "a" ? ` href="${esc(href)}" target="_blank" rel="noopener"` : ""} title="${esc(s.label ? tr(s.label) : t(s.role))}"><span class="f-sp-logo">${spImg(s)}</span>${esc(s.name)}</${tag}>`; }).join("");
+const footer = () => `<div class="fline"><div class="l"><a class="flogo" href="#home">LDS</a>${SPONSORS.some(s => s.role === "general") ? `<div class="f-sps"><span class="label">${t("sponsor")}</span>${footSponsors()}</div>` : ""}</div>
+    <div class="r"><a href="#tracks">${t("tracks")}</a><a href="#rules">${t("rules")}</a>
       <div class="socials">${SOCIALS.map(([n, , svg]) => `<a href="${esc(safeUrl(SETTINGS.socials[n]))}" target="_blank" rel="noopener" aria-label="${n}" title="${n}"><svg viewBox="0 0 24 24" aria-hidden="true">${svg}</svg></a>`).join("")}</div></div></div>`;
 // admin-entered links: only http(s) and mailto are allowed into href
 const safeUrl = u => /^(https?:\/\/|mailto:)/i.test(u || "") ? u : "#";
@@ -2197,7 +2414,7 @@ function home() {
       ${nx ? `<a class="ticket" href="#t-${nx.id}">
         <span class="tk-head"><span>${t("stage")} ${pad(nx.stage)} // ${esc(nx.track)}</span>${tourPill(nx)}</span>
         <span class="tk-row"><span class="label">${t("startLbl")}</span><span>${esc(nx.start)} ${t("msk")}</span></span>
-        <span class="tk-row"><span class="label">${t("hudSigned")}</span><span>${signed} / ${SETTINGS.maxStage}</span></span>
+        <span class="tk-row"><span class="label">${t("hudSigned")}</span><span>${signed} / ${stageMax(nx)}</span></span>
         <span class="tk-go">${open ? t("register") : nx.status === "soon" ? t("details") : t("watchStage")} <span aria-hidden="true">↗</span></span>
       </a>` : ""}
     </div>
@@ -2227,8 +2444,16 @@ function home() {
     <div id="lb">${leaderboard()}</div>
   </section>
 
+  ${SPONSORS.length ? `<section class="reveal stack sec">
+    <div class="sec-head"><span class="label idx">05 — ${t("partners")}</span><h2>${t("partnersTitle")}</h2></div>
+    <div class="spons">${SPONSORS.map(s => { const href = safeUrl(s.url), tag = href !== "#" ? "a" : "div";
+      return `<${tag} class="sp-card"${tag === "a" ? ` href="${esc(href)}" target="_blank" rel="noopener"` : ""}><span class="sp-logo">${spImg(s)}</span>
+        <span class="label acc">${esc(s.label ? tr(s.label) : t(s.role))}</span><b>${esc(s.name)}</b></${tag}>`; }).join("")}
+      <a class="sp-card sp-you" href="${esc(safeUrl(SETTINGS.socials.Gmail))}"><span class="sp-logo">+</span><span class="label">${t("yourBrand")}</span><b>${t("becomePartner")}</b></a></div>
+  </section>` : ""}
+
   <section class="reveal faq-sec">
-    <div class="stack"><span class="label idx">05 — FAQ</span><h2>${t("faqTitle")}</h2><p class="note">${t("faqText")}</p>
+    <div class="stack"><span class="label idx">${SPONSORS.length ? "06" : "05"} — FAQ</span><h2>${t("faqTitle")}</h2><p class="note">${t("faqText")}</p>
       <div class="row" style="gap:.5rem">${chat.map(([n]) => `<a class="btn line sm" href="${esc(safeUrl(SETTINGS.socials[n]))}" target="_blank" rel="noopener">${n} ↗</a>`).join("")}</div></div>
     <div class="faq">${t("faq").map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("")}</div>
   </section>`;
@@ -2309,6 +2534,100 @@ const tcard = (x, i, cur) => `<a class="tcard panel ${cur ? "current" : ""} ${x.
     <span class="mono muted">${esc(x.dates)}</span>
     <span class="go"><span>${cur && x.status === "reg" ? t("reg") : t("details")}</span><i>→</i></span>
   </a>`;
+// ---- top-32 bracket (single elimination, like Challonge): seeded from qualifying, winners from the judges island or the admin's fixes ----
+// kept with the live judging data (S.brackets), so judges can write results; seeds freeze when the stage reaches its top 32
+const BR_ROUNDS = ["top32", "top16", "top8", "top4", "final"];
+const seedOrder = n => n === 1 ? [1] : seedOrder(n / 2).flatMap(s => [s, n + 1 - s]);
+console.assert(seedOrder(4).join() === "1,4,2,3" && seedOrder(32).slice(0, 4).join() === "1,32,16,17", "seedOrder");
+// qualifying order for the bracket: only pilots scored in both runs, best run first; the top 32 of them make the bracket
+const qualOrder = x => bcRows(x).filter(r => r.a != null && r.b != null).sort((p, q) => q.best - p.best).map(r => r.name);
+const brOf = x => S.brackets?.[x.id];
+// four groups A–D of 8: each group is a quarter of the 32 slots, seeded 1v8, 4v5, 2v7, 3v6; two rounds per group,
+// the two group winners go on to the play-off (top 8 → top 4 → final). Placement is automatic by points: the standard top-32
+// seeding split into quarters (that gives the same 1v8, 4v5… order inside each group)
+const GROUP_SEEDS = [1, 8, 4, 5, 2, 7, 3, 6];
+function slotsOf(x) {
+  if (brOf(x)?.slots) return brOf(x).slots;
+  const q = qualOrder(x);
+  const members = GROUPS.map((_, k) => seedOrder(32).slice(8 * k, 8 * k + 8).sort((a, b) => a - b).map(s => q[s - 1] ?? null));
+  return members.flatMap(gp => GROUP_SEEDS.map(s => gp[s - 1] ?? null));
+}
+console.assert(GROUP_SEEDS.map(s => seedOrder(32).slice(0, 8).sort((a, b) => a - b)[s - 1]).join() === seedOrder(32).slice(0, 8).join(), "quarter seeding");
+function bracketOf(x) {
+  const slots = slotsOf(x), w = brOf(x)?.w || {}, rounds = [];
+  const seedOf = n => n ? GROUP_SEEDS[slots.indexOf(n) % 8] : 0;
+  for (let r = 0, prev = null; r < 5; r++) {
+    const ms = [];
+    for (let m = 0; m < 16 >> r; m++) {
+      const a = r ? prev[2 * m].win : slots[2 * m] ?? null, b = r ? prev[2 * m + 1].win : slots[2 * m + 1] ?? null;
+      const fed = !r || (prev[2 * m].done && prev[2 * m + 1].done), pick = w[`${r}-${m}`];
+      // no opponent (fewer than 32 qualified) is a bye: the other pilot goes through once a judge confirms it, like any decision
+      const lone = fed && !(a && b) ? a || b : null, bye = !!lone;
+      const win = a && b ? ([a, b].includes(pick) ? pick : null) : lone && pick === lone ? lone : null;
+      ms.push({ r, m, a, b, win, bye, done: !!win || (fed && !a && !b), sa: seedOf(a), sb: seedOf(b), g: r < 2 ? GROUPS[m >> (2 - r)] : "" });
+    }
+    rounds.push(ms); prev = ms;
+  }
+  // match for 3rd place (r = 5): the two semifinal (top 4) losers, played during the final stage
+  const lost = m => m.win && m.a && m.b ? (m.win === m.a ? m.b : m.a) : null, ta = lost(rounds[3][0]), tb = lost(rounds[3][1]), tp = w["5-0"];
+  rounds.push([{ r: 5, m: 0, a: ta, b: tb, win: ta && tb && [ta, tb].includes(tp) ? tp : null, done: false, sa: seedOf(ta), sb: seedOf(tb), g: "" }]);
+  return rounds;
+}
+// final place in the stage from the bracket: still in → the place already secured; semifinal losers split 3/4 by seed
+const LOSER_PLACE = [17, 9, 5, 3, 2];
+function stagePlace(x, name) {
+  const br = bracketOf(x);
+  for (let r = 0; r < 5; r++) {
+    const m = br[r].find(z => z.a === name || z.b === name);
+    if (!m) return r ? LOSER_PLACE[r - 1] : null;
+    if (r === 4 && m.win === name) return 1;
+    if (m.win && m.win !== name) {
+      if (r !== 3) return LOSER_PLACE[r];
+      if (br[5][0].win) return br[5][0].win === name ? 3 : 4; // decided in the match for 3rd place
+      const other = br[3].find(z => z !== m && z.win), ol = other && (other.win === other.a ? other.b : other.a), s = qualOrder(x);
+      return ol && s.indexOf(ol) < s.indexOf(name) ? 4 : 3;
+    }
+    if (!m.win && r === 4) return 2;
+    if (!m.win) return LOSER_PLACE[r];
+  }
+  return null;
+}
+// points by the rules: place + qualifying bonus (top 4), times the track difficulty factor (easy ×1, medium ×1.2, hard ×1.5)
+const bandOf = p => p == null ? 0 : p <= 4 ? p : p <= 8 ? 5 : p <= 16 ? 9 : 17;
+const PILOT_PTS = { 1: 100, 2: 80, 3: 60, 4: 50, 5: 40, 9: 25, 17: 10 }, TEAM_TBL = { 1: 70, 2: 60, 3: 45, 4: 30, 5: 15, 9: 5, 17: 2 };
+const factorOf = x => { const d = diffOf(x.track); return d >= 4 ? 1.5 : d === 3 ? 1.2 : 1; };
+const qualBonus = (x, name) => [20, 15, 10, 5][qualOrder(x).indexOf(name)] ?? 0;
+const stagePts = (x, name) => Math.round(((PILOT_PTS[bandOf(stagePlace(x, name))] ?? 0) + qualBonus(x, name)) * factorOf(x));
+const teamStagePts = (x, tm) => { const ms = membersOf(tm).map(p => p.name);
+  const best = ms.map(n => TEAM_TBL[bandOf(stagePlace(x, n))] ?? 0).sort((a, b) => b - a).slice(0, 2).reduce((s, v) => s + v, 0);
+  return Math.round((best + Math.max(0, ...ms.map(n => qualBonus(x, n)))) * factorOf(x)); };
+const liveRound = x => BR_ROUNDS.indexOf(x.status);
+const brPilot = (x, m, side, edit) => { const n = m[side], s = m[side === "a" ? "sa" : "sb"];
+  if (!n) return `<div class="bm-p empty"><span class="bm-seed"></span><span class="bm-ava"></span><span class="bm-n">${m.done || !m.r ? t("bye") : "…"}</span></div>`;
+  return `<div class="bm-p ${m.win === n ? "win" : m.win ? "lose" : ""}"><span class="bm-seed">${s || ""}</span>${pAva(roster().find(p => p.name === n) || { name: n }, "bm-ava")}<span class="bm-n">${esc(n)}</span>${edit && (m.a && m.b || m.bye)
+    ? `<button class="bm-pick" data-act="brWin" data-id="${x.id}" data-v="${m.r}-${m.m}" data-name="${esc(n)}" aria-pressed="${m.win === n}" title="${t("brSetWin")}">✓</button>` : ""}</div>`; };
+const brCol = (x, ms, label, edit) => `<div class="br-col"><span class="label ${ms[0] && ms[0].r === liveRound(x) ? "acc" : ""}">${label}</span>
+  <div class="br-ms">${ms.map(m => `<div class="bs"><div class="bm ${Math.min(m.r, 4) === liveRound(x) && m.a && m.b && !m.win ? "live" : ""}">${brPilot(x, m, "a", edit)}${brPilot(x, m, "b", edit)}</div></div>`).join("")}</div></div>`;
+const bracketView = (x, edit = false) => { const br = bracketOf(x);
+  return `<div class="br-groups">${GROUPS.map((g, q) => `<section class="br-group"><div class="br-gh"><b>${t("group")} ${g}</b><span class="note">${t("grpAdvance")}</span></div>
+      <div class="bracket b2">${brCol(x, br[0].slice(4 * q, 4 * q + 4), t("grpR1"), edit)}${brCol(x, br[1].slice(2 * q, 2 * q + 2), t("grpR2"), edit)}</div></section>`).join("")}</div>
+    <section class="br-group br-play"><div class="br-gh"><b>${t("playoff")}</b></div>
+      <div class="bracket b3">${[2, 3, 4].map(r => brCol(x, br[r], t(BR_ROUNDS[r]), edit)).join("")}</div>
+      <div class="bracket b3 br-third"><div></div><div></div>${brCol(x, br[5], t("thirdPlace"), edit)}</div></section>`; };
+const brLabel = m => `${m.g ? `${t("group")} ${m.g} · ${t(m.r ? "grpR2" : "grpR1")}` : m.r === 5 ? t("thirdPlace") : t(BR_ROUNDS[m.r])}`;
+// a decided battle in the judges island lands in the bracket match of those two pilots
+const brMatch = (tourId, p1, p2) => { const x = TOURS.find(z => z.id === tourId);
+  return x && p1 && p2 ? bracketOf(x).flat().find(z => !z.win && z.a && z.b && [z.a, z.b].includes(p1) && [z.a, z.b].includes(p2)) : null; };
+function brRecord(tourId, p1, p2, winner) {
+  const x = TOURS.find(z => z.id === tourId), m = brMatch(tourId, p1, p2);
+  if (!m) return;
+  brSet(x, `${m.r}-${m.m}`, winner);
+  toast(t("brRecorded"));
+}
+function brSet(x, key, winner) {
+  S.brackets = { ...S.brackets, [x.id]: { slots: slotsOf(x), w: { ...brOf(x)?.w } } };
+  if (winner) S.brackets[x.id].w[key] = winner; else delete S.brackets[x.id].w[key];
+}
 function tournaments() {
   const cur = currentTour();
   const past = [...new Set(TOURS.map(x => x.season))].filter(s => s < curSeason()).sort((a, b) => b - a);
@@ -2327,12 +2646,12 @@ function tournament(id) {
     const a = scoreOf(x, p, i, 0), b = scoreOf(x, p, i, 1);
     return { ...p, a, b, best: Math.max(a ?? -1, b ?? -1) };
   }).sort((p, q) => q.best - p.best || p.num - q.num);
-  const cell = v => v == null ? "—" : v.toFixed(1);
+  const cell = v => v == null ? "—" : v.toFixed(1), inBr = new Set(qualOrder(x).slice(0, 32)); // the top 32 with both runs make the bracket
   let action = x.status === "soon" ? `<p class="note">${t("regSoon")}</p>` : "";
   if (x.status === "reg") {
     if (x !== currentTour()) action = `<p class="note">${t("regLater")}</p>`;
     else if (!SETTINGS.regOpen && !isReg) action = `<p class="note">${t("regClosed")}</p>`;
-    else if (!isReg && regCount(x) >= SETTINGS.maxStage) action = `<p class="note">${t("stageFull")}</p>`;
+    else if (!isReg && regCount(x) >= stageMax(x)) action = `<p class="note">${t("stageFull")}</p>`;
     else if (S.user && isBanned(S.user.name)) action = `<p class="note err">${t("youBanned")}</p>`;
     else if (!S.user) action = `<p class="note">${t("needLogin")}</p><button class="btn steam" data-act="login">${STEAM_ICON}${t("login")}</button>`;
     else if (!S.num) action = `<p class="note">${t("needNum")}</p><a class="btn line" href="#profile">${t("profile")} →</a>`;
@@ -2343,10 +2662,11 @@ function tournament(id) {
   return `<a class="back" href="#tournaments">${t("back")}</a>
   <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(x.dates)}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
+  <details class="box panel br-box" ${liveRound(x) >= 0 ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) ? "" : `<span class="note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
   ${`<section class="stack"><h3>${t("qual")}</h3>
   <div class="tablebox panel"><table>
     <thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("group")}</th><th>${t("try1")}</th><th>${t("try2")}</th><th>${t("best")}</th></tr></thead>
-    <tbody>${rows.map((p, i) => `<tr class="${p.mine ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}</td><td>${grpTag(x, p.name) || '<span class="muted">—</span>'}</td>
+    <tbody>${rows.map((p, i) => `<tr class="${p.mine ? "mine" : ""} ${inBr.has(p.name) ? "in-br" : p.a != null && p.b != null ? "out-br" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${pAva(p, "t-ava")}${esc(p.name)}</td><td>${grpTag(x, p.name) || '<span class="muted">—</span>'}</td>
       <td class="mono">${cell(p.a)}</td><td class="mono">${cell(p.b)}</td><td class="mono best">${p.best < 0 ? "—" : p.best.toFixed(1)}</td></tr>`).join("")}</tbody>
   </table></div></section>`}
   ${runs ? (() => {
@@ -2362,7 +2682,7 @@ function tournament(id) {
       <label class="fieldlabel" for="ptext">${t("protestText")}<textarea id="ptext" maxlength="500" required></textarea></label>
       <div class="row"><button class="btn sm">${t("send")}</button><span class="note" role="status">${protestMsg}</span></div></form>`}
     ${myProtests(x).length ? `<div class="stack" style="gap:.5rem"><span class="label">${t("myProtests")}</span><ul class="my-prot">${myProtests(x).map(q => `<li><b>→ ${esc(q.against)}</b>
-      <span class="pill plain ${q.status === "accepted" ? "s-reg" : q.status === "rejected" ? "err" : ""}">${t(q.status)}</span>${q.verdict ? `<span class="note">${t("verdict")}: ${esc(q.verdict)}</span>` : ""}</li>`).join("")}</ul></div>` : ""}</section>` : ""}`;
+      <span class="pill plain ${q.status === "accepted" ? "s-reg" : q.status === "rejected" ? "err" : ""}">${t(q.status)}</span>${q.verdict ? `<span class="note">${t("verdict")}: ${esc(tr(q.verdict))}</span>` : ""}</li>`).join("")}</ul></div>` : ""}</section>` : ""}`;
 }
 // protests: only while the current stage is running (qualifying … final), only by its drivers
 const protestOpen = x => x === currentTour() && !["soon", "reg", "done"].includes(x.status);
@@ -2373,11 +2693,12 @@ let query = "";
 // ---- rating: season points only (no leagues) — podium of three, then the full list with search; drivers or teams ----
 let rTab = "pilots";
 const pHref = name => `#p-${encodeURIComponent(name)}`;
-const rItems = () => rTab === "teams"
-  ? allTeams().map(tm => ({ id: "t" + tm.id, href: `#tm-${tm.id}`, ava: logo(tm), name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: teamPts(tm), mine: tm.id === S.team }))
-      .sort((a, b) => b.pts - a.pts)
-  : roster().sort((a, b) => b.pts - a.pts).map(p => ({ id: p.name, href: pHref(p.name), ava: pAva(p, "r-ava"), name: p.name,
-      sub: [teamById(p.team)?.name || t("freeAgent"), p.car].join(" · "), num: p.num, pts: p.pts, mine: p.mine }));
+// the rating is the active stage only: it starts from zero when the next stage becomes the current one
+const rItems = () => { const x = currentTour(), byPts = (a, b) => b.pts - a.pts || a.name.localeCompare(b.name);
+  return rTab === "teams"
+    ? allTeams().map(tm => ({ id: "t" + tm.id, href: `#tm-${tm.id}`, ava: logo(tm), name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: x ? teamStagePts(x, tm) : 0, mine: tm.id === S.team })).sort(byPts)
+    : roster().filter(p => !p.test).map(p => ({ id: p.name, href: pHref(p.name), ava: pAva(p, "r-ava"), name: p.name,
+        sub: [teamById(p.team)?.name || t("freeAgent"), p.car].filter(Boolean).join(" · "), num: p.num, pts: x ? stagePts(x, p.name) : 0, mine: p.mine })).sort(byPts); };
 function rRows() {
   const all = rItems(), max = all[0]?.pts || 1, q = query.trim().toLowerCase();
   const list = all.map((r, k) => ({ ...r, place: k + 1 })).filter(r => !q || r.name.toLowerCase().includes(q) || String(r.num ?? "").startsWith(q));
@@ -2390,11 +2711,12 @@ function rRows() {
 function rating() {
   const top = rItems().slice(0, 3);
   const pod = (r, k) => r ? `<a class="r-pod p${k + 1}" href="${r.href}"><span class="r-place">${pad(k + 1)}</span>${r.ava}
-      <span class="label ${k === 0 ? "acc" : ""}">${t(["lbFirst", "lbSecond", "lbThird"][k])}</span><b>${esc(r.name)}</b><span class="note">${esc(r.sub)}</span>
+      <span class="label ${k === 0 ? "acc" : ""}">${t(["stageFirst", "lbSecond", "lbThird"][k])}</span><b>${esc(r.name)}</b><span class="note">${esc(r.sub)}</span>
       <span class="r-pts"><span class="label">${t("totalPts")}</span><b>${r.pts}</b></span></a>` : "";
   return `<section class="r-hero">
     <div class="stack" style="gap:.8rem"><h1 class="r-title">${t("rating")}</h1>
-      <p class="note">${t(rTab === "teams" ? "teamNote" : "standNote")}</p></div>
+      ${currentTour() ? `<span class="label acc">${t("stage")} ${currentTour().stage} · ${esc(currentTour().track)}</span>` : ""}
+      <p class="note">${t(rTab === "teams" ? "stageTeamNote" : "stageNote")}</p></div>
     <div class="seg2" role="tablist">${["pilots", "teams"].map(k => `<button role="tab" data-act="rTab" data-v="${k}" aria-selected="${rTab === k}">${t(k === "pilots" ? "tabPilots" : "tabTeams")}</button>`).join("")}</div>
   </section>
   <div class="r-podium">${[1, 0, 2].map(k => pod(top[k], k)).join("")}</div>
@@ -2410,7 +2732,7 @@ const memberRows = tm => `<ul class="members">${membersOf(tm).map((p, i) =>
 const descBlock = tm => tm.owner
   ? `<label class="fieldlabel" for="teamdesc">${t("teamDesc")}<textarea id="teamdesc" maxlength="300" placeholder="${t("descPh")}">${esc(tm.desc || "")}</textarea>
      <span class="counter" id="desccount">${(tm.desc || "").length} / 300</span></label><p class="note">${t("ownerHint")}</p>`
-  : `<p class="desc">${tm.desc ? esc(tm.desc) : `<span class="muted">${t("noDesc")}</span>`}</p>`;
+  : `<p class="desc">${tm.desc ? esc(tr(tm.desc)) : `<span class="muted">${t("noDesc")}</span>`}</p>`;
 
 let selTeam = null;
 // ---- teams: card grid in the home-page style; each card opens the team page, members open public driver profiles ----
@@ -2419,7 +2741,7 @@ const tmStatus = tm => `<span class="tm-status ${tm.closed ? "closed" : ""}">${t
 const tmCard = (tm, link = true, i = 0) => { const tag = link ? "a" : "div";
   return `<${tag} class="tm-card"${link ? ` href="#tm-${tm.id}"` : ""} style="--i:${i}">
     <div class="tm-top">${logo(tm)}${tmStatus(tm)}</div>
-    <div class="stack" style="gap:.4rem"><b class="tm-name">${esc(tm.name)}</b><p class="tm-desc ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tm.desc) : t("noDescShort")}</p></div>
+    <div class="stack" style="gap:.4rem"><b class="tm-name">${esc(tm.name)}</b><p class="tm-desc ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tr(tm.desc)) : t("noDescShort")}</p></div>
     <div class="tm-foot">${avStack(tm)}<span class="note">${membersOf(tm).length}/${maxTeam()}</span><span class="tm-pts"><b>${teamPts(tm)}</b><span class="label">${t("pointsShort")}</span></span></div>
   </${tag}>`; };
 function teams() {
@@ -2438,7 +2760,7 @@ function teamPage(id) {
   return `<a class="back" href="#teams">← ${t("teams")}</a>
   <section class="tm-hero">${logo(tm)}
     <div class="stack" style="gap:.7rem;min-width:0"><span class="label idx">${t("teamWord")}${tm.tag ? ` · ${esc(tm.tag)}` : ""}</span><h1>${esc(tm.name)}</h1>
-      <p class="tm-lead ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tm.desc) : t("noDescShort")}</p>${tmStatus(tm)}</div>
+      <p class="tm-lead ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tr(tm.desc)) : t("noDescShort")}</p>${tmStatus(tm)}</div>
     ${statRow([[`#${rank}`, "teamPlace"], [teamPts(tm), "points"], [`${ms.length}/${maxTeam()}`, "drivers"]])}
   </section>
   <section class="stack sec"><div class="sec-head"><span class="label idx">01 — ${t("rosterL")}</span><h2>${t("rosterTitle")}</h2></div>
@@ -2717,48 +3039,54 @@ const rulesEyebrow = () => `Lateral Drift Series · ${S.lang === "en" ? "Version
 
 function rules() {
   const docs = rulesFor(S.lang), fallback = S.lang === "en" && docs === rulesFor("ru");
-  // the first regulation reads as numbered chapters, the others as framed panels
-  const body = (s, di, k) => di === 0
-    ? `<section id="r${di}-${k}"><h3>${k + 1}. ${esc(s.title)}</h3>${textToHtml(s.text)}</section>`
-    : `<div class="stack" id="r${di}-${k}" style="gap:.3rem;scroll-margin-top:96px"><h4>${esc(s.title)}</h4>${textToHtml(s.text)}</div>`;
+  // every regulation is a framed block; its sections are headed blocks inside
   return `<div class="doc-head"><span class="label acc">${rulesEyebrow()}</span><h1>${t("rulesTitle")}</h1>${fallback ? `<p class="note">${t("rulesLang")}</p>` : ""}</div>
   <div class="doc">
     <aside class="toc" aria-label="Contents">${docs.map((d, di) => `<span class="sep">${esc(d.title)}</span>${d.items.map((s, k) =>
-      `<button data-goto="r${di}-${k}">${di === 0 ? `${k + 1}. ` : ""}${esc(s.title)}</button>`).join("")}`).join("")}</aside>
+      `<button data-goto="r${di}-${k}">${esc(s.title)}</button>`).join("")}`).join("")}</aside>
     <div class="prose">
-      ${docs.map((d, di) => di === 0 ? d.items.map((s, k) => body(s, di, k)).join("")
-        : `<section class="teamrules panel"><span class="label acc">Lateral Drift Series</span><h3>${esc(d.title)}</h3>${d.items.map((s, k) => body(s, di, k)).join("")}</section>`).join("")}
+      ${docs.map((d, di) => `<section class="teamrules panel"><span class="label acc">Lateral Drift Series</span><h3>${esc(d.title)}</h3>${d.items.map((s, k) =>
+        `<div class="stack rule-block" id="r${di}-${k}"><h4>${esc(s.title)}</h4>${textToHtml(s.text)}</div>`).join("")}</section>`).join("")}
     </div>
   </div>`;
 }
 
-// admin: rules editor, one language at a time
-let rLang = "ru";
+// admin: rules editor — regulations and their sections as a tree on the left, the picked one edited on the right with a live preview
+let rLang = "ru", rSel = [0, 0];
 function adminRules() {
   const d = rulesDoc || defaultRulesDoc(), docs = d[rLang] || [];
-  const btns = (act, di, k, n) => `<div class="row" style="gap:.2rem;align-self:end">
-          <button class="btn text sm" data-act="${act}Move" data-id="${di}" data-k="${k}" data-v="-1" ${(k ?? di) === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button>
-          <button class="btn text sm" data-act="${act}Move" data-id="${di}" data-k="${k}" data-v="1" ${(k ?? di) === n - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button>
-          <button class="btn text sm danger" data-act="${act}Del" data-id="${di}" data-k="${k}">${pending === `${act}-${rLang}-${di}-${k}` ? t("delSure") : t("del")}</button></div>`;
-  const block = (s, di, k, n) => `<div class="box panel rule-ed">
-      <div class="row" style="justify-content:space-between;gap:.6rem">
-        <label class="fieldlabel" style="flex:1;min-width:14rem">${t("sectionN")} ${k + 1}<input class="field" data-a="rule:${di}:${k}:title" value="${esc(s.title)}" maxlength="80"></label>
-        ${btns("rule", di, k, n)}</div>
-      <textarea class="field rule-text" data-a="rule:${di}:${k}:text" rows="${di === 0 ? 12 : 4}" aria-label="${esc(s.title)}">${esc(s.text)}</textarea></div>`;
-  return `<div class="head"><h2>${t("aRules")}</h2><button class="btn text danger" data-act="rulesReset">${pending === "rules" ? t("resetSure") : t("rulesReset")}</button></div>
-    <div class="box panel"><p class="note">${t("rulesHelp")}</p>
-      <div class="row" style="gap:1rem;align-items:end">
-        <label class="fieldlabel" style="max-width:12rem">${t("rulesVersion")}<input class="field" data-a="rule:version" value="${esc(d.version)}" maxlength="12"></label>
+  let [di, k] = rSel;
+  if (!docs[di]) [di, k] = [0, docs[0]?.items.length ? 0 : -1];
+  if (k >= (docs[di]?.items.length ?? 0)) k = -1;
+  rSel = [di, k];
+  const doc = docs[di], it = k >= 0 ? doc?.items[k] : null;
+  const ctl = (act, i, j, n) => { const at = j ?? i, key = `${act}-${rLang}-${i}-${j}`;
+    return `<span class="rt-ctl"><button data-act="${act}Move" data-id="${i}" data-k="${j}" data-v="-1" ${at === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button><button data-act="${act}Move" data-id="${i}" data-k="${j}" data-v="1" ${at === n - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button><button class="danger" data-act="${act}Del" data-id="${i}" data-k="${j}" aria-label="${t("del")}">${pending === key ? t("delSure") : "×"}</button></span>`; };
+  const tree = docs.map((x, i) => `<div class="rt-doc">
+      <div class="rt-row doc ${i === di && k < 0 ? "on" : ""}"><button class="rt-name" data-act="rSel" data-id="${i}" data-k="-1">${esc(x.title)}</button>${ctl("doc", i, undefined, docs.length)}</div>
+      <ol>${x.items.map((s, j) => `<li class="rt-row ${i === di && j === k ? "on" : ""}"><button class="rt-name" data-act="rSel" data-id="${i}" data-k="${j}">${esc(s.title)}</button>${ctl("rule", i, j, x.items.length)}</li>`).join("")}</ol>
+      <button class="rt-add" data-act="ruleAdd" data-id="${i}">${t("addSection")}</button></div>`).join("");
+  const md = (v, l) => `<button data-act="mdIns" data-v="${v}" title="${t(l)}">${t(l)}</button>`;
+  const editor = !doc ? `<div class="box panel empty"><p class="note">${rLang === "en" ? t("rulesEnEmpty") : t("pickSection")}</p></div>`
+    : !it ? `<div class="box panel"><label class="fieldlabel">${t("regName")}<input class="field" data-a="rule:${di}:-1:title" value="${esc(doc.title)}" maxlength="80"></label>
+        <p class="note">${t("pickSection")}</p><div><button class="btn line sm" data-act="ruleAdd" data-id="${di}">${t("addSection")}</button></div></div>`
+    : `<div class="box panel rule-pane"><span class="label">${esc(doc.title)}</span>
+        <label class="fieldlabel">${t("sectionN")}<input class="field" data-a="rule:${di}:${k}:title" value="${esc(it.title)}" maxlength="80"></label>
+        <div class="md-bar" role="toolbar" aria-label="${t("mdBar")}">${md("h", "mdH")}${md("li", "mdList")}${md("b", "mdBold")}${md("warn", "mdWarn")}${md("table", "mdTable")}</div>
+        <div class="rule-split">
+          <textarea class="field rule-text" id="rule-ta" data-a="rule:${di}:${k}:text" aria-label="${esc(it.title)}">${esc(it.text)}</textarea>
+          <div class="rule-prev"><span class="label">${t("rulePreview")}</span><div class="prose" id="rule-prev">${textToHtml(it.text)}</div></div></div>
+        <p class="note">${t("rulesHelp")}</p></div>`;
+  return `<div class="head"><h2>${t("aRules")}</h2>
+      <div class="row" style="gap:.8rem;align-items:end">
+        <label class="fieldlabel" style="width:7rem">${t("rulesVersion")}<input class="field" data-a="rule:version" value="${esc(d.version)}" maxlength="12"></label>
         <div class="seg2" role="tablist" aria-label="${t("rulesLangL")}">${["ru", "en"].map(l => `<button role="tab" data-act="rLang" data-v="${l}" aria-selected="${rLang === l}">${l.toUpperCase()}</button>`).join("")}</div>
-        <a class="btn line sm" href="#rules">${t("rulesTitle")} →</a></div>
-      ${rLang === "en" && !docs.length ? `<p class="note">${t("rulesEnEmpty")}</p>` : ""}</div>
-    ${docs.map((doc, di) => `<section class="stack rule-doc" style="gap:.8rem">
-      <div class="box panel"><div class="row" style="justify-content:space-between;gap:.6rem">
-        <label class="fieldlabel" style="flex:1;min-width:14rem">${t("regTitle")} ${di + 1}<input class="field" data-a="rule:${di}:-1:title" value="${esc(doc.title)}" maxlength="80"></label>
-        ${btns("doc", di, undefined, docs.length)}</div></div>
-      ${doc.items.map((s, k) => block(s, di, k, doc.items.length)).join("")}
-      <div><button class="btn line sm" data-act="ruleAdd" data-id="${di}">${t("addSection")}</button></div></section>`).join("")}
-    <div><button class="btn" data-act="docAdd">${t("addReg")}</button></div>`;
+        <a class="btn line sm" href="#rules">${t("rulesTitle")} ↗</a>
+        <button class="btn text danger sm" data-act="rulesReset">${pending === "rules" ? t("resetSure") : t("rulesReset")}</button></div></div>
+    <div class="rule-ed2">
+      <aside class="rt panel">${tree}<button class="btn sm" data-act="docAdd">${t("addReg")}</button></aside>
+      <div class="stack" style="gap:1rem;min-width:0">${editor}</div>
+    </div>`;
 }
 // first edit copies the defaults into an editable document
 const editRules = () => (rulesDoc ??= defaultRulesDoc());
@@ -2797,23 +3125,27 @@ function confirmNum() {
   setTimeout(render, 950);
 }
 const myTeamRef = () => S.team === OWN_TEAM ? S.created : TEAMS.find(x => x.id === S.team);
+// an uploaded image becomes a small 256×256 data URL: team logos are cropped to a square, sponsor logos fit whole (transparent edges)
+function readLogo(fileObj, done, fail, fit = false) {
+  if (!/^image\/(png|jpeg|webp)$/.test(fileObj?.type || "") || fileObj.size > 5 * 1024 * 1024) return fail();
+  const url = URL.createObjectURL(fileObj), img = new Image();
+  img.onload = () => {
+    const c = document.createElement("canvas"), n = 256, w = img.naturalWidth, h = img.naturalHeight, side = Math.min(w, h), k = n / Math.max(w, h);
+    c.width = c.height = n;
+    if (fit) c.getContext("2d").drawImage(img, (n - w * k) / 2, (n - h * k) / 2, w * k, h * k);
+    else c.getContext("2d").drawImage(img, (w - side) / 2, (h - side) / 2, side, side, 0, 0, n, n);
+    let data = c.toDataURL("image/webp", .85);
+    if (!data.startsWith("data:image/webp")) data = fit ? c.toDataURL("image/png") : c.toDataURL("image/jpeg", .85);
+    URL.revokeObjectURL(url);
+    done(data);
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); fail(); };
+  img.src = url;
+}
 function setTeamLogo(fileObj) {
   const ref = myTeamRef();
   if (!ref || !fileObj) return;
-  if (!/^image\/(png|jpeg|webp)$/.test(fileObj.type) || fileObj.size > 5 * 1024 * 1024) { teamMsg = t("logoBad"); return render(); }
-  const url = URL.createObjectURL(fileObj), img = new Image();
-  img.onload = () => {
-    const c = document.createElement("canvas"), n = 256, side = Math.min(img.naturalWidth, img.naturalHeight);
-    c.width = c.height = n;
-    c.getContext("2d").drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, n, n);
-    let data = c.toDataURL("image/webp", .85);
-    if (!data.startsWith("data:image/webp")) data = c.toDataURL("image/jpeg", .85);
-    URL.revokeObjectURL(url);
-    ref.img = data; teamMsg = "";
-    S.team === OWN_TEAM ? save() : dbSave();
-  };
-  img.onerror = () => { URL.revokeObjectURL(url); teamMsg = t("logoBad"); render(); };
-  img.src = url;
+  readLogo(fileObj, data => { ref.img = data; teamMsg = ""; S.team === OWN_TEAM ? save() : dbSave(); }, () => { teamMsg = t("logoBad"); render(); });
 }
 // leader = the team's creator (admins can also manage); a closed team only takes pilots it invited
 const saveTeam = () => S.team === OWN_TEAM ? save() : dbSave();
@@ -2878,14 +3210,14 @@ function stageRegBox() {
     if (mine) act = `<span class="pill plain ok-pill">${t("participating")}</span>${open ? `<button class="btn text sm" data-act="unreg" data-id="${x.id}">${t("cancel")}</button>` : ""}`;
     else if (!open) act = `<span class="note">${isCur ? t(x.status) : t("regSoon")}</span>`;
     else if (!SETTINGS.regOpen) act = `<span class="note">${t("regClosed")}</span>`;
-    else if (regCount(x) >= SETTINGS.maxStage) act = `<span class="note">${t("stageFull")}</span>`;
+    else if (regCount(x) >= stageMax(x)) act = `<span class="note">${t("stageFull")}</span>`;
     else if (isBanned(S.user.name)) act = `<span class="note err">${t("youBanned")}</span>`;
     else if (!S.num) act = `<span class="note">${t("needNumHere")}</span>`;
     else if (!carOk()) act = `<span class="note">${t("needCarHere")}</span>`;
     else act = `<button class="btn sm" data-act="reg" data-id="${x.id}">${t("register")}</button>`;
     return `<div class="regrow ${mine ? "mine" : ""} ${isCur ? "cur" : "later"}">
       <div><span class="label">${isCur ? t("currentStage") : t("upcoming")}</span><h4>${t("stage")} ${x.stage} · ${esc(x.track)}</h4>
-        <span class="note mono">${esc(x.start)} · ${t("signed")}: ${regCount(x) + (mine ? 1 : 0)} / ${SETTINGS.maxStage}</span></div>
+        <span class="note mono">${esc(x.start)} · ${t("signed")}: ${regCount(x) + (mine ? 1 : 0)} / ${stageMax(x)}</span></div>
       <div class="row">${act}</div></div>`;
   };
   return `<section class="box panel"><div class="head"><h3>${t("stagesReg")}</h3><a class="btn text sm" href="#tournaments">${t("tournaments")} →</a></div>
@@ -2906,11 +3238,11 @@ function pilotHero(p, own) {
   const garage = carSpec(p).filter(([, v]) => v);
   return `<section class="pp-hero">
     <span class="pp-bgnum" aria-hidden="true" data-t="${p.num ?? ""}">${p.num ?? ""}</span>
-    <span class="pp-role ${isAdminName(p.name) ? "admin" : ""}">${t(isOwnerName(p.name) ? "roleOwner" : isAdminName(p.name) ? "roleAdmin" : "pilot")}</span>
+    <span class="pp-role ${roleOf(p.name) ? "admin" : ""}">${roleLabel(roleOf(p.name))}</span>
     <div class="pp-main">${pAva(p, "pp-ava")}
       <div class="pp-who"><h1>${esc(p.name)}</h1>
-        <div class="pp-chips">${p.num ? `<span class="chip4 acc">#${p.num}</span>` : ""}${tm ? `<a class="chip4" href="#tm-${tm.id}">${logo(tm)}${esc(tm.name)}</a>` : `<span class="chip4">${t("freeAgent")}</span>`}${own ? `<span class="chip4">Steam ID ${esc(S.user.steamId)}</span>` : ""}</div>
-        ${own || bio ? `<p class="pp-bio ${bio ? "" : "muted"}">${bio ? esc(bio) : t("noBio")}</p>` : ""}</div></div>
+        <div class="pp-chips">${sanctionChips(p.name)}${p.num ? `<span class="chip4 acc">#${p.num}</span>` : ""}${tm ? `<a class="chip4" href="#tm-${tm.id}">${logo(tm)}${esc(tm.name)}</a>` : `<span class="chip4">${t("freeAgent")}</span>`}${own ? `<span class="chip4">Steam ID ${esc(S.user.steamId)}</span>` : ""}</div>
+        ${own || bio ? `<p class="pp-bio ${bio ? "" : "muted"}">${bio ? esc(tr(bio)) : t("noBio")}</p>` : ""}</div></div>
     ${garage.length ? `<dl class="pp-car">${garage.map(([k, v]) => `<div><dt>${t(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
     ${statRow([[place ? `#${place}` : "—", "cmpPlace"], [p.pts, "points"], [q.length, "statRaced"]])}
   </section>`;
@@ -2941,45 +3273,14 @@ function pilotPage(name) {
 
 // achievements: 23 badges; the ones that can be read from qualifying results unlock automatically, the rest need battle results (not tracked yet)
 // shortcut: battle-based badges stay locked until tandem results are stored per stage
-const DEF_ACH = [
-  ["🏆", "win", ["Победа на этапе", "Выиграть этап"], ["Round win", "Win a round"]],
-  ["⭐", "first", ["Первая победа", "Впервые выиграть этап"], ["First win", "Win a round for the first time"]],
-  ["🔁", "defend", ["Защитил титул", "Выиграть этап сразу после своей победы"], ["Title defence", "Win a round right after your previous win"]],
-  ["🎩", "hat", ["Хет-трик", "Выиграть три этапа сезона подряд"], ["Hat-trick", "Win three rounds of a season in a row"]],
-  ["🧊", "clean", ["Чистая работа", "Выиграть этап, не доведя ни одну дуэль до OMT"], ["Clean sweep", "Win a round without a single OMT"]],
-  ["🥉", "podium", ["Подиум", "Финишировать в тройке на этапе"], ["Podium", "Finish a round in the top three"]],
-  ["🚀", "rise", ["Из низов", "Подняться на подиум с 9-го места квалификации или ниже"], ["From the back", "Reach the podium from 9th in qualifying or lower"]],
-  ["👑", "qking", ["Король квалификации", "Выиграть квалификацию"], ["Qualifying king", "Top a qualifying session"]],
-  ["💯", "perfect", ["Идеальные 100", "Получить 100 баллов за заезд"], ["Perfect 100", "Score 100 points in a run"]],
-  ["🔥", "omt2", ["Пережил 2 OMT", "Выиграть дуэль после двух перезаездов"], ["Survived 2 OMT", "Win a battle after two re-runs"]],
-  ["⚔️", "kingfell", ["Король пал", "Победить в дуэли чемпиона прошлого этапа"], ["The king has fallen", "Beat the previous round's winner in a battle"]],
-  ["🪨", "david", ["Давид и Голиаф", "Выиграть дуэль у соперника, который был выше в квалификации на 8+ мест"], ["David and Goliath", "Beat a rival who qualified 8+ places higher"]],
-  ["🎬", "debut", ["Дебют", "Проехать свой первый этап"], ["Debut", "Drive your first round"]],
-  ["😤", "revenge", ["Реванш", "Выбить того, кто выбил тебя на прошлом этапе"], ["Revenge", "Knock out the driver who knocked you out last round"]],
-  ["🚃", "last", ["Последний вагон", "Попасть в сетку последним номером посева и выиграть дуэль"], ["Last carriage", "Enter the bracket as the last seed and win a battle"]],
-  ["🏃", "marathon", ["Марафонец", "Проехать 3+ OMT за один этап"], ["Marathon", "Run 3+ OMTs in one round"]],
-  ["🎯", "sniper", ["Снайпер", "Две зачётные попытки квалификации с разницей не больше 0,5 балла"], ["Sniper", "Two qualifying runs within 0.5 points of each other"]],
-  ["🪵", "wood", ["Деревянная медаль", "Занять 4-е место на этапе"], ["Wooden medal", "Finish a round in 4th place"]],
-  ["🌀", "spin", ["Волчок", "Спин в обеих зачётных попытках квалификации"], ["Spinning top", "Spin in both qualifying runs"]],
-  ["💀", "322", ["322", "Выиграть квалификацию и вылететь от последнего номера посева"], ["322", "Top qualifying and lose to the last seed"]],
-  ["🛡️", "iron", ["Железный пилот", "Проехать все этапы сезона"], ["Iron driver", "Drive every round of a season"]],
-  ["🤝", "team", ["Командный игрок", "Принести очки команде на трёх этапах"], ["Team player", "Score team points in three rounds"]],
-  ["↩️", "comeback", ["Камбэк", "Выиграть дуэль после проигранного первого заезда"], ["Comeback", "Win a battle after losing the first run"]],
-];
-if (!S.db?.achievements) ACHIEVEMENTS.push(...clone(DEF_ACH));
-function achUnlocked(name) {
-  const q = qualOf(name), got = new Set();
-  if (q.length) got.add("debut");
-  if (q.some(r => r.place === 1)) got.add("qking");
-  if (q.some(r => r.a >= 100 || r.b >= 100)) got.add("perfect");
-  if (q.some(r => r.a >= 0 && r.b >= 0 && Math.abs(r.a - r.b) <= .5)) got.add("sniper");
-  if (q.some(r => r.a === 0 && r.b === 0)) got.add("spin");
-  const season = seasonTours(curSeason());
-  if (season.length && season.every(x => q.some(r => r.x === x))) got.add("iron");
-  return got;
-}
+// the old built-in badges (removed); saves that still carry them drop them on load
+const OLD_ACH = new Set(["win", "first", "defend", "hat", "clean", "podium", "rise", "qking", "perfect", "omt2", "kingfell", "david", "debut", "revenge", "last", "marathon", "sniper", "wood", "spin", "322", "iron", "team", "comeback"]);
+ACHIEVEMENTS.splice(0, ACHIEVEMENTS.length, ...ACHIEVEMENTS.filter(a => !OLD_ACH.has(a[1])));
+// achievements are made and handed out by admins: AWARDS[id] = names of the pilots who have it
+const achUnlocked = name => new Set(ACHIEVEMENTS.filter(a => AWARDS[a[1]]?.includes(name)).map(a => a[1]));
 const achBlock = name => { const got = achUnlocked(name), lang = S.lang === "en" ? 3 : 2;
-  return `<div class="ach-grid">${ACHIEVEMENTS.map(a => { const on = got.has(a[1]), title = a[lang][0] || a[2][0], desc = a[lang][1] || a[2][1];
+  if (!ACHIEVEMENTS.length) return `<p class="note">${t("noAch")}</p>`;
+  return `<div class="ach-grid">${ACHIEVEMENTS.map(a => { const on = got.has(a[1]), title = a[lang][0] || tr(a[2][0]), desc = a[lang][1] || tr(a[2][1]);
     return `<div class="ach ${on ? "on" : ""}" title="${on ? t("achOn") : t("achOff")}"><span class="ach-ic" aria-hidden="true">${esc(a[0])}</span><span><b>${esc(title)}</b><span class="ach-d">${esc(desc)}</span></span></div>`; }).join("")}</div>`; };
 const achCount = name => `<span class="ach-count">${(got => ACHIEVEMENTS.filter(a => got.has(a[1])).length)(achUnlocked(name))}<span>/${ACHIEVEMENTS.length}</span></span>`;
 
@@ -2989,9 +3290,9 @@ function profile() {
   const counter = key => `<span class="counter" id="cnt-${key}">${Math.min((about[key] || "").length, ABOUT_MAX)} / ${ABOUT_MAX}</span>`;
   return `<div class="pp-bar"><span class="label">${t("myProfile")}</span>
     <div class="row" style="gap:1rem"><a class="btn text sm" href="${pHref(p.name)}">${t("publicView")} ↗</a>
-      ${ADMINS.length || HOSTED ? "" : `<button class="btn text sm" data-act="toggleAdmin">${t("adminFirst")}</button>`}<button class="btn line sm" data-act="logout">${t("logout")}</button></div></div>
+      ${Object.keys(ROLES).length || HOSTED ? "" : `<button class="btn text sm" data-act="toggleAdmin">${t("adminFirst")}</button>`}<button class="btn line sm" data-act="logout">${t("logout")}</button></div></div>
   ${pilotHero(p, true)}
-  ${sanctionsOf(S.user.name).length ? `<div class="warn"><b>${t("yourSanctions")}:</b> ${sanctionsOf(S.user.name).map(sanctionLabel).join(", ")}</div>` : ""}
+
   <details class="psec panel ach-box" id="ach-box" ${S.achOpen ? "open" : ""}><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achCount(S.user.name)}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achBlock(S.user.name)}</details>
   ${stageRegBox()}
   <div class="pp-pair">
@@ -3017,44 +3318,49 @@ function profile() {
 // admAnim: set when the admin moves to another section, so only navigation animates, not every saved field
 let admAnim = false;
 let aTab = "seasons", aSeason = 0, aTour = 0, aSub = "main", adminMsg = "", pending = null;
+const stageMax = x => x.max ?? SETTINGS.maxStage; // per stage, falling back to the settings default
 const sel = (attr, list, cur, label, cls = "ai wide") => `<select class="${cls}" data-a="${attr}" aria-label="${label}">${list.map(s => `<option value="${s}" ${s === cur ? "selected" : ""}>${t(s)}</option>`).join("")}</select>`;
 const seasonPill = s => `<span class="pill ${s === "live" ? "s-reg" : "s-done"} ${s === "plan" ? "plain" : ""}">${t(s)}</span>`;
 const backBtn = (attr, label) => `<button class="back linkbtn" ${attr}>← ${label}</button>`;
 
 function adminSeasons() {
   const s = SEASONS.find(z => z.id === aSeason);
-  if (!s) return `<div class="head"><h2>${t("seasons")}</h2><button class="btn" data-act="newSeason">${t("newSeason")}</button></div>
+  const ed = can("edit");
+  if (!s) return `<div class="head"><h2>${t("seasons")}</h2>${ed ? `<button class="btn" data-act="newSeason">${t("newSeason")}</button>` : ""}</div>
     <div class="tablebox panel"><table><thead><tr><th>${t("no")}</th><th>${t("seasonNameCol")}</th><th>${t("stagesCol")}</th><th>${t("status")}</th><th></th></tr></thead><tbody>${
-      SEASONS.map(z => `<tr class="clickrow" data-season="${z.id}" tabindex="0"><td class="mono">${z.id}</td><td>${esc(z.name)}</td><td class="mono">${seasonTours(z.id).length}</td><td>${seasonPill(z.status)}</td>
+      SEASONS.map(z => `<tr class="clickrow" data-season="${z.id}" tabindex="0"><td class="mono">${z.id}</td><td>${esc(z.name)}</td><td class="mono">${seasonTours(z.id).length}</td><td>${ed ? sel(`season:${z.id}:status`, ["plan", "live", "done"], z.status, t("status"), "ai") : seasonPill(z.status)}</td>
         <td class="acc" style="text-align:right">${t("configure")} →</td></tr>`).join("")}</tbody></table></div>`;
   const x = TOURS.find(z => z.id === aTour && z.season === s.id);
   if (x) return adminTour(x);
   const stages = seasonTours(s.id);
   return `${backBtn('data-season="0"', t("seasons"))}
     <div class="head"><h2>${esc(s.name)}</h2>${seasonPill(s.status)}</div>
-    <div class="box panel"><div class="cols" style="gap:1rem">
-      <label class="fieldlabel">${t("seasonNameCol")}<input class="field" data-a="season:${s.id}:name" value="${esc(s.name)}" maxlength="40"></label>
-      <label class="fieldlabel">${t("status")}${sel(`season:${s.id}:status`, ["plan", "live", "done"], s.status, t("status"), "field")}</label></div></div>
-    <div class="head"><h3>${t("aStagesOf")}</h3>${stages.length < 12 ? `<button class="btn line sm" data-act="addStage" data-id="${s.id}">${t("addStage")}</button>` : ""}</div>
-    <div class="tablebox panel"><table><thead><tr><th>${t("stage")}</th><th>${t("track")}</th><th>${t("dates")}</th><th>${t("status")}</th><th>${t("drivers")}</th><th></th></tr></thead><tbody>${
-      stages.map(z => `<tr class="clickrow" data-qt="${z.id}" tabindex="0"><td class="n">${z.stage}</td><td>${esc(z.track)}</td><td class="mono muted">${esc(z.dates)}</td><td>${tourPill(z)}</td>
-        <td class="mono muted">${stageRows(z).length}</td><td class="acc" style="text-align:right">${t("configure")} →</td></tr>`).join("")}</tbody></table></div>
-    <div>${s.status === "live" ? `<p class="note">${t("liveLocked")}</p>` : `<button class="btn text danger" data-act="delSeason" data-id="${s.id}">${pending === `s${s.id}` ? t("delSure") : t("delSeason")}</button>`}</div>`;
+    ${ed ? `<div class="box panel"><label class="fieldlabel" style="max-width:24rem">${t("seasonNameCol")}<input class="field" data-a="season:${s.id}:name" value="${esc(s.name)}" maxlength="40"></label></div>` : ""}
+    <div class="head"><h3>${t("aStagesOf")}</h3>${ed && stages.length < 12 ? `<button class="btn line sm" data-act="addStage" data-id="${s.id}">${t("addStage")}</button>` : ""}</div>
+    <div class="tablebox panel"><table class="stage-tbl"><thead><tr><th>${t("stage")}</th><th>${t("track")}</th><th>${t("status")}</th><th>${t("drivers")} / ${t("maxPilotsCol")}</th><th></th></tr></thead><tbody>${
+      stages.map(z => `<tr class="clickrow" data-qt="${z.id}" tabindex="0"><td class="n">${z.stage}</td>
+        <td><b class="st-track">${esc(z.track)}</b><span class="note mono">${esc(z.dates)}</span></td>
+        <td>${ed ? sel(`tour:${z.id}:status`, STATUSES, z.status, t("status"), "ai") : tourPill(z)}</td>
+        <td class="st-cap"><span class="mono">${stageRows(z).length}</span><span class="muted">/</span>${ed ? `<input class="ai" type="number" min="2" max="256" data-a="tour:${z.id}:max" value="${stageMax(z)}" aria-label="${t("maxPilotsCol")}">` : `<span class="mono muted">${stageMax(z)}</span>`}</td>
+        <td class="st-go" aria-label="${t("configure")}">→</td></tr>`).join("")}</tbody></table></div>
+    <div>${!ed ? "" : s.status === "live" ? `<p class="note">${t("liveLocked")}</p>` : `<button class="btn text danger" data-act="delSeason" data-id="${s.id}">${pending === `s${s.id}` ? t("delSure") : t("delSeason")}</button>`}</div>`;
 }
 
 function adminTour(x) {
   const sub = (k, l) => `<button data-sub="${k}" aria-pressed="${aSub === k}">${t(l)}</button>`;
   const head = `${backBtn('data-qt="0"', esc(seasonName(x.season)))}
     <div class="head"><h2>${t("stage")} ${x.stage} · ${esc(x.track)}</h2>${tourPill(x)}</div>
-    <div class="tabs">${sub("main", "aMain")}${sub("judge", "aJudge")}${sub("qual", "aQual")}${sub("pilots", "aPilots")}${sub("teams", "aTeams")}</div>`;
+    <div class="tabs">${sub("main", "aMain")}${sub("judge", "aJudge")}${sub("qual", "aQual")}${sub("bracket", "bracketTitle")}${sub("pilots", "aPilots")}${sub("teams", "aTeams")}</div>`;
   let body = "";
-  if (aSub === "judge") body = judgeIsland(x);
+  if (aSub === "bracket") body = `<div class="${can("judge") ? "rw" : ""}"><div class="head"><p class="note" style="margin:0">${t("brEditHint")}</p>
+      <button class="btn text danger sm" data-act="brReseed" data-id="${x.id}">${pending === `br${x.id}` ? t("delSure") : t("brReseed")}</button></div>
+    <div class="box panel">${bracketView(x, true)}</div></div>`;
+  if (aSub === "judge") body = `<div class="${can("judge") ? "rw" : ""}">${judgeIsland(x)}</div>`;
   if (aSub === "main") body = `<div class="box panel"><div class="cols" style="gap:1rem">
       <label class="fieldlabel">${t("track")}<input class="field" data-a="tour:${x.id}:track" value="${esc(x.track)}" maxlength="40"></label>
       <label class="fieldlabel">${t("dates")}<input class="field" data-a="tour:${x.id}:dates" value="${esc(x.dates)}" maxlength="40"></label>
       <label class="fieldlabel">${t("startAt")}<input class="field" data-a="tour:${x.id}:start" value="${esc(x.start)}" maxlength="40"></label>
 </div></div>
-    <div class="box panel"><h3>${t("stageStatus")}</h3>${stepper(x)}</div>
     <div><button class="btn text danger" data-act="delStage" data-id="${x.id}">${pending === `st${x.id}` ? t("delSure") : t("delStage")}</button></div>`;
   if (aSub === "qual") {
     const inp = (p, i, k) => { const v = scoreOf(x, p, i, k); return `<input class="ai" type="number" min="0" max="100" step="0.1" data-a="score:${x.id}:${k}:${i}" value="${v ?? ""}" aria-label="${esc(p.name)} ${k + 1}">`; };
@@ -3074,17 +3380,22 @@ function adminTour(x) {
   return head + body;
 }
 
-const sanctionLabel = s => s.type === "dq" ? `${t("dq")} · ${t("stage")} ${TOURS.find(x => x.id === s.tour)?.stage ?? "?"}` : t(s.type);
+const sanctionLabel = s => (s.type === "dq" && s.tour ? `${t("dq")} · ${t("stage")} ${TOURS.find(x => x.id === s.tour)?.stage ?? "?"}` : t(s.type)) + (s.auto ? ` · ${t("sancAuto")}` : "");
+// violations on the pilot card: warnings toward the next DQ, DQs toward a ban
+const sanctionChips = name => { const l = sanctionsOf(name), n = k => l.filter(s => s.type === k).length;
+  if (!l.length) return "";
+  return isBanned(name) ? `<span class="chip4 sanc ban">${t("ban")}</span>`
+    : `<span class="chip4 sanc">⚠ ${t("warnShort")} ${n("warn") % 3}/3</span>${n("dq") ? `<span class="chip4 sanc dq">DQ ${n("dq")}/2</span>` : ""}`; };
 function adminPilots() {
   const own = isOwner();
-  return `<div class="head"><div class="stack" style="gap:.3rem"><h2>${t("aSanctions")}</h2><p class="note" style="margin:0">${t("dqNote")}${own ? "" : ` ${t("ownerOnly")}`}</p></div>
+  return `<div class="head"><div class="stack" style="gap:.3rem"><h2>${t("aSanctions")}</h2><p class="note" style="margin:0">${t("dqNote")} <b>${t("sancRule")}</b>${own ? "" : ` ${t("ownerOnly")}`}</p></div>
       <button class="btn line" data-act="addTest">${t("addTestPilot")}</button></div>
     <div class="tablebox panel"><table><thead><tr><th>${t("numCol")}</th><th>${t("pilot")}</th><th>${t("sanctions")}</th><th></th></tr></thead><tbody>${roster().map((p, i) => {
       const key = p.mine ? "me" : i, kickKey = `kick-${p.name}`;
       const extra = p.test ? `<button class="btn text danger sm" data-act="delTest" data-name="${esc(p.name)}">${pending === kickKey ? t("delSure") : t("del")}</button>`
         : own && !p.mine ? `<button class="btn text danger sm" data-act="kick" data-name="${esc(p.name)}">${pending === kickKey ? t("kickSure") : t("kick")}</button>` : "";
-      return `<tr class="${p.mine ? "mine" : ""}"><td>${own || p.test ? `<input class="ai" type="number" min="1" max="999" data-a="pilot:${key}:num" value="${p.num ?? ""}" aria-label="${t("numCol")} ${esc(p.name)}">` : `<span class="n">${p.num ?? "—"}</span>`}</td>
-        <td>${esc(p.name)}${p.test ? ` <span class="label">${t("testTag")}</span>` : ""}<div class="note">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</div></td>
+      return `<tr class="${p.mine ? "mine" : ""}"><td class="pl-num">${own || p.test ? `<input class="ai" type="number" min="1" max="999" data-a="pilot:${key}:num" value="${p.num ?? ""}" aria-label="${t("numCol")} ${esc(p.name)}">` : `<span class="n">${p.num ?? "—"}</span>`}</td>
+        <td><div class="row" style="gap:0;flex-wrap:nowrap">${pAva(p, "t-ava")}<div>${esc(p.name)}${p.test ? ` <span class="label">${t("testTag")}</span>` : ""}<div class="note">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</div></div></div></td>
         <td style="white-space:normal"><div class="row" style="gap:.35rem">${sanctionsOf(p.name).map((s, j) => `<span class="chip-s ${s.type}">${sanctionLabel(s)}<button data-act="delSanction" data-name="${esc(p.name)}" data-id="${j}" aria-label="${t("del")}">×</button></span>`).join("") || '<span class="muted">—</span>'}</div></td>
         <td><div class="row" style="flex-wrap:nowrap;gap:.35rem"><select class="ai" id="sanc-${i}" aria-label="${t("sanctions")} ${esc(p.name)}">${["warn", "dq", "ban"].map(s => `<option value="${s}">${t(s)}</option>`).join("")}</select>
           <button class="btn line sm" data-act="giveSanction" data-id="${i}">${t("give")}</button>${extra}</div></td></tr>`; }).join("")}</tbody></table></div>`;
@@ -3095,44 +3406,64 @@ const adminTeams = () => `<h2>${t("aTeams")}</h2><div class="tablebox panel"><ta
     <td><button class="btn text danger" data-act="delTeam" data-id="${tm.id}">${pending === tm.id ? t("delSure") : t("del")}</button></td></tr>`).join("")}</tbody></table></div>`;
 // built-in ids unlock automatically from qualifying results; badges added here stay locked
 // shortcut: no manual award yet, add an "award to pilot" action when custom badges need to be given out
-const ACH_AUTO = ["debut", "qking", "perfect", "sniper", "spin", "iron"];
-const adminAch = () => `<div class="head"><div class="stack" style="gap:.3rem"><h2>${t("achievements")}</h2><p class="note" style="margin:0">${t("achAdminHint")}</p></div><button class="btn" data-act="newAch">${t("addAch")}</button></div>
-  <div class="tablebox panel"><table class="ach-table"><thead><tr><th>${t("achIcon")}</th><th>${t("achTitle")} RU</th><th>${t("achDesc")} RU</th><th>${t("achTitle")} EN</th><th>${t("achDesc")} EN</th><th></th><th></th></tr></thead><tbody>${ACHIEVEMENTS.map((a, i) => `<tr>
-    <td><input class="ai ach-ic-in" data-a="ach:${i}:ic" value="${esc(a[0])}" maxlength="8" aria-label="${t("achIcon")}"></td>
-    <td><input class="ai wide" data-a="ach:${i}:ruT" value="${esc(a[2][0])}" maxlength="40" aria-label="${t("achTitle")} RU"></td>
-    <td><input class="ai wide" data-a="ach:${i}:ruD" value="${esc(a[2][1])}" maxlength="120" aria-label="${t("achDesc")} RU"></td>
-    <td><input class="ai wide" data-a="ach:${i}:enT" value="${esc(a[3][0])}" maxlength="40" aria-label="${t("achTitle")} EN"></td>
-    <td><input class="ai wide" data-a="ach:${i}:enD" value="${esc(a[3][1])}" maxlength="120" aria-label="${t("achDesc")} EN"></td>
-    <td class="muted">${ACH_AUTO.includes(a[1]) ? t("achAuto") : t("achManual")}</td>
-    <td><button class="btn text danger" data-act="delAch" data-id="${i}">${pending === `ach${i}` ? t("delSure") : t("del")}</button></td></tr>`).join("") || `<tr><td colspan="7" class="muted">—</td></tr>`}</tbody></table></div>`;
-const adminSponsors = () => `<div class="head"><h2>${t("sponsors")}</h2><button class="btn" data-act="newSponsor">${t("addSponsor")}</button></div>
-  <div class="tablebox panel"><table><thead><tr><th>${t("seasonNameCol")}</th><th>${t("role")}</th><th>${t("link")}</th><th></th></tr></thead><tbody>${SPONSORS.map((s, i) => `<tr>
-    <td><input class="ai wide" data-a="sponsor:${i}:name" value="${esc(s.name)}" maxlength="40" aria-label="${t("seasonNameCol")}"></td>
-    <td>${sel(`sponsor:${i}:role`, ["general", "partner"], s.role, t("role"))}</td>
-    <td><input class="ai wide" data-a="sponsor:${i}:url" value="${esc(s.url || "")}" maxlength="120" placeholder="https://" aria-label="${t("link")}"></td>
-    <td><button class="btn text danger" data-act="delSponsor" data-id="${i}">${pending === `sp${i}` ? t("delSure") : t("del")}</button></td></tr>`).join("") || `<tr><td colspan="4" class="muted">—</td></tr>`}</tbody></table></div>`;
-const adminSettings = () => `<h2>${t("aSettings")}</h2>
-  <div class="box panel">
-    <label class="row" style="gap:.7rem"><input type="checkbox" data-a="setting:regOpen" ${SETTINGS.regOpen ? "checked" : ""}>${t("regOpenL")}</label>
-    <div class="car-form" style="max-width:34rem"><label class="fieldlabel">${t("maxTeamL")}<input class="field" type="number" min="1" max="8" data-a="setting:maxTeam" value="${SETTINGS.maxTeam}"></label>
-    <label class="fieldlabel">${t("maxStageL")}<input class="field" type="number" min="2" max="256" data-a="setting:maxStage" value="${SETTINGS.maxStage}"></label>
-    <label class="fieldlabel">${t("hpMinL")}<input class="field" type="number" min="50" max="3000" data-a="setting:hpMin" value="${SETTINGS.hpMin}"></label>
-    <label class="fieldlabel">${t("hpMaxL")}<input class="field" type="number" min="50" max="3000" data-a="setting:hpMax" value="${SETTINGS.hpMax}"></label></div>
-  </div>
-  <div class="box panel"><h3>${t("socialsL")}</h3><div class="cols" style="gap:1rem">${SOCIALS.map(([n]) =>
-    `<label class="fieldlabel">${n}<input class="field" data-a="social:${n}" value="${esc(SETTINGS.socials[n] || "")}" maxlength="120" placeholder="https:// или mailto:"></label>`).join("")}</div></div>
-  ${adminTracks()}
-  <div class="box panel"><p class="note">${t("adminNote")}</p><div><button class="btn text danger" data-act="resetDemo">${pending === "reset" ? t("resetSure") : t("resetDemo")}</button></div></div>`;
+const adminAch = () => `<div class="head"><p class="note" style="margin:0">${t("achAdminHint2")}</p><button class="btn" data-act="newAch">${t("addAch")}</button></div>
+  ${ACHIEVEMENTS.length ? `<div class="ach-eds">${ACHIEVEMENTS.map((a, i) => { const who = AWARDS[a[1]] || [];
+    return `<article class="box panel ach-ed">
+      <div class="ach-ed-top"><input class="field ach-ic-in" data-a="ach:${i}:ic" value="${esc(a[0])}" maxlength="8" aria-label="${t("achIcon")}">
+        <label class="fieldlabel">${t("achTitle")} RU<input class="field" data-a="ach:${i}:ruT" value="${esc(a[2][0])}" maxlength="40"></label>
+        <label class="fieldlabel">${t("achTitle")} EN<input class="field" data-a="ach:${i}:enT" value="${esc(a[3][0])}" maxlength="40"></label>
+        <button class="btn text danger sm" data-act="delAch" data-id="${i}">${pending === `ach${i}` ? t("delSure") : t("del")}</button></div>
+      <div class="ach-ed-desc"><label class="fieldlabel">${t("achDesc")} RU<input class="field" data-a="ach:${i}:ruD" value="${esc(a[2][1])}" maxlength="120"></label>
+        <label class="fieldlabel">${t("achDesc")} EN<input class="field" data-a="ach:${i}:enD" value="${esc(a[3][1])}" maxlength="120"></label></div>
+      <div class="ach-ed-who"><span class="label">${t("achHolders")} · ${who.length}</span>
+        <div class="row" style="gap:.35rem">${who.map(n => `<span class="chip-s">${esc(n)}<button data-act="achTake" data-id="${i}" data-name="${esc(n)}" aria-label="${t("del")}">×</button></span>`).join("") || `<span class="muted">—</span>`}</div>
+        <div class="row" style="gap:.4rem;flex-wrap:nowrap"><select class="ai" id="achp-${i}" aria-label="${t("pilot")}">${roster().filter(p => !who.includes(p.name)).map(p => `<option>${esc(p.name)}</option>`).join("")}</select>
+          <button class="btn line sm" data-act="achGive" data-id="${i}">${t("give")}</button></div></div></article>`; }).join("")}</div>`
+    : `<div class="box panel empty"><p class="note">${t("noAchAdmin")}</p></div>`}`;
+const spImg = s => /^data:image\/(webp|jpeg|png);base64,/.test(s.img || "") ? `<img src="${s.img}" alt="">` : `<span>${esc((s.name || "?").slice(0, 2).toUpperCase())}</span>`;
+const adminSponsors = () => `<div class="head"><p class="note" style="margin:0">${t("spHint")}</p><button class="btn" data-act="newSponsor">${t("addSponsor")}</button></div>
+  ${SPONSORS.length ? `<div class="sp-eds">${SPONSORS.map((s, i) => `<article class="box panel sp-ed">
+    <div class="sp-ed-logo"><span class="sp-logo">${spImg(s)}</span>
+      <label class="btn line sm">${t(s.img ? "spLogoChange" : "spLogoAdd")}<input type="file" accept="image/png,image/jpeg,image/webp" data-splogo="${i}" hidden></label>
+      ${s.img ? `<button class="btn text sm danger" data-act="spLogoDel" data-id="${i}">${t("removeLogo")}</button>` : ""}</div>
+    <div class="sp-ed-fields">
+      <label class="fieldlabel">${t("seasonNameCol")}<input class="field" data-a="sponsor:${i}:name" value="${esc(s.name)}" maxlength="40"></label>
+      <label class="fieldlabel">${t("spCaption")}<input class="field" data-a="sponsor:${i}:label" value="${esc(s.label || "")}" maxlength="40" placeholder="${t(s.role)}"></label>
+      <label class="fieldlabel">${t("role")}${sel(`sponsor:${i}:role`, ["general", "partner"], s.role, t("role"), "field")}</label>
+      <label class="fieldlabel">${t("link")}<input class="field" data-a="sponsor:${i}:url" value="${esc(s.url || "")}" maxlength="120" placeholder="https://"></label>
+      <div><button class="btn text danger sm" data-act="delSponsor" data-id="${i}">${pending === `sp${i}` ? t("delSure") : t("del")}</button></div></div></article>`).join("")}</div>`
+    : `<div class="box panel empty"><p class="note">—</p></div>`}`;
+// settings: one compact page per topic; sponsors and achievements live here too
+let setTab = "general";
+function adminSettings() {
+  const tab = (k, l) => `<button data-act="setTab" data-v="${k}" aria-pressed="${setTab === k}">${t(l)}</button>`;
+  const num = (key, label, min, max) => `<label class="fieldlabel">${t(label)}<input class="field" type="number" min="${min}" max="${max}" data-a="setting:${key}" value="${SETTINGS[key]}"></label>`;
+  const body = {
+    general: () => `<div class="box panel"><label class="row" style="gap:.7rem"><input type="checkbox" data-a="setting:regOpen" ${SETTINGS.regOpen ? "checked" : ""}>${t("regOpenL")}</label>
+      <div class="set-grid">${num("maxTeam", "maxTeamL", 1, 15)}${num("maxStage", "maxStageDefL", 2, 256)}${num("hpMin", "hpMinL", 50, 3000)}${num("hpMax", "hpMaxL", 50, 3000)}</div></div>
+      <div class="box panel"><p class="note">${t("adminNote")}</p><div><button class="btn text danger" data-act="resetDemo">${pending === "reset" ? t("resetSure") : t("resetDemo")}</button></div></div>`,
+    socials: () => `<div class="box panel"><div class="set-grid">${SOCIALS.map(([n]) =>
+      `<label class="fieldlabel">${n}<input class="field" data-a="social:${n}" value="${esc(SETTINGS.socials[n] || "")}" maxlength="120" placeholder="https:// / mailto:"></label>`).join("")}</div></div>`,
+    tracks: adminTracks, sponsors: adminSponsors, ach: adminAch,
+  }[setTab] || (() => "");
+  return `<h2>${t("aSettings")}</h2>
+    <div class="tabs">${tab("general", "setGeneral")}${tab("socials", "setSocials")}${tab("tracks", "setTracks")}${tab("sponsors", "aSponsors")}${tab("ach", "achievements")}</div>
+    ${body()}`;
+}
 
+// sections by role: judges and streamers see seasons read-only (judges still score in the island), technical assistants only the rules
+const TAB_PERM = { seasons: "seasons", pilots: "edit", teams: "edit", rules: "rules", access: "edit", settings: "edit" };
 function admin() {
-  if (!isAdmin()) return `<div class="box panel empty"><p class="muted">${S.user ? t("adminOnly") : t("loginFirst")}</p><div><a class="btn line" href="#profile">${t("profile")} →</a></div></div>`;
-  const item = (k, l, badge) => `<button data-tab="${k}" aria-pressed="${aTab === k}">${t(l)}${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
-  const view = { seasons: adminSeasons, pilots: adminPilots, teams: adminTeams, sponsors: adminSponsors, ach: adminAch, rules: adminRules, access: adminAccess, settings: adminSettings }[aTab] || adminSeasons;
+  if (!hasPanel()) return `<div class="box panel empty"><p class="muted">${S.user ? t("adminOnly") : t("loginFirst")}</p><div><a class="btn line" href="#profile">${t("profile")} →</a></div></div>`;
+  const tabs = Object.keys(TAB_PERM).filter(k => can(TAB_PERM[k]));
+  if (!tabs.includes(aTab)) aTab = tabs[0] || "";
+  const item = (k, l, badge) => tabs.includes(k) ? `<button data-tab="${k}" aria-pressed="${aTab === k}">${t(l)}${badge ? `<span class="badge">${badge}</span>` : ""}</button>` : "";
+  const view = { seasons: adminSeasons, pilots: adminPilots, teams: adminTeams, rules: adminRules, access: adminAccess, settings: adminSettings }[aTab] || (() => `<p class="note">${t("noPanelRole")}</p>`);
   return `<div class="adm">
-    <aside class="adm-side"><span class="label acc">${t("adminPanel")}</span>
-      ${item("seasons", "aSeasons")}${item("pilots", "aSanctions")}${item("teams", "aTeams")}${item("sponsors", "aSponsors")}${item("ach", "achievements")}${item("rules", "aRules")}${item("access", "aAccess")}${item("settings", "aSettings")}
-      <a class="bc-link" href="#broadcast">${t("broadcastBtn")}</a></aside>
-    <div class="adm-main stack ${admAnim ? "adm-enter" : ""}" style="gap:1.2rem"><span class="note err" role="status">${adminMsg}</span>${view()}</div>
+    <aside class="adm-side"><span class="label acc">${t("adminPanel")}</span><span class="note">${roleLabel(roleOf(S.user.name))}</span>
+      ${item("seasons", "aSeasons")}${item("pilots", "aSanctions")}${item("teams", "aTeams")}${item("rules", "aRules")}${item("access", "aAccess")}${item("settings", "aSettings")}
+      ${can("bc") ? `<a class="bc-link" href="#broadcast">${t("broadcastBtn")}</a>` : ""}</aside>
+    <div class="adm-main stack ${can(aTab === "rules" ? "rules" : "edit") ? "" : "ro"} ${admAnim ? "adm-enter" : ""}" style="gap:1.2rem"><span class="note err" role="status">${adminMsg}</span>${view()}</div>
   </div>`;
 }
 
@@ -3140,7 +3471,8 @@ function adminEdit([kind, id, f, k], v) {
   adminMsg = "";
   if (kind === "tour") {
     const x = TOURS.find(z => z.id === +id);
-    if (f === "status") { if (STATUSES.includes(v)) x.status = v; }
+    if (f === "status") { if (BR_ROUNDS.includes(v) && !brOf(x)) brSet(x); if (STATUSES.includes(v)) x.status = v; } // the bracket freezes from the qualifying as entered, before the status moves on
+    else if (f === "max") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) x.max = n; else return render(); }
     else x[f] = v.trim().slice(0, 40) || x[f];
     return dbSave();
   }
@@ -3241,6 +3573,7 @@ function adminEdit([kind, id, f, k], v) {
       s.role = v;
     } else if (f === "name") s.name = v.trim().slice(0, 40) || s.name;
     else if (f === "url") s.url = v.trim().slice(0, 120);
+    else if (f === "label") s.label = v.trim().slice(0, 40);
     return dbSave();
   }
   if (kind === "protest") {
@@ -3250,7 +3583,7 @@ function adminEdit([kind, id, f, k], v) {
   }
   if (kind === "setting") {
     if (id === "regOpen") SETTINGS.regOpen = !!v;
-    if (id === "maxTeam") { const n = Math.round(Number(v)); if (n >= 1 && n <= 8) SETTINGS.maxTeam = n; }
+    if (id === "maxTeam") { const n = Math.round(Number(v)); if (n >= 1 && n <= 15) SETTINGS.maxTeam = n; }
     if (id === "hpMin" || id === "hpMax") { const n = Math.round(Number(v)), lo = id === "hpMin" ? n : SETTINGS.hpMin, hi = id === "hpMax" ? n : SETTINGS.hpMax;
       if (n >= 50 && n <= 3000 && lo < hi) SETTINGS[id] = n; else adminMsg = t("hpBad"); }
     if (id === "maxStage") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) SETTINGS.maxStage = n; }
@@ -3263,6 +3596,7 @@ function adminEdit([kind, id, f, k], v) {
     return dbSave();
   }
   if (kind === "jd") return judgeSet(+k, id, v);
+  if (kind === "role") return setRole(roster()[+id]?.name, v);
   if (kind === "rule") return ruleEdit(id, f, k, v);
   if (kind === "bc") {
     const b = bcState();
@@ -3288,7 +3622,9 @@ function judgeSet(tourId, field, v, j) {
   if (field === "label") b.label = String(v).slice(0, 40);
   if (field === "vote" && ["leader", "chaser", "omt"].includes(v)) b.votes = b.votes.map((x, k) => k === j ? (x === v ? null : v) : x); // click again to clear
   if (field === "votes") b.votes = [null, null, null];
-  b.decidedAt = b.votes.every(Boolean) ? (field === "vote" ? Date.now() : b.decidedAt || Date.now()) : null; // all three voted: start the reset timer
+  // all three voted: start the reset timer; a bracket pair's winner waits for the judge to confirm before advancing
+  const res = judgeResult(b.votes), pend = (res === "leader" || res === "chaser") && !!brMatch(tourId, b.leader, b.chaser);
+  b.decidedAt = b.votes.every(Boolean) && !pend ? (field === "vote" ? Date.now() : b.decidedAt || Date.now()) : null;
   S.bc = b;
   save();
 }
@@ -3298,7 +3634,7 @@ setInterval(() => {
   const at = S.bc?.decidedAt;
   const left = document.getElementById("vote-reset");
   if (left) left.textContent = at ? `${t("resetIn")} ${Math.max(0, Math.ceil((at + DECISION_MS - Date.now()) / 1000))} ${t("sec")}` : "";
-  if (at && isAdmin() && Date.now() - at >= DECISION_MS) judgeSet(S.bc.tour, "votes");
+  if (at && can("judge") && Date.now() - at >= DECISION_MS) judgeSet(S.bc.tour, "votes");
 }, 500);
 function nextPilot(tourId) {
   const x = TOURS.find(z => z.id === tourId), order = regRows(x).map(([p]) => p.name), st = bcState();
@@ -3306,29 +3642,21 @@ function nextPilot(tourId) {
   judgeSet(tourId, "onTrack", order[(k + 1) % order.length]);
 }
 let accessQuery = "";
-const accessRows = () => { const q = accessQuery.trim().toLowerCase();
-  return roster().filter(p => !q || p.name.toLowerCase().includes(q)).sort((a, b) => isAdminName(b.name) - isAdminName(a.name) || a.name.localeCompare(b.name)).map(p => {
-    const adm = isAdminName(p.name), key = `role-${p.name}`, tm = teamById(p.team);
-    return `<tr><td><b>${esc(p.name)}</b>${p.mine ? ` <span class="label acc">${t("youTag")}</span>` : ""}</td><td class="muted">${tm ? esc(tm.name) : "—"}</td>
-      <td>${adm ? `<span class="pill plain s-live">${t(isOwnerName(p.name) ? "roleOwner" : "roleAdmin")}</span>` : `<span class="muted">${t("rolePilot")}</span>`}</td>
-      <td style="text-align:right">${isOwnerName(p.name) ? "" : `<button class="btn ${adm ? "text danger" : "line"} sm" data-act="${adm ? "revokeAdmin" : "grantAdmin"}" data-name="${esc(p.name)}">${pending === key ? t("confirmBtn") : adm ? t("revokeAdmin") : t("grantAdmin")}</button>`}</td></tr>`; }).join("")
-    || `<tr><td colspan="4" class="muted">${t("nothing")}</td></tr>`; };
-const adminAccess = () => `<div class="head"><div class="stack" style="gap:.4rem"><h2>${t("aAccess")}</h2><p class="note">${t("accessHint")}</p></div><span class="label">${t("adminsN")}: ${adminCount()}</span></div>
+// roles: only the head admin changes them; everyone with panel access can see who has which role
+const accessRows = () => { const q = accessQuery.trim().toLowerCase(), rank = p => ["owner", ...ROLE_LIST, ""].indexOf(roleOf(p.name));
+  return roster().map((p, i) => [p, i]).filter(([p]) => !p.test && (!q || p.name.toLowerCase().includes(q))).sort(([a], [b]) => rank(a) - rank(b) || a.name.localeCompare(b.name)).map(([p, i]) => {
+    const r = roleOf(p.name), tm = teamById(p.team);
+    const cell = r === "owner" || !can("roles") ? `<span class="${r ? "pill plain s-live" : "muted"}">${roleLabel(r) === t("pilot") ? t("roleNone") : roleLabel(r)}</span>`
+      : `<select class="ai" data-a="role:${i}" aria-label="${t("roleCol")} ${esc(p.name)}"><option value="">${t("roleNone")}</option>${ROLE_LIST.map(k => `<option value="${k}" ${r === k ? "selected" : ""}>${roleLabel(k)}</option>`).join("")}</select>`;
+    return `<tr><td>${pAva(p, "t-ava")}<b>${esc(p.name)}</b>${p.mine ? ` <span class="label acc">${t("youTag")}</span>` : ""}</td><td class="muted">${tm ? esc(tm.name) : "—"}</td><td>${cell}</td></tr>`; }).join("")
+    || `<tr><td colspan="3" class="muted">${t("nothing")}</td></tr>`; };
+const adminAccess = () => `<div class="head"><div class="stack" style="gap:.4rem"><h2>${t("aAccess")}</h2><p class="note">${t("accessHint2")}</p>${can("roles") ? "" : `<p class="note err">${t("rolesOwnerOnly")}</p>`}</div></div>
   <input class="search" id="accq" type="search" placeholder="${t("search")}" value="${esc(accessQuery)}" aria-label="${t("search")}">
-  <div class="tablebox panel"><table><thead><tr><th>${t("pilot")}</th><th>${t("team")}</th><th>${t("roleCol")}</th><th></th></tr></thead><tbody id="acc-body">${accessRows()}</tbody></table></div>`;
-// granting and revoking both take a second click; the last admin can't be removed so the panel never locks everyone out
-function setAdmin(name, on) {
-  if (!name) return;
-  if (!on && isOwnerName(name)) return;
-  if (!on && isAdminName(name) && adminCount() <= 1) { adminMsg = t("lastAdmin"); return render(); }
-  confirmTwice(`role-${name}`, () => {
-    const i = ADMINS.indexOf(name);
-    if (on && i < 0) ADMINS.push(name);
-    if (!on) { if (i >= 0) ADMINS.splice(i, 1); if (name === S.user?.name) S.user.admin = false; }
-    adminMsg = "";
-    dbSave();
-    if (!on && name === S.user?.name) location.hash = "#profile";
-  });
+  <div class="tablebox panel"><table><thead><tr><th>${t("pilot")}</th><th>${t("team")}</th><th>${t("roleCol")}</th></tr></thead><tbody id="acc-body">${accessRows()}</tbody></table></div>`;
+function setRole(name, r) {
+  if (!can("roles") || !name || isOwnerName(name) || (r && !ROLE_LIST.includes(r))) return render();
+  if (r) ROLES[name] = r; else delete ROLES[name];
+  dbSave();
 }
 // small "saved" confirmation in the corner; a new one replaces the previous
 function toast(msg) {
@@ -3372,6 +3700,7 @@ function delStage(id) {
     TOURS.splice(TOURS.indexOf(x), 1);
     seasonTours(x.season).forEach((z, i) => z.stage = i + 1);
     Object.keys(S.scores).forEach(k => { if (k.startsWith(`${id}:`)) delete S.scores[k]; }); // a reused id starts clean
+    if (S.brackets) delete S.brackets[id];
     aTour = 0; dbSave();
   });
 }
@@ -3404,14 +3733,20 @@ function delTestPilot(name) {
     dbSave();
   });
 }
+// escalation: every 3rd warning brings a DQ from the current stage, a 2nd DQ brings a ban (no stage registration)
 function giveSanction(i) {
   const p = roster()[i], type = document.getElementById(`sanc-${i}`)?.value;
   if (!p || !["warn", "dq", "ban"].includes(type)) return;
   const cur = currentTour();
   if (type === "dq" && !cur) { adminMsg = t("noCurrent"); return render(); }
-  (SANCTIONS[p.name] ??= []).push({ type, tour: type === "dq" ? cur.id : null, at: new Date().toISOString().slice(0, 10) });
+  const list = (SANCTIONS[p.name] ??= []), n = k => list.filter(s => s.type === k).length, at = new Date().toISOString().slice(0, 10);
+  const add = (type, auto) => list.push({ type, tour: type === "dq" ? cur?.id ?? null : null, at, ...(auto ? { auto: true } : {}) });
+  add(type);
+  if (type === "warn" && n("warn") % 3 === 0) { add("dq", true); toast(t("autoDq")); }
+  if (n("dq") >= 2 && !n("ban")) { add("ban", true); toast(t("autoBan")); }
   dbSave();
 }
+console.assert((() => { const l = [], n = k => l.filter(s => s.type === k).length; for (let k = 0; k < 6; k++) { l.push({ type: "warn" }); if (n("warn") % 3 === 0) l.push({ type: "dq" }); if (n("dq") >= 2 && !n("ban")) l.push({ type: "ban" }); } return n("dq") === 2 && n("ban") === 1; })(), "sanction escalation");
 function delSanction(name, j) {
   const list = SANCTIONS[name];
   if (!list) return;
@@ -3525,7 +3860,7 @@ function obsView(kind) {
 
 // broadcast panel: output only — what goes on air and how it looks; scores and decisions come from the judges' island
 function broadcast() {
-  if (!isAdmin()) return `<div class="box panel empty"><p class="muted">${t("noAdminBc")}</p><div><a class="btn line" href="#profile">${t("profile")} →</a></div></div>`;
+  if (!can("bc")) return `<div class="box panel empty"><p class="muted">${t("noAdminBc")}</p><div><a class="btn line" href="#profile">${t("profile")} →</a></div></div>`;
   const st = bcState(), x = bcTour(st);
   if (!x) return `<p class="note">—</p>`;
   const rows = bcRows(x), stages = seasonTours(curSeason());
@@ -3555,7 +3890,7 @@ const protestCard = p => { const x = TOURS.find(z => z.id === p.tour);
   return `<article class="box panel protest ${p.status}"><div class="head"><div class="stack" style="gap:.3rem">
       <span class="label">${x ? `${esc(seasonName(x.season))} · ${t("stage")} ${x.stage} · ${esc(x.track)}` : "—"}</span>
       <h3>${esc(p.from)} → ${esc(p.against)}</h3></div>${sel(`protest:${p.id}:status`, ["new", "accepted", "rejected"], p.status, t("status"))}</div>
-    <p class="desc" style="margin:0;color:var(--soft)">${esc(p.text)}</p>
+    <p class="desc" style="margin:0;color:var(--soft)">${esc(tr(p.text))}</p>
     <label class="fieldlabel">${t("verdict")}<textarea data-a="protest:${p.id}:verdict" maxlength="500">${esc(p.verdict)}</textarea></label></article>`; };
 // stage lifecycle: click any step or move one step back/forward
 const stepper = x => { const at = STATUSES.indexOf(x.status);
@@ -3587,10 +3922,20 @@ function judgeIsland(x) {
       <div class="cols" style="gap:.8rem;grid-template-columns:repeat(2,minmax(0,1fr))">
         <label class="fieldlabel">${t("leader")}<select class="field" data-a="jd:leader:0:${x.id}">${opts(st.leader, st.chaser)}</select></label>
         <label class="fieldlabel">${t("chaser")}<select class="field" data-a="jd:chaser:0:${x.id}">${opts(st.chaser, st.leader)}</select></label></div>
+      ${(() => { // pairs of the current round, by group; decided pairs stay listed with their winner
+        const r = liveRound(x), cur = bracketOf(x).flat().filter(m => (m.a && m.b || m.bye) && (r < 0 || Math.min(m.r, 4) === r));
+        const parts = [...GROUPS.map(g => [`${t("group")} ${g}`, cur.filter(m => m.g === g)]), [t("playoff"), cur.filter(m => !m.g)]].filter(([, l]) => l.length);
+        const row = m => m.bye ? (m.win ? `<div class="br-done"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)}</span>✓ <b>${esc(m.win)}</b> <span class="muted">${t("bye")}</span></div>`
+            : `<button class="br-bye" data-act="brWin" data-id="${x.id}" data-v="${m.r}-${m.m}" data-name="${esc(m.a || m.b)}"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)} · ${t("bye")}</span>${esc(m.a || m.b)}<span class="acc">${t("byeConfirm")} →</span></button>`)
+          : m.win ? `<div class="br-done"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)}</span>✓ <b>${esc(m.win)}</b> <span class="muted">${t("beat")} ${esc(m.win === m.a ? m.b : m.a)}</span></div>`
+          : `<button class="${st.leader === m.a && st.chaser === m.b ? "on" : ""}" data-act="brPair" data-id="${x.id}" data-v="${m.r}-${m.m}"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)}</span>${esc(m.a)} <span class="muted">vs</span> ${esc(m.b)}</button>`;
+        return parts.length ? `<div class="stack" style="gap:.5rem"><span class="label">${t("brPairs")}</span><div class="br-isl">${parts.map(([h, l]) => `<div class="br-isl-g"><b>${h}</b>${l.map(row).join("")}</div>`).join("")}</div></div>` : ""; })()}
       <label class="fieldlabel">${t("pairLabel")}<input class="field" data-a="jd:label:0:${x.id}" value="${esc(st.label)}" maxlength="40" placeholder="${t("top16")} · ${t("pairN")} 3"></label>
       ${JUDGES.map((k, j) => `<div class="judge-row"><span class="note">${t(k)}</span>${seg(j)}</div>`).join("")}
       <div class="row" style="justify-content:space-between"><span class="ov-result ${res}" style="width:auto">${t({ pending: "pending", leader: "winLeader", chaser: "winChaser", omt: "omt" }[res])}</span>
         <span class="note mono" id="vote-reset"></span><button class="btn text sm" data-act="resetVotes" data-id="${x.id}">${t("resetVotes")}</button></div>
+      ${live && (res === "leader" || res === "chaser") && brMatch(x.id, st.leader, st.chaser) ? `<div class="br-confirm"><span class="note">${t("brWaiting")}</span>
+        <button class="btn sm" data-act="brConfirm" data-id="${x.id}">${t("brConfirm")} ${esc(st[res])} →</button></div>` : ""}
     </section>
   </div>
   <section class="stack"><h3>${t("protests")}${prots.some(q => q.status === "new") ? ` <span class="badge">${prots.filter(q => q.status === "new").length}</span>` : ""}</h3>
@@ -3609,15 +3954,17 @@ function reloadState(raw) {
   Object.assign(SETTINGS, clone(DEF_SETTINGS), n.db?.settings);
   Object.keys(SANCTIONS).forEach(k => delete SANCTIONS[k]); Object.assign(SANCTIONS, n.db?.sanctions);
   rulesDoc = migrateRules(n.db?.rules);
-  syncInto(ADMINS, n.db?.admins, []);
-  syncInto(ACHIEVEMENTS, n.db?.achievements, DEF_ACH);
+  Object.keys(ROLES).forEach(k => delete ROLES[k]);
+  Object.assign(ROLES, n.db?.roles || Object.fromEntries((n.db?.admins || []).map((x, i) => [x, i ? "admin" : "owner"])));
+  syncInto(ACHIEVEMENTS, (n.db?.achievements || []).filter(a => !OLD_ACH.has(a[1])), []);
+  Object.keys(AWARDS).forEach(k => delete AWARDS[k]); Object.assign(AWARDS, n.db?.awards);
   Object.keys(TRACK_DIFF).forEach(k => delete TRACK_DIFF[k]); Object.assign(TRACK_DIFF, n.db?.trackDiff);
 }
 try { lastRaw = localStorage.getItem("lds"); } catch {}
 // live judging data (on-air state + scores) is shared through the artifact db, so the judges island, the broadcast panel
 // and overlays stay in step in every tab or device; without db (local file, signed out) only this browser is in sync
 const tourStatuses = () => Object.fromEntries(TOURS.map(x => [x.id, x.status]));
-const liveBody = () => JSON.stringify({ bc: S.bc ?? null, scores: S.scores ?? {}, statuses: tourStatuses() });
+const liveBody = () => JSON.stringify({ bc: S.bc ?? null, scores: S.scores ?? {}, statuses: tourStatuses(), brackets: S.brackets ?? {} });
 function pushLive() {
   if (!liveDoc) return;
   clearTimeout(liveTimer);
@@ -3639,10 +3986,10 @@ function pushLive() {
     liveDoc = ref;
     if (!snap.exists) return pushLive(); // first run: seed the shared doc from this browser
     if (snap.metadata.hasPendingWrites) return;
-    const d = snap.data(), body = JSON.stringify({ bc: d.bc ?? null, scores: d.scores ?? {}, statuses: d.statuses ?? tourStatuses() });
+    const d = snap.data(), body = JSON.stringify({ bc: d.bc ?? null, scores: d.scores ?? {}, statuses: d.statuses ?? tourStatuses(), brackets: d.brackets ?? {} });
     liveSent = body;
     if (body === liveBody()) return;
-    S.bc = d.bc ? clone(d.bc) : undefined; S.scores = clone(d.scores ?? {});
+    S.bc = d.bc ? clone(d.bc) : undefined; S.scores = clone(d.scores ?? {}); S.brackets = clone(d.brackets ?? {});
     TOURS.forEach(x => { const v = d.statuses?.[x.id]; if (STATUSES.includes(v)) x.status = v; });
     S.db = { ...S.db, tours: TOURS };
     try { lastRaw = JSON.stringify(S); localStorage.setItem("lds", lastRaw); } catch {}
@@ -3659,24 +4006,23 @@ async function api(path, opt = {}) {
   return r.json();
 }
 const meBody = () => JSON.stringify({ team: S.team, num: S.num, car: S.car, about: S.about || {}, regs: S.regs, regAt: S.regAt || {}, created: S.created, declined: S.declined || [] });
-const dbBody = () => S.db ? JSON.stringify({ ...S.db, pilots: undefined, testPilots: PILOTS.filter(p => p.test), adminIds: USERS.filter(u => ADMINS.includes(u.name)).map(u => u.steamId) }) : "";
+const dbBody = () => S.db ? JSON.stringify({ ...S.db, pilots: undefined, testPilots: PILOTS.filter(p => p.test), roleIds: Object.fromEntries(USERS.filter(u => ROLE_LIST.includes(ROLES[u.name])).map(u => [u.steamId, ROLES[u.name]])) }) : ""; // the server checks roles by SteamID
 function pushRemote() {
   if (!HOSTED || !token || !S.user) return;
   clearTimeout(pushTimer); pushing = true;
   pushTimer = setTimeout(async () => {
     const jobs = [], put = (path, body) => jobs.push(api(path, { method: "PUT", body }).catch(() => { toast(t("netErr")); return "fail"; }));
     const m = meBody(); if (m !== sentMe) { sentMe = m; put("/api/me", m); }
-    if (isAdmin()) {
-      const d = dbBody(); if (d && d !== sentDb) { sentDb = d; put("/api/db", `{"db":${d}}`); }
-      const l = liveBody(); if (l !== sentLive) { sentLive = l; put("/api/live", l); }
-    }
+    // shortcut: the server still lets only admins write; judge, streamer and tech writes need per-role checks there before going live
+    if (can("edit") || can("rules")) { const d = dbBody(); if (d && d !== sentDb) { sentDb = d; put("/api/db", `{"db":${d}}`); } }
+    if (can("judge") || can("bc")) { const l = liveBody(); if (l !== sentLive) { sentLive = l; put("/api/live", l); } }
     const res = await Promise.all(jobs);
     if (res.includes("fail")) sentMe = sentDb = sentLive = "";
     pushing = false; apiV = null; // re-read once our write is in
   }, 400);
 }
-function applyMe({ user, admin, owner }) {
-  meAdmin = !!admin; meOwner = !!owner; OWN_TEAM = teamIdOf(user.steamId);
+function applyMe({ user, admin, owner, role }) {
+  meAdmin = !!admin; meOwner = !!owner; meRole = role ?? (owner ? "owner" : admin ? "admin" : ""); OWN_TEAM = teamIdOf(user.steamId);
   S.user = { name: user.name, steamId: user.steamId, avatar: user.avatar || "" };
   Object.assign(S, { team: user.team ?? null, num: user.num ?? null, car: { ...DEFAULT.car, ...user.car }, about: user.about || {}, regs: user.regs || [],
     regAt: user.regAt || {}, created: user.created || null, declined: user.declined || [] });
@@ -3684,7 +4030,7 @@ function applyMe({ user, admin, owner }) {
 }
 function applyRemote(st) {
   const mine = { user: S.user, team: S.team, num: S.num, car: S.car, about: S.about, regs: S.regs, regAt: S.regAt, created: S.created, declined: S.declined, lang: S.lang };
-  reloadState(JSON.stringify({ ...S, db: st.db || undefined, bc: st.live?.bc ?? undefined, scores: st.live?.scores ?? {} }));
+  reloadState(JSON.stringify({ ...S, db: st.db || undefined, bc: st.live?.bc ?? undefined, scores: st.live?.scores ?? {}, brackets: st.live?.brackets ?? {} }));
   Object.assign(S, mine);
   TOURS.forEach(x => { const v = st.live?.statuses?.[x.id]; if (STATUSES.includes(v)) x.status = v; });
   USERS = st.users || [];
@@ -3766,7 +4112,9 @@ document.addEventListener("click", e => {
     document.querySelectorAll(".picklist").forEach((l, i) => l.scrollTop = tops[i]); return; }
   const el = e.target.closest("[data-lang],[data-act],[data-num],[data-sel],[data-goto],[data-tab],[data-qt],[data-sub],[data-season]");
   if (!el) return;
-  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
+  if (el.matches("tr") && e.target.closest("select, input, label")) return; // inline editors in a table row don't open the row
+  if (ACT_PERM[el.dataset.act] && !can(ACT_PERM[el.dataset.act])) return;
+  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
   if (el.dataset.tab || el.dataset.season || el.dataset.qt || el.dataset.sub) admAnim = true;
   if (el.dataset.tab) { aTab = el.dataset.tab; aSeason = 0; aTour = 0; adminMsg = ""; return render(); }
   if (el.dataset.season) { aSeason = +el.dataset.season; aTour = 0; return render(); }
@@ -3781,30 +4129,43 @@ document.addEventListener("click", e => {
   ({
     login, logout, resetDemo,
     delTeam: () => delTeam(id),
-    grantAdmin: () => setAdmin(el.dataset.name, true),
-    revokeAdmin: () => setAdmin(el.dataset.name, false),
+    setTab: () => { setTab = el.dataset.v; admAnim = true; render(); },
     lbTab: () => { lbTab = el.dataset.v === "teams" ? "teams" : "pilots"; document.querySelectorAll('[data-act="lbTab"]').forEach(b => b.setAttribute("aria-selected", b.dataset.v === lbTab)); document.getElementById("lb").innerHTML = leaderboard(); },
     delLogo: () => { const ref = myTeamRef(); if (!ref) return; delete ref.img; S.team === OWN_TEAM ? save() : dbSave(); },
     rTab: () => { rTab = el.dataset.v === "teams" ? "teams" : "pilots"; render(); },
     goBack: () => { if (history.length > 1) history.back(); else location.hash = "#teams"; },
     trackDiff: () => { const v = +el.dataset.v, n = el.dataset.name;
-      if (!isAdmin() || !(v >= 1 && v <= 5) || !trackNames().includes(n)) return;
+      if (!(v >= 1 && v <= 5) || !trackNames().includes(n)) return;
       TRACK_DIFF[n] = v; dbSave(); toast(t("saved")); },
     vote: () => judgeSet(id, "vote", el.dataset.v, +el.dataset.j),
     onTrack: () => judgeSet(id, "onTrack", el.dataset.name),
-    rLang: () => { rLang = el.dataset.v === "en" ? "en" : "ru"; render(); },
-    docAdd: () => { editDocs().push({ title: t("newReg"), items: [] }); dbSave(); },
+    rLang: () => { rLang = el.dataset.v === "en" ? "en" : "ru"; rSel = [0, 0]; render(); },
+    rSel: () => { rSel = [id, +el.dataset.k]; render(); },
+    // toolbar: prefix the current line, or wrap / insert at the cursor; the change event saves as if typed
+    mdIns: () => { const ta = document.getElementById("rule-ta"); if (!ta) return;
+      const v = el.dataset.v, a = ta.selectionStart, b = ta.selectionEnd, line = ta.value.lastIndexOf("\n", a - 1) + 1;
+      if (v === "b") ta.setRangeText(`**${ta.value.slice(a, b) || t("mdBold")}**`, a, b, "end");
+      else if (v === "table") ta.setRangeText(`\n| ${t("mdCol")} 1 | ${t("mdCol")} 2 |\n| … | … |\n`, a, b, "end");
+      else ta.setRangeText({ h: "## ", li: "- ", warn: "! " }[v] || "", line, line, "end");
+      ta.focus(); ta.dispatchEvent(new Event("input", { bubbles: true })); ta.dispatchEvent(new Event("change", { bubbles: true })); },
+    docAdd: () => { const l = editDocs(); l.push({ title: t("newReg"), items: [] }); rSel = [l.length - 1, -1]; dbSave(); },
     docDel: () => confirmTwice(`doc-${rLang}-${id}-undefined`, () => { editDocs().splice(id, 1); dbSave(); }),
     docMove: () => { const list = editDocs(), j = id + +el.dataset.v; if (j < 0 || j >= list.length) return; [list[id], list[j]] = [list[j], list[id]]; dbSave(); },
-    ruleAdd: () => { editDocs()[id]?.items.push({ title: t("newSection"), text: "" }); dbSave(); },
+    ruleAdd: () => { const l = editDocs()[id]?.items; if (!l) return; l.push({ title: t("newSection"), text: "" }); rSel = [id, l.length - 1]; dbSave(); },
     ruleDel: () => { const k = +el.dataset.k; confirmTwice(`rule-${rLang}-${id}-${k}`, () => { editDocs()[id]?.items.splice(k, 1); dbSave(); }); },
     ruleMove: () => { const list = editDocs()[id]?.items, k = +el.dataset.k, j = k + +el.dataset.v; if (!list || j < 0 || j >= list.length) return; [list[k], list[j]] = [list[j], list[k]]; dbSave(); },
     rulesReset: () => confirmTwice("rules", () => { rulesDoc = null; dbSave(); }),
     setStatus: () => { if (el.dataset.v) adminEdit(["tour", String(id), "status"], el.dataset.v); },
     resetVotes: () => judgeSet(id, "votes"),
     // explicit nulls, so finished stages don't fall back to their demo scores
-    clearScores: () => { const x = TOURS.find(z => z.id === id); if (!x || !isAdmin()) return; confirmTwice(`cs${id}`, () => { stageRows(x).forEach(([p]) => S.scores[`${id}:${p.name}`] = { 0: null, 1: null }); save(); toast(t("scoresCleared")); }); },
+    clearScores: () => { const x = TOURS.find(z => z.id === id); if (!x) return; confirmTwice(`cs${id}`, () => { stageRows(x).forEach(([p]) => S.scores[`${id}:${p.name}`] = { 0: null, 1: null }); save(); toast(t("scoresCleared")); }); },
     nextPilot: () => nextPilot(id),
+    brPair: () => { const x = TOURS.find(z => z.id === id), [r, m] = el.dataset.v.split("-").map(Number), mt = x && bracketOf(x)[r]?.[m]; if (!mt?.a || !mt.b) return;
+      S.bc = { ...bcState(), tour: id, leader: mt.a, chaser: mt.b, label: `${brLabel(mt)} · ${t("pairN")} ${(mt.g ? m % (4 >> r) : m) + 1}`, votes: [null, null, null], decidedAt: null }; save(); },
+    brConfirm: () => { const b = bcState(), res = judgeResult(b.votes); if (b.tour !== id || (res !== "leader" && res !== "chaser")) return;
+      brRecord(id, b.leader, b.chaser, b[res]); S.bc = { ...b, decidedAt: Date.now() }; save(); }, // the decision stays on air, then the votes clear
+    brWin: () => { const x = TOURS.find(z => z.id === id); if (!x) return; brSet(x, el.dataset.v, brOf(x)?.w?.[el.dataset.v] === el.dataset.name ? null : el.dataset.name); save(); toast(t("saved")); },
+    brReseed: () => { const x = TOURS.find(z => z.id === id); if (!x) return; confirmTwice(`br${id}`, () => { S.brackets = { ...S.brackets, [id]: { w: {} } }; S.brackets[id].slots = slotsOf(x); save(); }); },
     toIsland: () => { const x = TOURS.find(z => z.id === id); if (!x) return; aTab = "seasons"; aSeason = x.season; aTour = id; aSub = "judge"; location.hash = "#admin"; },
     bcSwap: () => {
       // roles swap for the second run, so votes follow the pilots
@@ -3813,15 +4174,19 @@ document.addEventListener("click", e => {
       save();
     },
     newSeason, delSeason: () => delSeason(id), addStage: () => addStage(id), delStage: () => delStage(id),
-    addTest: () => { if (isAdmin()) addTestPilot(); }, delTest: () => { if (isAdmin()) delTestPilot(el.dataset.name); }, kick: () => kickPilot(el.dataset.name),
+    addTest: addTestPilot, delTest: () => delTestPilot(el.dataset.name), kick: () => kickPilot(el.dataset.name),
     giveSanction: () => giveSanction(id), delSanction: () => delSanction(el.dataset.name, id),
     newSponsor: () => { SPONSORS.push({ name: "Новый спонсор", role: SPONSORS.some(s => s.role === "general") ? "partner" : "general", url: "" }); dbSave(); },
-    newAch: () => { if (!isAdmin()) return; ACHIEVEMENTS.push(["🏁", "c" + Date.now().toString(36), [t("achNewRu"), ""], ["", ""]]); dbSave(); },
-    delAch: () => { if (!isAdmin()) return; confirmTwice(`ach${id}`, () => { ACHIEVEMENTS.splice(id, 1); dbSave(); }); },
+    newAch: () => { ACHIEVEMENTS.push(["🏁", "c" + Date.now().toString(36), [t("achNewRu"), ""], ["", ""]]); dbSave(); },
+    delAch: () => { confirmTwice(`ach${id}`, () => { delete AWARDS[ACHIEVEMENTS[id]?.[1]]; ACHIEVEMENTS.splice(id, 1); dbSave(); }); },
+    achGive: () => { const a = ACHIEVEMENTS[id], n = document.getElementById(`achp-${id}`)?.value; if (!a || !roster().some(p => p.name === n)) return;
+      AWARDS[a[1]] = [...new Set([...(AWARDS[a[1]] || []), n])]; dbSave(); toast(t("achGiven")); },
+    achTake: () => { const a = ACHIEVEMENTS[id]; if (!a) return; AWARDS[a[1]] = (AWARDS[a[1]] || []).filter(n => n !== el.dataset.name); dbSave(); },
+    spLogoDel: () => { const s = SPONSORS[id]; if (!s) return; delete s.img; dbSave(); },
     delSponsor: () => confirmTwice(`sp${id}`, () => { SPONSORS.splice(id, 1); dbSave(); }),
     // demo switch: turning it off also drops the role granted in the Access section
-    toggleAdmin: () => { if (ADMINS.length) return; ADMINS.push(S.user.name); dbSave(); }, // only while the site has no admin yet: the first one claims it
-    reg: () => { const x = TOURS.find(z => z.id === id); if (!x) return; if (regCount(x) >= SETTINGS.maxStage) return toast(t("stageFull")); if (!carOk()) return toast(t("needCarHere")); S.regs = [...new Set([...S.regs, id])]; S.regAt = { ...S.regAt, [id]: Date.now() }; save(); },
+    toggleAdmin: () => { if (Object.keys(ROLES).length) return; ROLES[S.user.name] = "owner"; dbSave(); }, // demo only, while nobody has a role: the first one becomes head admin
+    reg: () => { const x = TOURS.find(z => z.id === id); if (!x) return; if (regCount(x) >= stageMax(x)) return toast(t("stageFull")); if (isBanned(S.user?.name)) return toast(t("youBanned")); if (!carOk()) return toast(t("needCarHere")); S.regs = [...new Set([...S.regs, id])]; S.regAt = { ...S.regAt, [id]: Date.now() }; save(); },
     unreg: () => { S.regs = S.regs.filter(x => x !== id); save(); },
     join: () => { const x = teamById(id); if (x && !x.owner && !x.closed && membersOf(x).length < maxTeam()) { S.team = id; save(); } },
     teamOpen: () => { const ref = myTeamRef(); if (!ref) return; ref.closed = el.dataset.v === "closed"; saveTeam(); },
@@ -3867,6 +4232,7 @@ document.addEventListener("input", e => {
     document.querySelectorAll("#invlist li").forEach(li => { const on = li.dataset.q.includes(q); li.hidden = !on; n += on; });
     document.getElementById("invnone").hidden = n > 0; return; }
   // update in place so the field keeps focus
+  if (e.target.id === "rule-ta") { const pv = document.getElementById("rule-prev"); if (pv) pv.innerHTML = textToHtml(e.target.value); return; }
   if (e.target.id === "accq") { accessQuery = e.target.value; document.getElementById("acc-body").innerHTML = accessRows(); }
   if (e.target.id === "search") { query = e.target.value; const el = document.getElementById("rlist"); if (el) el.innerHTML = rRows(); }
   if (e.target.dataset.about) {
@@ -3882,10 +4248,12 @@ document.addEventListener("input", e => {
 document.addEventListener("toggle", e => { if (e.target.id === "ach-box") { S.achOpen = e.target.open; persist(); } }, true);
 document.addEventListener("change", e => {
   if (e.target.id === "teamlogo") return setTeamLogo(e.target.files?.[0]);
+  if (e.target.dataset.splogo && isAdmin()) { const s = SPONSORS[+e.target.dataset.splogo], f = e.target.files?.[0];
+    return s && f && readLogo(f, data => { s.img = data; dbSave(); toast(t("saved")); }, () => toast(t("logoBad")), true); }
   const k = e.target.dataset.car, a = e.target.dataset.a;
   if (k === "hp") { const n = Math.round(Number(e.target.value)); S.car.hp = e.target.value === "" || !Number.isFinite(n) ? "" : String(Math.min(SETTINGS.hpMax, Math.max(SETTINGS.hpMin, n))); save(); }
   else if (k) { S.car[k] = e.target.value.slice(0, 40); save(); }
-  if (a && isAdmin()) { adminEdit(a.split(":"), e.target.type === "checkbox" ? e.target.checked : e.target.value); if (!adminMsg) toast(t("saved")); }
+  if (a && canEdit(a.split(":")[0])) { adminEdit(a.split(":"), e.target.type === "checkbox" ? e.target.checked : e.target.value); if (!adminMsg) toast(t("saved")); }
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Enter" && e.target.matches?.("tr[data-qt], tr[data-season]")) e.target.click();

@@ -44,6 +44,26 @@ ok((await call("/api/live", { method: "PUT", token: pilot, body: "{}" })).status
 ok((await call("/api/db", { method: "PUT", token: owner, body: JSON.stringify({ db: { settings: { maxStage: 40 }, protests: [] } }) })).ok, "owner writes league data");
 ok((await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: { onTrack: "Test Pilot" }, scores: {} }) })).ok, "owner writes live data");
 
+// roles by SteamID: tech writes only the rules, judges write live data, admins can't touch roles
+const putDbAs = (token, db) => call("/api/db", { method: "PUT", token, body: JSON.stringify({ db }) });
+const base = { settings: { maxStage: 40 }, protests: [] };
+const setRole = r => putDbAs(owner, { ...base, roleIds: r ? { [PILOT]: r } : {} });
+await setRole("tech");
+ok((await (await call("/api/me", { token: pilot })).json()).role === "tech", "role comes from roleIds");
+ok((await putDbAs(pilot, { rules: { version: "9" }, settings: { maxStage: 1 } })).ok, "tech saves");
+st = await (await call("/api/state")).json();
+ok(st.db.rules.version === "9" && st.db.settings.maxStage === 40, "tech changed only the rules");
+ok((await call("/api/live", { method: "PUT", token: pilot, body: "{}" })).status === 403, "tech cannot write live data");
+await setRole("judge");
+ok((await call("/api/live", { method: "PUT", token: pilot, body: JSON.stringify({ bc: { onTrack: "Test Pilot" }, scores: {}, brackets: { 203: { w: {} } } }) })).ok, "judge writes live data");
+ok((await putDbAs(pilot, base)).status === 403, "judge cannot write league data");
+await setRole("admin");
+ok((await putDbAs(pilot, { ...base, roleIds: {} })).ok, "admin writes league data");
+st = await (await call("/api/state")).json();
+ok(st.db.roleIds[PILOT] === "admin", "admin cannot change roles");
+await setRole("");
+ok((await (await call("/api/me", { token: pilot })).json()).role === "", "role removed");
+
 // protests: only while the stage runs, only by its pilots, once per opponent; it lands under the pilot's Steam name
 const protest = (tour, token = pilot) => call("/api/protest", { method: "POST", token, body: JSON.stringify({ tour, against: "Someone", text: "contact" }) });
 ok((await protest(203)).status === 409, "no protest before the stage runs");
