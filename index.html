@@ -1755,6 +1755,9 @@ a.sp-card:hover { background: color-mix(in srgb, var(--accent) 6%, transparent) 
 .sp-ed-logo { display: grid; justify-items: center; gap: .5rem; width: 8rem } .sp-ed-logo .sp-logo { width: 96px; height: 96px }
 .sp-ed-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem }
 @media (max-width: 640px) { .sp-eds { grid-template-columns: 1fr } .sp-ed, .sp-ed-fields { grid-template-columns: 1fr } .sp-ed-logo { width: auto } }
+/* number fields: no spin arrows (they ate the digits in narrow fields); the value is typed */
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
+input[type=number] { -moz-appearance: textfield; appearance: textfield }
 /* judges island: three criteria per run, summed */
 .jparts { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)) 4rem; gap: .5rem .6rem; align-items: center }
 .jparts .field { padding-inline: .5rem; text-align: center }
@@ -1774,10 +1777,16 @@ a.sp-card:hover { background: color-mix(in srgb, var(--accent) 6%, transparent) 
 .rdoc > summary h3 { margin: 0 }
 .rdoc[open] > summary { padding-bottom: 1rem; border-bottom: 1px solid var(--line) }
 .rdoc[open] .ach-chev { transform: rotate(180deg) } .rdoc > summary:hover .ach-chev { border-color: var(--accent) }
+.tm-status.staff { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, var(--line)) }
+.tm-status.staff::before { background: var(--accent) }
+.pl-right .staff-role { position: static; font-size: .62rem; white-space: nowrap }
 .cap.rep { background: var(--panel-2); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent) }
 .members li .cap, .pl-card b .cap { margin-left: .4rem; vertical-align: middle }
-.tm-roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line) }
-.tm-roles .cap { margin-left: .3rem }
+.tm-roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.2rem; align-items: stretch }
+.tm-role { display: grid; gap: .6rem; align-content: start; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--bg) 40%, transparent) }
+.tm-role-h { display: flex; align-items: center; gap: .5rem; font-weight: 700 } .tm-role-h .cap { margin: 0 }
+.tm-role-row { display: flex; gap: .5rem } .tm-role-row .field { flex: 1; min-width: 0 }
+.tm-role .note { margin: 0; font-size: .78rem }
 @media (max-width: 900px) { .tm-roles { grid-template-columns: 1fr } }
 /* achievements editor */
 .ach-ed2 { display: grid; grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2000,7 +2009,8 @@ const I18N = {
     howCarT: "Заполните профиль", howCarD: "Машина, двигатель, КПП, мощность и стартовый номер от 1 до 999.",
     howRegT: "Запишитесь на этап", howRegD: "Регистрация открывается заранее и закрывается перед стартом этапа.",
     howRaceT: "Квалификация и парные", howRaceD: "Две попытки в квалификации, затем сетка Топ 32 вплоть до финала.",
-    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", repL: "Представитель", repPick: "Представитель команды", founderPass: "Передать права основателя", founderPassBtn: "Передать",
+    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", repHint: "Один участник команды, метка R в составе.", rolesNoMembers: "В команде пока нет других участников.", staffName: "Организаторы LDS", staffDesc: "Главный администратор, администраторы, судьи, стримеры и технические помощники чемпионата.",
+    staffBadge: "Организаторы", staffN: "в составе", staffRoster: "Состав организаторов", repL: "Представитель", repPick: "Представитель команды", founderPass: "Передать права основателя", founderPassBtn: "Передать",
     founderPassHint: "После передачи вы станете обычным участником, управление командой перейдёт к новому основателю.", founderPassed: "Права основателя переданы", createdKeep: "Вы уже создали команду — она продолжает существовать. Новую создать нельзя.", founderAssigned: "Вы основатель команды. Чтобы выйти из неё, сначала передайте права основателя другому участнику.", teamSend: "Отправка участников от команды", teamSendSoon: "Отправка участников откроется, когда этап перейдёт в статус «Регистрация».",
     teamSendNoStage: "Сейчас нет этапа. Отправка участников откроется вместе с регистрацией на следующий этап.", choose: "Выбрать", teamManage: "Управление командой", founderL: "Основатель", founderStays: "Вы основатель своей команды и остаётесь в ней. Чтобы перейти в другую, сначала распустите свою.",
     achPilots: "Достижения в профиле", achTeams: "Достижения команд", achPilotHint: "Показываются в профилях пилотов. Выдаются пилотам.", achTeamHint: "Показываются на страницах команд. Выдаются командам.",
@@ -2136,7 +2146,8 @@ const I18N = {
     howCarT: "Set up your profile", howCarD: "Car, engine, gearbox, power and a race number from 1 to 999.",
     howRegT: "Sign up for a round", howRegD: "Registration opens in advance and closes before the round starts.",
     howRaceT: "Qualify and battle", howRaceD: "Two qualifying runs, then a Top 32 bracket all the way to the final.",
-    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", repL: "Representative", repPick: "Team representative", founderPass: "Hand over the founder role", founderPassBtn: "Hand over",
+    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", repHint: "One team member, marked R in the line-up.", rolesNoMembers: "No other members in the team yet.", staffName: "LDS organisers", staffDesc: "The championship's head admin, admins, judges, streamers and technical assistants.",
+    staffBadge: "Organisers", staffN: "members", staffRoster: "The organisers", repL: "Representative", repPick: "Team representative", founderPass: "Hand over the founder role", founderPassBtn: "Hand over",
     founderPassHint: "After the hand-over you become a regular member; team management moves to the new founder.", founderPassed: "Founder role handed over", createdKeep: "You already created a team and it still exists. You can't create a new one.", founderAssigned: "You are the team's founder. To leave it, first hand the founder role to another member.", teamSend: "Send the team's drivers", teamSendSoon: "Sending drivers opens when the round moves to Registration.",
     teamSendNoStage: "There is no round right now. Sending drivers opens with registration for the next round.", choose: "Choose", teamManage: "Team management", founderL: "Founder", founderStays: "You founded your team and stay in it. To move to another team, disband yours first.",
     achPilots: "Profile achievements", achTeams: "Team achievements", achPilotHint: "Shown in drivers' profiles. Given to drivers.", achTeamHint: "Shown on team pages. Given to teams.",
@@ -2405,7 +2416,11 @@ const statusPill = s => `<span class="pill s-${statusCls(s)}">${t(s)}</span>`;
 const allTeams = () => (HOSTED ? [...TEAMS, ...SRV_TEAMS.map(z => ({ ...z, srv: true, owner: z.founder === S.user?.steamId }))]
   : [...TEAMS, ...(S.created ? [{ id: OWN_TEAM, ...S.created, owner: true }] : [])])
   .map(tm => TEAM_NAMES[tm.id] ? { ...tm, name: TEAM_NAMES[tm.id] } : tm);
-const teamById = id => allTeams().find(x => x.id === id);
+// the organisers' team: everyone with a role (head admin … technical assistant), gathered from the roles, pinned first,
+// outside every points table, stage entry and join list (it is not in allTeams)
+const STAFF_ID = 9e6;
+const staffTeam = () => ({ id: STAFF_ID, name: t("staffName"), tag: "LDS", desc: t("staffDesc"), staff: true });
+const teamById = id => id === STAFF_ID ? staffTeam() : allTeams().find(x => x.id === id);
 const logo = tm => /^data:image\/(webp|jpeg|png);base64,/.test(tm.img || "")
   ? `<span class="tlogo has-img" style="background-image:url(${tm.img})" role="img" aria-label="${esc(tm.tag)}"></span>`
   : `<span class="tlogo">${esc(tm.tag)}</span>`;
@@ -2419,7 +2434,9 @@ const scoreOf = (x, p, i, k) => HOSTED || x.status === "soon" || x.status === "r
 const taken = () => new Set(PILOTS.map(p => p.num));
 // the pilot who created a team stays its founder: listed first and marked everywhere
 const founderName = tm => founderOf(tm)?.name || null;
-const membersOf = tm => { const f = founderName(tm); return roster().filter(p => p.team === tm.id).sort((a, b) => (b.name === f) - (a.name === f) || b.rating - a.rating); };
+const STAFF_RANK = r => ["owner", ...ROLE_LIST].indexOf(r);
+const membersOf = tm => { if (tm.staff) return roster().filter(p => !p.test && roleOf(p.name)).sort((a, b) => STAFF_RANK(roleOf(a.name)) - STAFF_RANK(roleOf(b.name)) || a.name.localeCompare(b.name));
+  const f = founderName(tm); return roster().filter(p => p.team === tm.id).sort((a, b) => (b.name === f) - (a.name === f) || b.rating - a.rating); };
 // one-letter marks: C = founder, R = representative (one per team, picked by the founder)
 const repName = tm => tm.rep && tm.rep !== founderName(tm) && roster().some(p => p.team === tm.id && p.name === tm.rep) ? tm.rep : null;
 const founderTag = (tm, p) => p.name === founderName(tm) ? `<span class="cap" title="${t("founderL")}">C</span>`
@@ -2846,12 +2863,13 @@ const descBlock = tm => isFounder(tm)
 let selTeam = null;
 // ---- teams: card grid in the home-page style; each card opens the team page, members open public driver profiles ----
 const avStack = tm => `<span class="av-stack" aria-hidden="true">${membersOf(tm).slice(0, 4).map(p => pAva(p, "", "i")).join("")}</span>`;
-const tmStatus = tm => `<span class="tm-status ${tm.closed ? "closed" : ""}">${t(tm.closed ? "teamClosedL" : "teamOpenL")}</span>`;
+const tmStatus = tm => tm.staff ? `<span class="tm-status staff">${t("staffBadge")}</span>` : `<span class="tm-status ${tm.closed ? "closed" : ""}">${t(tm.closed ? "teamClosedL" : "teamOpenL")}</span>`;
 const tmCard = (tm, link = true, i = 0) => { const tag = link ? "a" : "div";
   return `<${tag} class="tm-card"${link ? ` href="#tm-${tm.id}"` : ""} style="--i:${i}">
     <div class="tm-top">${logo(tm)}${tmStatus(tm)}</div>
     <div class="stack" style="gap:.4rem"><b class="tm-name">${esc(tm.name)}</b><p class="tm-desc ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tr(tm.desc)) : t("noDescShort")}</p></div>
-    <div class="tm-foot">${avStack(tm)}<span class="note">${membersOf(tm).length}/${maxTeam()}</span><span class="tm-pts"><b>${teamPts(tm)}</b><span class="label">${t("pointsShort")}</span></span></div>
+    <div class="tm-foot">${avStack(tm)}${tm.staff ? `<span class="note">${membersOf(tm).length} ${t("staffN")}</span>`
+      : `<span class="note">${membersOf(tm).length}/${maxTeam()}</span><span class="tm-pts"><b>${teamPts(tm)}</b><span class="label">${t("pointsShort")}</span></span>`}</div>
   </${tag}>`; };
 function teams() {
   const list = allTeams();
@@ -2859,13 +2877,23 @@ function teams() {
     <div class="stack" style="gap:.8rem"><h1 class="r-title">${t("teams")}</h1><p class="note">${t("teamsLead")}</p></div>
     <a class="btn line" href="#profile">${t(S.team ? "myTeam" : "createOrJoin")} ↗</a>
   </section>
-  <div class="tm-grid stagger">${list.map((tm, i) => tmCard(tm, true, i)).join("")}</div>`;
+  <div class="tm-grid stagger">${[...(membersOf(staffTeam()).length ? [staffTeam()] : []), ...list].map((tm, i) => tmCard(tm, true, i)).join("")}</div>`;
 }
 const statRow = rows => `<dl class="pp-stats">${rows.map(([v, k]) => `<div><dt>${t(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
 function teamPage(id) {
   const tm = teamById(id);
   if (!tm) return teams();
   const ms = membersOf(tm), rank = allTeams().map(z => [z.id, teamPts(z)]).sort((a, b) => b[1] - a[1]).findIndex(([z]) => z === tm.id) + 1;
+  if (tm.staff) return `<a class="back" href="#teams">← ${t("teams")}</a>
+  <section class="tm-hero">${logo(tm)}
+    <div class="stack" style="gap:.7rem;min-width:0"><span class="label idx">${t("teamWord")} · LDS</span><h1>${esc(tm.name)}</h1><p class="tm-lead">${esc(tm.desc)}</p>${tmStatus(tm)}</div>
+    ${statRow([[ms.length, "staffN"]])}
+  </section>
+  <section class="stack sec"><div class="sec-head"><span class="label idx">01 — ${t("rosterL")}</span><h2>${t("staffRoster")}</h2></div>
+    ${ms.length ? `<div class="pl-grid">${ms.map((p, i) => `<a class="pl-card" href="${pHref(p.name)}" style="--i:${i}">${pAva(p, "pl-ava")}
+      <span class="stack" style="gap:.2rem;min-width:0"><b>${esc(p.name)}</b><span class="note">${teamById(p.team) ? esc(teamById(p.team).name) : t("freeAgent")}</span></span>
+      <span class="pl-right"><span class="pp-role admin staff-role">${roleLabel(roleOf(p.name))}</span></span></a>`).join("")}</div>` : `<p class="note">${t("noMembers")}</p>`}
+  </section>`;
   return `<a class="back" href="#teams">← ${t("teams")}</a>
   <section class="tm-hero">${logo(tm)}
     <div class="stack" style="gap:.7rem;min-width:0"><span class="label idx">${t("teamWord")}${tm.tag ? ` · ${esc(tm.tag)}` : ""}</span><h1>${esc(tm.name)}</h1>
@@ -3490,10 +3518,15 @@ function teamManage() {
   const tm = teamById(S.team);
   if (!isFounder(tm)) return ""; // only the founder manages the team; other members don't see this block
   const others = membersOf(tm).filter(p => p.name !== S.user.name);
+  const none = !others.length;
   const roles = `<div class="tm-roles">
-      <label class="fieldlabel">${t("repPick")} <span class="cap rep">R</span><select class="field" id="teamrep"><option value="">—</option>${others.map(p => `<option ${p.name === repName(tm) ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select></label>
-      <div class="fieldlabel">${t("founderPass")} <span class="cap">C</span><div class="row" style="gap:.4rem;flex-wrap:nowrap"><select class="field" id="teamfounder"><option value="">—</option>${others.map(p => `<option ${p.name === passTo ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
-        <button class="btn line sm" data-act="founderPass">${pending === "fpass" ? t("confirmBtn") : t("founderPassBtn")}</button></div><span class="note">${t("founderPassHint")}</span></div></div>`;
+      <div class="tm-role"><span class="tm-role-h"><span class="cap rep">R</span>${t("repPick")}</span>
+        <select class="field" id="teamrep" aria-label="${t("repPick")}" ${none ? "disabled" : ""}><option value="">—</option>${others.map(p => `<option ${p.name === repName(tm) ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+        <p class="note">${t(none ? "rolesNoMembers" : "repHint")}</p></div>
+      <div class="tm-role"><span class="tm-role-h"><span class="cap">C</span>${t("founderPass")}</span>
+        <div class="tm-role-row"><select class="field" id="teamfounder" aria-label="${t("founderPass")}" ${none ? "disabled" : ""}><option value="">—</option>${others.map(p => `<option ${p.name === passTo ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+          <button class="btn line sm" data-act="founderPass" ${none ? "disabled" : ""}>${pending === "fpass" ? t("confirmBtn") : t("founderPassBtn")}</button></div>
+        <p class="note">${t(none ? "rolesNoMembers" : "founderPassHint")}</p></div></div>`;
   return psec(t("teamManage"), `<div class="tm-desc-ed">${descBlock(tm)}</div>${roles}<div class="tm-manage two">${leaderTools(tm)}${teamRegBox(tm)}</div>`);
 }
 function myTeamBox() {
@@ -4788,6 +4821,8 @@ document.addEventListener("change", e => {
   else if (k) { S.car[k] = e.target.value.slice(0, 40); save(); }
   if (a && canEdit(a.split(":")[0])) { adminEdit(a.split(":"), e.target.type === "checkbox" ? e.target.checked : e.target.value); if (!adminMsg) toast(t("saved")); }
 });
+// the mouse wheel over a focused number field scrolls the page instead of changing a score
+document.addEventListener("wheel", e => { if (e.target.matches?.("input[type=number]") && e.target === document.activeElement) e.target.blur(); }, { passive: true });
 document.addEventListener("keydown", e => {
   if (e.key === "Enter" && e.target.matches?.("tr[data-qt], tr[data-season]")) e.target.click();
 });
