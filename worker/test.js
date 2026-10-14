@@ -97,13 +97,6 @@ setTimeout(() => call("/api/me", { method: "PUT", token: owner, body: JSON.strin
 held = await waiting;
 ok("users" in held && Date.now() - t0 < 6000, "long poll answers right after a change");
 
-// translation: Russian is translated once and cached, other text passes through
-const tr1 = await (await call("/api/translate", { method: "POST", body: JSON.stringify({ q: ["Привет", "LDS 2.0"] }) })).json();
-ok(typeof tr1.t[0] === "string" && !/[А-Яа-я]/.test(tr1.t[0]) && tr1.t[1] === "LDS 2.0", "translates Russian, keeps the rest");
-t0 = Date.now();
-const tr2 = await (await call("/api/translate", { method: "POST", body: JSON.stringify({ q: ["Привет"] }) })).json();
-ok(tr2.t[0] === tr1.t[0], "second time comes from the cache");
-
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");
 ok(!(await fetch(API + "/api/state", { headers: { origin: "https://evil.example" } })).headers.get("access-control-allow-origin"), "no CORS for other sites");

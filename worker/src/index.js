@@ -38,7 +38,6 @@ async function route(req, env, url) {
   if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireRole(req, env, ["owner", "admin", "tech"]));
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
-  if (m === "POST" && p === "/api/translate") return postTranslate(req, env);
   if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
   if (m === "GET" && p === "/") return json({ ok: true, service: "lds-api" });
   throw new HttpError(404, "not found");
@@ -245,35 +244,6 @@ async function postProtest(req, env, sid) {
   await kvSet(env, "db", db);
   await bump(env);
   return json({ ok: true });
-}
-
-// ---------- translation: Russian site text to English, translated once on the server and shared by every visitor ----------
-// visitors' browsers can be blocked or rate-limited by Google; the worker asks instead and keeps every answer in D1
-const MAX_TR = 40; // a request may make at most 50 outgoing calls on the free plan
-const hasRu = s => /[А-Яа-яЁё]/.test(s);
-async function sha(text) {
-  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-async function googleTr(text) {
-  const r = await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=ru&tl=en&dt=t",
-    { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" }, body: "q=" + encodeURIComponent(text) });
-  if (!r.ok) return null;
-  const out = ((await r.json())?.[0] || []).map(p => p?.[0] || "").join("");
-  return out.trim() ? out : null;
-}
-async function postTranslate(req, env) {
-  const body = await readJson(req, 120_000);
-  const q = (Array.isArray(body?.q) ? body.q : []).slice(0, MAX_TR).map(s => String(s).slice(0, 2000));
-  const keys = await Promise.all(q.map(sha)), found = new Map();
-  if (keys.length) {
-    const rows = await env.DB.prepare(`SELECT k, v FROM tr WHERE k IN (${keys.map(() => "?").join(",")})`).bind(...keys).all();
-    for (const r of rows.results) found.set(r.k, r.v);
-  }
-  const t = await Promise.all(q.map((s, i) => found.has(keys[i]) ? found.get(keys[i]) : hasRu(s) ? googleTr(s).catch(() => null) : s));
-  const fresh = q.map((s, i) => [keys[i], t[i], s]).filter(([k, v, s]) => v && !found.has(k) && hasRu(s));
-  if (fresh.length) await env.DB.batch(fresh.map(([k, v]) => env.DB.prepare("INSERT OR REPLACE INTO tr (k, v) VALUES (?, ?)").bind(k, v)));
-  return json({ t });
 }
 
 // head admin: set another pilot's number, or remove the pilot (their profile is deleted; signing in again starts a fresh one)
