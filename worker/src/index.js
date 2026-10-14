@@ -115,7 +115,8 @@ async function roleOf(env, sid, db) {
   db ??= await kvGet(env, "db");
   const r = db?.roleIds?.[sid];
   if (ROLES.includes(r)) return r;
-  return Array.isArray(db?.adminIds) && db.adminIds.includes(sid) ? "admin" : "";
+  // the old admin list counts only until the head admin has saved roles once
+  return !db?.roleIds && Array.isArray(db?.adminIds) && db.adminIds.includes(sid) ? "admin" : "";
 }
 async function requireRole(req, env, allowed) {
   const sid = await auth(req, env), role = await roleOf(env, sid);
