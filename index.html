@@ -1936,7 +1936,7 @@ const I18N = {
     howCarT: "Заполните профиль", howCarD: "Машина, двигатель, КПП, мощность и стартовый номер от 1 до 999.",
     howRegT: "Запишитесь на этап", howRegD: "Регистрация открывается заранее и закрывается перед стартом этапа.",
     howRaceT: "Квалификация и парные", howRaceD: "Две попытки в квалификации, затем сетка Топ 32 вплоть до финала.",
-    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
+    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", rulesEnAuto: "Английская версия переводится автоматически из русской.", rulesAuto: "", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
     spHint: "Спонсоры показываются на главной под лидерами сезона. Логотип: PNG, JPG или WebP до 5 МБ, он впишется в квадрат целиком.", bracketTitle: "Сетка топ-32", brPreview: "Предварительно — по текущей квалификации", bye: "Без соперника", brSetWin: "Отметить победителя",
     brRecorded: "Результат записан в сетку", brPairs: "Пары сетки", brReseed: "Пересобрать из квалификации", brEditHint: "Сетка заполняется сама из судейского острова. Здесь можно исправить ошибку: ✓ отмечает победителя пары, повторный клик снимает.",
     stageFirst: "Лидер этапа", stageNote: "Очки активного этапа: место в сетке, бонус за квалификацию и коэффициент сложности трассы. Когда начинается следующий этап, рейтинг обнуляется.",
@@ -2059,7 +2059,7 @@ const I18N = {
     howCarT: "Set up your profile", howCarD: "Car, engine, gearbox, power and a race number from 1 to 999.",
     howRegT: "Sign up for a round", howRegD: "Registration opens in advance and closes before the round starts.",
     howRaceT: "Qualify and battle", howRaceD: "Two qualifying runs, then a Top 32 bracket all the way to the final.",
-    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
+    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", rulesEnAuto: "The English version is translated from the Russian one automatically.", rulesAuto: "Translated automatically from the official Russian rules.", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
     spHint: "Sponsors show on the home page under the season leaders. Logo: PNG, JPG or WebP up to 5 MB, fitted whole into a square.", bracketTitle: "Top 32 bracket", brPreview: "Preview — from the current qualifying", bye: "Bye", brSetWin: "Mark the winner",
     brRecorded: "Result saved to the bracket", brPairs: "Bracket pairs", brReseed: "Rebuild from qualifying", brEditHint: "The bracket fills itself from the judges’ island. Fix mistakes here: ✓ marks a pair’s winner, a second click clears it.",
     stageFirst: "Round leader", stageNote: "Points for the active round: bracket place, qualifying bonus and the track difficulty factor. The rating resets when the next round starts.",
@@ -2854,136 +2854,11 @@ const TEAM_RULES = [
   ["Замены участников", "Замена участника после начала этапа допускается только с разрешения организаторов и в случаях, предусмотренных регламентом."],
   ["Наказание команды", "За серьёзные или систематические нарушения к команде могут быть применены предупреждение, штрафные санкции или дисквалификация."],
 ];
-// English defaults, already in the editable text form
-const RULES_EN = () => [
-  ["General information", `LDS (Lateral Drift Series) is a professional CarX Drift Racing Online 2 championship for drivers who want to compete in a fair and organised setting. Whatever their level, every participant gets the chance to show their skills, gain experience and become part of a competitive community.
-
-The main goal of the championship is to run quality competitions where the result depends only on the driver's skill. To achieve this we use one set of rules, a clear round format and objective judging.
-
-Every LDS round is a full competition: drivers fight not only for the round win but also for championship points that make up the season standings.
-
-All runs follow these rules. The judging panel scores performances by the published criteria; judges' decisions are binding for all participants.
-
-The rules may be changed or extended when needed. All changes are published before they take effect and become binding for everyone.
-
-By registering for the championship, a driver confirms they have read the rules, accepts them and agrees to treat organisers, judges and other participants with respect.`],
-  ["Exterior rules", `## 2.1 Body
-**2.1.1 Not allowed:**
-- 2.1.1.1 Removing two paired parts of the car at the same time.
-- 2.1.1.2 Removing the boot lid and doors.
-- 2.1.1.3 Removing the bonnet.
-- 2.1.1.4 Removing the front and rear bumpers.
-- 2.1.1.5 Removing the headlights.
-
-**2.1.2 Allowed:**
-- 2.1.2.1 Running without a spoiler.
-- 2.1.2.2 Removing the mirrors.
-- 2.1.2.3 Fully editing the interior.
-
-## 2.2 Livery
-**2.2.1 Not allowed:**
-- 2.2.1.1 Liveries with obscene language in any language.
-- 2.2.1.2 Pornographic, erotic or sexual images.
-- 2.2.1.3 Material promoting extremism, terrorism, nazism, racism, discrimination or hatred.
-- 2.2.1.4 Political slogans, symbols and campaign material.
-- 2.2.1.5 Liveries insulting, bullying or humiliating other participants, teams, organisers or third parties.
-- 2.2.1.6 Using another team's livery without its owners' permission.
-- 2.2.1.7 Liveries that make the car hard to identify, including plain single-colour wraps that hide the driver's number.
-- 2.2.1.8 Cheat or modified textures that give a visual advantage or are not in the official game. Third-party visual mods may lead to disqualification.
-
-The organisers may ban any livery that breaks the championship rules.
-
-## 2.3 Number and banner
-**2.3.1** The banner has 4 elements: a black strip, the CarX logo (white), the LDS logo (white) and the driver's number (white).
-
-**2.3.2** There are only two numbers: on the banner and on the rear window. The rear window number is a black rectangle with the driver's number inside it (white). The number is assigned in the round table after registration.
-
-! **Warning.** If the marshal finds a body or number/banner violation, you get 5 minutes to fix it. Not fixed in time — disqualification from the event. Fixed — you move to the end of the qualifying / battle queue.`],
-  ["Technical rules", `## 3.1 Suspension
-**3.1.1** Heavily lowered suspension is not allowed.
-
-**3.1.2** Heavily raised suspension is not allowed.
-
-**3.1.3** Wheels may stick out of the arches by no more than 5% of the tyre width; tyres must not clip through the arch textures, static or in motion.
-
-## 3.2 Specifications
-| Parameter | From | To |
-| Front wheel | 235/40 R18 | 265/35 R18 |
-| Rear wheel | 265/35 R18 |
-| Rear tyre pressure | 0.6 bar | 2.5 bar |
-| Tyre type | semi-slick |
-| Car weight, kg | 1185 | 1550 |
-| Engine power, hp | ${SETTINGS.hpMin} | ${SETTINGS.hpMax} |`],
-  ["Judging", `Round judging panel: angle judge, line judge, style judge, extra judges, a marshal and a streamer-commentator. Judging coordinator: **@kt_anzou**.
-
-## 4.1 Judging criteria
-**4.1.1 Line.** The car's path through the course while drifting: clipping points and transition zones. Judges score how precisely the car follows the set line; a good line shows planning, control and understanding of the track.
-
-**4.1.2 Angle.** The drift angle through the section; it makes the run look spectacular. Judges score how optimal and stable the angle is. Too much or too little angle gets in the chaser's way and costs points.
-
-**4.1.3 Style.** A subjective score of how the driver handles the car: smoothness, aggression, originality and control — everything that makes a run memorable.
-
-## 4.2 Competition format
-- 4.2.1 Game version — standard.
-- 4.2.2 Type — two-stage event: groups compete separately, winners move on to the final stage.
-- 4.2.3 Driver split — 4 groups of 10 drivers.
-- 4.2.4 Bracket — Single Elimination.
-- 4.2.5 Final — 4 winners.
-- 4.2.6 Venue — private online room.
-- 4.2.7 Room limit — 5 drivers + judges in qualifying, 4 drivers + judges in battles.
-- 4.2.8 Qualifying runs — two, except for technical issues.
-
-A separate judging brief is published before every round: track information, scoring and rules.`],
-  ["Points", `Drivers and teams earn points every round. At the end of the season the teams and drivers with the most points are awarded.
-
-## 5.1 Drivers
-| Round place | Points | Qualifying | Bonus |
-| 1 | 100 | 1 | +20 |
-| 2 | 80 | 2 | +15 |
-| 3 | 60 | 3 | +10 |
-| 4 | 50 | 4 | +5 |
-| 5–8 | 40 |  |  |
-| 9–16 | 25 |  |  |
-| 17–32 | 10 |  |  |
-| Did not qualify | 0 |  |  |
-
-**Round difficulty factor:** easy ×1.0, medium ×1.2, hard ×1.5. For example, 1st place on a hard round is worth 150 points.
-
-## 5.2 Teams
-Team points come from the team table and add up for the team's two best drivers in the round. The qualifying bonus counts only for one driver's best place (+20 / +15 / +10 / +5). The total is multiplied by the round difficulty factor.
-
-| Round place | Team points |
-| 1 | 70 |
-| 2 | 60 |
-| 3 | 45 |
-| 4 | 30 |
-| 5–8 | 15 |
-| 9–16 | 5 |
-| 17–32 | 2 |
-| Below top 32 | 0 |`],
-  ["Prize fund and awards", `**6.1 General.** Round winners and podium finishers, and the season champions, receive awards and prizes. The prize fund and its terms are published before the season or round starts; sponsors and partners may increase it.
-
-**6.2 Season awards.** Drivers in places 1–4 of the driver standings and teams in places 1–4 of the team standings are awarded.
-
-**6.3 Prize payout.** Cash prizes are paid in the way and time set by the organisers; the winner provides payment details. If the winner cannot be reached for 20 calendar days after the results are announced, the payout may be cancelled. On disqualification the prize passes to the next driver in the final classification.
-
-**6.4 Loss of prizes.** The organiser may cancel a participant's results and awards for breaking the rules; prizes received are returned on the organisers' request.
-
-**6.5 Prize split.** The season's total prize fund and amounts per place will be announced separately.`],
-];
-const TEAM_RULES_EN = [
-  ["Team line-up", "The team standings count only if the team founder has filed the team entry for the round. Up to 32 teams per round and 4 drivers per team."],
-  ["Team responsibility", "The founder and members of a team are fully responsible for following the team rules."],
-  ["Conduct", "Insults, provocation, spam and improper behaviour towards other participants, judges or organisers are not allowed."],
-  ["Respecting judges' decisions", "All team members respect the judging panel's decisions. Disputes are discussed only in the way set by the organisers."],
-  ["Driver changes", "Replacing a driver after the round has started is allowed only with the organisers' permission and in cases covered by the rules."],
-  ["Team penalties", "Serious or repeated violations may bring the team a warning, penalties or disqualification."],
-];
 // Editable rules: several regulations per language, each a list of sections in plain text with light markup:
 // "## heading", "- list item", "! warning", "| cell | cell |" table rows (first row = header), "**bold**", blank line = new paragraph.
-// shape: { version, ru: [{ title, items: [{ title, text }] }], en: [...] }; older saves had { sections, team } in Russian only
+// shape: { version, ru: [{ title, items: [{ title, text }] }] }; older saves had { sections, team }. English is translated from it automatically
 const migrateRules = d => !d ? null : d.ru ? d : { version: d.version || "1.1",
-  ru: [{ title: I18N.ru.pilotRules, items: d.sections || [] }, { title: I18N.ru.teamRules, items: d.team || [] }], en: defaultRulesDoc().en };
+  ru: [{ title: I18N.ru.pilotRules, items: d.sections || [] }, { title: I18N.ru.teamRules, items: d.team || [] }] };
 let rulesDoc = null; // set after defaultRulesDoc is defined
 const inlineMd = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 function textToHtml(text) {
@@ -3031,17 +2906,20 @@ function htmlToText(html) {
 }
 const items = (list, toText) => list.map(([title, body]) => ({ title, text: toText(body) }));
 const defaultRulesDoc = () => ({ version: "1.1",
-  ru: [{ title: I18N.ru.pilotRules, items: items(RULES, htmlToText) }, { title: I18N.ru.teamRules, items: items(TEAM_RULES, x => x) }],
-  en: [{ title: I18N.en.pilotRules, items: items(RULES_EN(), x => x) }, { title: I18N.en.teamRules, items: items(TEAM_RULES_EN, x => x) }] });
+  ru: [{ title: I18N.ru.pilotRules, items: items(RULES, htmlToText) }, { title: I18N.ru.teamRules, items: items(TEAM_RULES, x => x) }] });
 rulesDoc = migrateRules(S.db?.rules);
-// the page language picks the rules; an empty English set falls back to Russian
-const rulesFor = lang => { const d = rulesDoc || defaultRulesDoc(); return lang === "en" && d.en?.length ? d.en : d.ru; };
+// admins write the rules in Russian; the English page translates them line by line, keeping the markup
+// ("## ", "- ", "! " prefixes, table cells and **bold**) so the translated text renders the same way
+const trSeg = s => s.split(/(\*\*)/).map(p => p === "**" ? p : p.replace(/^(\s*)([\s\S]*?)(\s*)$/, (_, a, b, c) => a + tr(b) + c)).join(""); // keep the spaces around bold text
+const trLine = l => { if (/^\s*\|/.test(l)) return l.split("|").map(trSeg).join("|"); const m = /^(\s*(?:## |- |! )?)(.*)$/.exec(l); return m[1] + trSeg(m[2]); };
+const rulesFor = lang => { const ru = (rulesDoc || defaultRulesDoc()).ru;
+  return lang !== "en" ? ru : ru.map(d => ({ title: tr(d.title), items: d.items.map(s => ({ title: tr(s.title), text: s.text.split("\n").map(trLine).join("\n") })) })); };
 const rulesEyebrow = () => `Lateral Drift Series · ${S.lang === "en" ? "Version" : "Версия"} ${esc((rulesDoc || defaultRulesDoc()).version)}`;
 
 function rules() {
-  const docs = rulesFor(S.lang), fallback = S.lang === "en" && docs === rulesFor("ru");
+  const docs = rulesFor(S.lang);
   // every regulation is a framed block; its sections are headed blocks inside
-  return `<div class="doc-head"><span class="label acc">${rulesEyebrow()}</span><h1>${t("rulesTitle")}</h1>${fallback ? `<p class="note">${t("rulesLang")}</p>` : ""}</div>
+  return `<div class="doc-head"><span class="label acc">${rulesEyebrow()}</span><h1>${t("rulesTitle")}</h1>${S.lang === "en" ? `<p class="note">${t("rulesAuto")}</p>` : ""}</div>
   <div class="doc">
     <aside class="toc" aria-label="Contents">${docs.map((d, di) => `<span class="sep">${esc(d.title)}</span>${d.items.map((s, k) =>
       `<button data-goto="r${di}-${k}">${esc(s.title)}</button>`).join("")}`).join("")}</aside>
@@ -3081,7 +2959,7 @@ function adminRules() {
   return `<div class="head"><h2>${t("aRules")}</h2>
       <div class="row" style="gap:.8rem;align-items:end">
         <label class="fieldlabel" style="width:7rem">${t("rulesVersion")}<input class="field" data-a="rule:version" value="${esc(d.version)}" maxlength="12"></label>
-        <div class="seg2" role="tablist" aria-label="${t("rulesLangL")}">${["ru", "en"].map(l => `<button role="tab" data-act="rLang" data-v="${l}" aria-selected="${rLang === l}">${l.toUpperCase()}</button>`).join("")}</div>
+        <span class="note" style="max-width:16rem">${t("rulesEnAuto")}</span>
         <a class="btn line sm" href="#rules">${t("rulesTitle")} ↗</a>
         <button class="btn text danger sm" data-act="rulesReset">${pending === "rules" ? t("resetSure") : t("rulesReset")}</button></div></div>
     <div class="rule-ed2">
@@ -4140,7 +4018,6 @@ document.addEventListener("click", e => {
       TRACK_DIFF[n] = v; dbSave(); toast(t("saved")); },
     vote: () => judgeSet(id, "vote", el.dataset.v, +el.dataset.j),
     onTrack: () => judgeSet(id, "onTrack", el.dataset.name),
-    rLang: () => { rLang = el.dataset.v === "en" ? "en" : "ru"; rSel = [0, 0]; render(); },
     rSel: () => { rSel = [id, +el.dataset.k]; render(); },
     // toolbar: prefix the current line, or wrap / insert at the cursor; the change event saves as if typed
     mdIns: () => { const ta = document.getElementById("rule-ta"); if (!ta) return;
