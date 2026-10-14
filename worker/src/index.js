@@ -173,9 +173,10 @@ async function steamProfile(env, sid) {
 
 // ---------- data ----------
 // what a pilot may set on their own profile; name and avatar always come from Steam
-const PROFILE_KEYS = ["team", "num", "car", "about", "regs", "regAt", "created", "declined"];
+const PROFILE_KEYS = ["team", "num", "car", "about", "regs", "regAt", "created", "declined", "teamRegs", "teamReqs"];
 const publicUser = (u, env) => ({ steamId: u.steamId, name: u.name, avatar: u.avatar, team: u.team ?? null, num: u.num ?? null, car: u.car ?? null,
-  about: u.about ?? null, regs: u.regs ?? [], regAt: u.regAt ?? {}, created: u.created ?? null, owner: isOwner(env, u.steamId) });
+  about: u.about ?? null, regs: u.regs ?? [], regAt: u.regAt ?? {}, created: u.created ?? null, teamRegs: u.teamRegs ?? {}, teamReqs: u.teamReqs ?? [],
+  owner: isOwner(env, u.steamId) });
 
 // long poll: with ?wait=N the request is held (up to 25 s) until the version changes, so open pages update within about a second
 async function getState(env, url) {
@@ -198,13 +199,29 @@ async function putMe(req, env, sid) {
   const body = await readJson(req, MAX_PROFILE);
   const u = await getUser(env, sid);
   if (!u) throw new HttpError(401, "sign in required");
+  const prevRegs = u.teamRegs && typeof u.teamRegs === "object" ? u.teamRegs : {};
   for (const k of PROFILE_KEYS) if (k in body) u[k] = body[k];
+  // team entries: a founder may file or change one only while that stage takes registrations, and the filing time is the
+  // server's (the queue order can't be faked); stages that are not in registration keep what was stored
+  if ("teamRegs" in body) {
+    const [live, db] = await Promise.all([kvGet(env, "live"), kvGet(env, "db")]), given = body.teamRegs && typeof body.teamRegs === "object" && !Array.isArray(body.teamRegs) ? body.teamRegs : {};
+    const next = {};
+    for (const k of new Set([...Object.keys(prevRegs), ...Object.keys(given)])) {
+      // the live status wins; a stage never moved on the judging side still has its status in the league data
+      const status = live?.statuses?.[k] ?? (db?.tours || []).find(x => String(x.id) === k)?.status;
+      const e = status === "reg" ? given[k] : prevRegs[k];
+      if (e && typeof e === "object" && Array.isArray(e.pilots)) next[k] = { founderNick: String(e.founderNick || "").slice(0, 32), at: prevRegs[k]?.at ?? Date.now(),
+        pilots: e.pilots.slice(0, 15).map(p => ({ name: String(p?.name || "").slice(0, 40), nick: String(p?.nick || "").slice(0, 32) })) };
+    }
+    u.teamRegs = next;
+  }
+  if ("teamReqs" in body) u.teamReqs = (Array.isArray(body.teamReqs) ? body.teamReqs : []).slice(-50);
   // shortcut: field shapes are trusted (number range, team id); validate per field once real abuse shows up
   if (u.num != null && !(Number.isInteger(u.num) && u.num >= 1 && u.num <= 999)) u.num = null;
   if (typeof u.about === "object" && u.about) u.about = { ru: String(u.about.ru || "").slice(0, 60) };
   await setUser(env, sid, u);
   await bump(env);
-  return json({ ok: true });
+  return json({ ok: true, teamRegs: u.teamRegs ?? {} }); // what was kept, so the page can show a refused entry
 }
 
 // admins write the league data, but only the head admin changes roles; a technical assistant writes only the rules

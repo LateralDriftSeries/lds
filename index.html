@@ -1742,6 +1742,40 @@ a.sp-card:hover { background: color-mix(in srgb, var(--accent) 6%, transparent) 
 .sp-ed-logo { display: grid; justify-items: center; gap: .5rem; width: 8rem } .sp-ed-logo .sp-logo { width: 96px; height: 96px }
 .sp-ed-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem }
 @media (max-width: 640px) { .sp-eds { grid-template-columns: 1fr } .sp-ed, .sp-ed-fields { grid-template-columns: 1fr } .sp-ed-logo { width: auto } }
+/* judges island: three criteria per run, summed */
+.jparts { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)) 4rem; gap: .5rem .6rem; align-items: center }
+.jparts .field { padding-inline: .5rem; text-align: center }
+.jp-h { display: grid; gap: .15rem; text-align: center; min-width: 0; letter-spacing: .02em !important; font-size: .62rem !important } .jp-h small { font-size: .6rem; letter-spacing: 0; color: var(--muted) } .jparts b { text-align: right }
+/* rules: folded regulations */
+.toc-g > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: .5rem }
+.toc-g > summary::-webkit-details-marker { display: none }
+.toc-g > summary::after { content: "+"; font: 600 .8rem var(--f-body); color: var(--muted) } .toc-g[open] > summary::after { content: "−" }
+.toc-g > summary:hover::after { color: var(--accent) }
+/* opening a group: its sections slide in one after another, the +/− turns */
+.toc-g > summary::after { display: inline-block; transition: transform .3s var(--ease) } .toc-g[open] > summary::after { transform: rotate(180deg) }
+.toc-g[open] > button { animation: tocIn .35s var(--ease) both; animation-delay: calc(var(--i, 0) * 35ms) }
+@keyframes tocIn { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
+@media (prefers-reduced-motion: reduce) { .toc-g[open] > button { animation: none } } .toc-g { display: grid } .toc-g + .toc-g { margin-top: .5rem }
+.rdoc > summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; cursor: pointer; list-style: none }
+.rdoc > summary::-webkit-details-marker { display: none }
+.rdoc > summary h3 { margin: 0 }
+.rdoc[open] > summary { padding-bottom: 1rem; border-bottom: 1px solid var(--line) }
+.rdoc[open] .ach-chev { transform: rotate(180deg) } .rdoc > summary:hover .ach-chev { border-color: var(--accent) }
+.ach-move { display: flex; justify-content: flex-end; gap: .2rem; margin: -.4rem -.4rem -.6rem 0 }
+/* team entries */
+.treg { display: grid; gap: .9rem; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--bg) 40%, transparent) }
+.treg-head { display: flex; justify-content: space-between; align-items: baseline; gap: .8rem; flex-wrap: wrap }
+.treg-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem }
+.treg-pilots { display: grid; gap: .4rem }
+.treg-p { display: grid; grid-template-columns: auto auto minmax(0, 1fr) minmax(0, 10rem); align-items: center; gap: .5rem; padding: .35rem .5rem; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); cursor: pointer }
+.treg-p .t-ava { margin: 0 } .treg-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600 } .treg-p .field { padding: .35rem .5rem }
+.treg-fixed { display: grid; gap: .4rem; padding: .8rem; border-radius: 10px; background: var(--panel-2) }
+.treg-name { gap: .5rem; flex-wrap: nowrap } .treg-name .field { flex: 1; min-width: 0 }
+.ok-note { color: var(--ok, #5ad17a) !important }
+.treg-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: .6rem }
+.treg-item { display: flex; align-items: center; gap: .6rem; padding: .6rem .8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--panel) }
+.treg-item.over { opacity: .5 }
+@media (max-width: 640px) { .treg-row { grid-template-columns: 1fr } .treg-p { grid-template-columns: auto auto minmax(0, 1fr) } .treg-p .field { grid-column: 1 / -1 } }
 /* small avatar in tables */
 .t-ava { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: .55rem; vertical-align: middle; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); font-size: .7rem; font-weight: 700; color: var(--soft) }
 /* bracket */
@@ -1936,7 +1970,16 @@ const I18N = {
     howCarT: "Заполните профиль", howCarD: "Машина, двигатель, КПП, мощность и стартовый номер от 1 до 999.",
     howRegT: "Запишитесь на этап", howRegD: "Регистрация открывается заранее и закрывается перед стартом этапа.",
     howRaceT: "Квалификация и парные", howRaceD: "Две попытки в квалификации, затем сетка Топ 32 вплоть до финала.",
-    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
+    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", teamRegL: "Регистрация команды на этап", teamRegRefused: "Сервер не принял заявку: регистрация на этап закрыта.", entryDup: "Уже заявлен за другую команду на этом этапе", teamRegDone: "Команда зарегистрирована. До конца регистрации заявку можно менять.", teamUnreg: "Отозвать заявку",
+    teamRegFull: "Мест для команд на этот этап больше нет.", teamRegClosed: "Регистрация команд сейчас закрыта.", teamRegNotIn: "Команда не зарегистрирована на этап и не участвует в командном зачёте. Изменения — только через организаторов.",
+    founderNick: "Ник основателя", entryPilots: "Заявленные пилоты", upTo: "не больше", gameNick: "Ник в игре", entryCheck: "Проверьте название, ники основателя и пилотов перед отправкой.",
+    entrySave: "Сохранить заявку", entrySend: "Отправить заявку", entrySaved: "Заявка сохранена", entryNeedFounder: "Укажите ник основателя.", entryNeedPilots: "Отметьте хотя бы одного пилота.", entryTooMany: "Пилотов в заявке не больше",
+    entryOver: "Сверх лимита команд", entryFixed: "Состав зафиксирован", rosterReq: "Запрос на изменение состава", reqReason: "Причина", reqOut: "Исключить / заменить", reqIn: "Новый пилот (ник)",
+    reqSend: "Отправить запрос", reqNeed: "Укажите причину и кого исключить или добавить.", reqSent: "Запрос отправлен организаторам", nameReq: "Запросить смену названия", newTeamName: "Новое название команды",
+    nameNeed: "Введите новое название.", reqList: "Запросы организаторам", reqRoster: "Состав", reqName: "Название", rq_new: "На рассмотрении", rq_approved: "Одобрено", rq_rejected: "Отклонено",
+    teamRegAdminHint: "Заявки команд на этап, по времени подачи. Места:", teamEdit: "Изменить", teamAdd: "+ Зарегистрировать команду", noEntries: "Заявок пока нет.", filedAt: "Подана",
+    rosterReqs: "Запросы на изменение состава", nameReqs: "Запросы на смену названия", noReqs: "Запросов нет.", reqApprove: "Одобрить", reqReject: "Отклонить", reqNoEntry: "У команды нет заявки на этот этап.",
+    stageTeamEntries: "Команды этапа", stageTeamEntriesNote: "В командном зачёте участвуют только зарегистрированные команды, в порядке подачи заявок.", maxTeamsStageL: "Команд на этап", teamStageMaxL: "Пилотов в заявке команды", critAngle: "Угол", critLine: "Траектория", critStyle: "Стиль", sumL: "Сумма", sectionsN: "разд.", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
     spHint: "Спонсоры показываются на главной под лидерами сезона. Логотип: PNG, JPG или WebP до 5 МБ, он впишется в квадрат целиком.", bracketTitle: "Сетка топ-32", brPreview: "Предварительно — по текущей квалификации", bye: "Без соперника", brSetWin: "Отметить победителя",
     brRecorded: "Результат записан в сетку", brPairs: "Пары сетки", brReseed: "Пересобрать из квалификации", brEditHint: "Сетка заполняется сама из судейского острова. Здесь можно исправить ошибку: ✓ отмечает победителя пары, повторный клик снимает.",
     stageFirst: "Лидер этапа", stageNote: "Очки активного этапа: место в сетке, бонус за квалификацию и коэффициент сложности трассы. Когда начинается следующий этап, рейтинг обнуляется.",
@@ -2059,7 +2102,16 @@ const I18N = {
     howCarT: "Set up your profile", howCarD: "Car, engine, gearbox, power and a race number from 1 to 999.",
     howRegT: "Sign up for a round", howRegD: "Registration opens in advance and closes before the round starts.",
     howRaceT: "Qualify and battle", howRaceD: "Two qualifying runs, then a Top 32 bracket all the way to the final.",
-    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
+    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", teamRegL: "Team entry for the round", teamRegRefused: "The server refused the entry: registration for the round is closed.", entryDup: "Already entered for another team in this round", teamRegDone: "Your team is entered. You can change the entry until registration closes.", teamUnreg: "Withdraw entry",
+    teamRegFull: "No team spots left for this round.", teamRegClosed: "Team registration is closed now.", teamRegNotIn: "The team is not entered for this round and is not in its team standings. Changes go through the organisers only.",
+    founderNick: "Founder's nickname", entryPilots: "Entered drivers", upTo: "up to", gameNick: "In-game nickname", entryCheck: "Check the team name and the founder's and drivers' nicknames before sending.",
+    entrySave: "Save entry", entrySend: "Send entry", entrySaved: "Entry saved", entryNeedFounder: "Enter the founder's nickname.", entryNeedPilots: "Tick at least one driver.", entryTooMany: "Drivers per entry: at most",
+    entryOver: "Over the team limit", entryFixed: "Line-up fixed", rosterReq: "Line-up change request", reqReason: "Reason", reqOut: "Remove / replace", reqIn: "New driver (nickname)",
+    reqSend: "Send request", reqNeed: "Give a reason and who to remove or add.", reqSent: "Request sent to the organisers", nameReq: "Request a name change", newTeamName: "New team name",
+    nameNeed: "Enter the new name.", reqList: "Requests to the organisers", reqRoster: "Line-up", reqName: "Name", rq_new: "Under review", rq_approved: "Approved", rq_rejected: "Rejected",
+    teamRegAdminHint: "Team entries for the round, in filing order. Spots:", teamEdit: "Edit", teamAdd: "+ Enter a team", noEntries: "No entries yet.", filedAt: "Filed",
+    rosterReqs: "Line-up change requests", nameReqs: "Name change requests", noReqs: "No requests.", reqApprove: "Approve", reqReject: "Reject", reqNoEntry: "The team has no entry for this round.",
+    stageTeamEntries: "Round teams", stageTeamEntriesNote: "Only entered teams take part in the team standings, in filing order.", maxTeamsStageL: "Teams per round", teamStageMaxL: "Drivers per team entry", critAngle: "Angle", critLine: "Line", critStyle: "Style", sumL: "Total", sectionsN: "sections", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
     spHint: "Sponsors show on the home page under the season leaders. Logo: PNG, JPG or WebP up to 5 MB, fitted whole into a square.", bracketTitle: "Top 32 bracket", brPreview: "Preview — from the current qualifying", bye: "Bye", brSetWin: "Mark the winner",
     brRecorded: "Result saved to the bracket", brPairs: "Bracket pairs", brReseed: "Rebuild from qualifying", brEditHint: "The bracket fills itself from the judges’ island. Fix mistakes here: ✓ marks a pair’s winner, a second click clears it.",
     stageFirst: "Round leader", stageNote: "Points for the active round: bracket place, qualifying bonus and the track difficulty factor. The rating resets when the next round starts.",
@@ -2192,7 +2244,9 @@ const DEF_PROTESTS = [
   { id: 1, tour: 202, from: "Nikita Fox", against: "Max Volkov", text: "Контакт в парном заезде на втором повороте, преследователь не сохранил дистанцию.", status: "new", verdict: "" },
   { id: 2, tour: 201, from: "Egor Belyi", against: "Lev Gromov", text: "Сход с траектории в квалификации не засчитан как ошибка.", status: "rejected", verdict: "Повтор просмотрен, все колёса остались на трассе." },
 ];
-const DEF_SETTINGS = { regOpen: true, maxTeam: 4, maxStage: 32, hpMin: 400, hpMax: 900, socials: Object.fromEntries(SOCIALS.map(([n, href]) => [n, href])) };
+// judges' criteria and their maximum per run: angle 35 + line 35 + style 30 = 100
+const JUDGE_PARTS = [["critAngle", 35], ["critLine", 35], ["critStyle", 30]];
+const DEF_SETTINGS = { regOpen: true, maxTeam: 4, maxStage: 32, maxTeamsStage: 32, teamStageMax: 4, hpMin: 400, hpMax: 900, socials: Object.fromEntries(SOCIALS.map(([n, href]) => [n, href])) };
 const TEAMS = S.db?.teams || clone(DEF_TEAMS), PILOTS = HOSTED ? [] : S.db?.pilots || clone(DEF_PILOTS), TOURS = S.db?.tours?.[0]?.season ? S.db.tours : clone(DEF_TOURS); // older saves have no seasons, so they fall back to defaults
 const SEASONS = S.db?.seasons || clone(DEF_SEASONS), SPONSORS = S.db?.sponsors || clone(DEF_SPONSORS), PROTESTS = S.db?.protests || clone(DEF_PROTESTS);
 const SETTINGS = { ...clone(DEF_SETTINGS), ...S.db?.settings }, SANCTIONS = S.db?.sanctions || {};
@@ -2226,7 +2280,7 @@ if (S.dataVer !== DATA_VER) {
 }
 // admin edits mutate the objects above; this stores them with the rest of the state
 const dbSave = (rerender = true) => {
-  S.db = { teams: TEAMS, pilots: PILOTS, tours: TOURS, seasons: SEASONS, sponsors: SPONSORS, protests: PROTESTS, settings: SETTINGS, sanctions: SANCTIONS, rules: rulesDoc, roles: ROLES, trackDiff: TRACK_DIFF, achievements: ACHIEVEMENTS, awards: AWARDS };
+  S.db = { teams: TEAMS, pilots: PILOTS, tours: TOURS, seasons: SEASONS, sponsors: SPONSORS, protests: PROTESTS, settings: SETTINGS, sanctions: SANCTIONS, rules: rulesDoc, roles: ROLES, trackDiff: TRACK_DIFF, achievements: ACHIEVEMENTS, awards: AWARDS, teamEntries: TEAM_ENTRIES, reqStatus: REQ_STATUS, teamNames: TEAM_NAMES };
   rerender ? save() : persist();
 };
 // shortcut: roles live with the rest of the demo data in this browser; a real site checks roles on the server
@@ -2237,6 +2291,8 @@ if (S.user?.admin) { ROLES[S.user.name] ??= "owner"; delete S.user.admin; }
 const ROLE_LIST = ["admin", "judge", "streamer", "tech"];
 const PERMS = { owner: ["edit", "judge", "bc", "rules", "seasons", "roles"], admin: ["edit", "judge", "bc", "rules", "seasons"],
   judge: ["judge", "seasons"], streamer: ["bc", "seasons"], tech: ["rules"] };
+// team entries per stage: what the organisers set or approved (by stage id, then team id), the status of founders' requests, approved team names
+const TEAM_ENTRIES = S.db?.teamEntries || {}, REQ_STATUS = S.db?.reqStatus || {}, TEAM_NAMES = S.db?.teamNames || {};
 const ACHIEVEMENTS = S.db?.achievements || [], AWARDS = S.db?.awards || {}; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc]]; admin edits them
 const TRACK_DIFF = S.db?.trackDiff || {}; // admin overrides of track difficulty, by track name
 // head admin: the SteamIDs in the server's OWNER_STEAM_IDS on the hosted site; only they change numbers, remove drivers and hand out roles
@@ -2256,10 +2312,10 @@ const isOwnerName = name => roleOf(name) === "owner";
 const isOwner = () => !!S.user && isOwnerName(S.user.name);
 const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", tech: "roleTech" }[r] || "pilot");
 // which permission an admin-panel edit needs, by the first part of its data-a / its data-act
-const KIND_PERM = { rule: "rules", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
-const ACT_PERM = { brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
+const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
+const ACT_PERM = { teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", newAch: "edit", delAch: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achGive: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -2305,7 +2361,9 @@ const ME_RATING = 34;
 const tourPill = x => x.status === "done" || x === currentTour() ? statusPill(x.status) : `<span class="pill s-done">${t("soon")}</span>`; // later rounds open after the current one
 const statusCls = s => s === "reg" || s === "done" || s === "soon" ? s : "live";
 const statusPill = s => `<span class="pill s-${statusCls(s)}">${t(s)}</span>`;
-const allTeams = () => [...TEAMS, ...PILOTS.filter(p => p.created).map(p => ({ id: teamIdOf(p.steamId), ...p.created })), ...(S.created ? [{ id: OWN_TEAM, ...S.created, owner: true }] : [])];
+// a renamed team shows its new name only once the organisers approved it
+const allTeams = () => [...TEAMS, ...PILOTS.filter(p => p.created).map(p => ({ id: teamIdOf(p.steamId), ...p.created })), ...(S.created ? [{ id: OWN_TEAM, ...S.created, owner: true }] : [])]
+  .map(tm => TEAM_NAMES[tm.id] ? { ...tm, name: TEAM_NAMES[tm.id] } : tm);
 const teamById = id => allTeams().find(x => x.id === id);
 const logo = tm => /^data:image\/(webp|jpeg|png);base64,/.test(tm.img || "")
   ? `<span class="tlogo has-img" style="background-image:url(${tm.img})" role="img" aria-label="${esc(tm.tag)}"></span>`
@@ -2599,7 +2657,7 @@ const PILOT_PTS = { 1: 100, 2: 80, 3: 60, 4: 50, 5: 40, 9: 25, 17: 10 }, TEAM_TB
 const factorOf = x => { const d = diffOf(x.track); return d >= 4 ? 1.5 : d === 3 ? 1.2 : 1; };
 const qualBonus = (x, name) => [20, 15, 10, 5][qualOrder(x).indexOf(name)] ?? 0;
 const stagePts = (x, name) => Math.round(((PILOT_PTS[bandOf(stagePlace(x, name))] ?? 0) + qualBonus(x, name)) * factorOf(x));
-const teamStagePts = (x, tm) => { const ms = membersOf(tm).map(p => p.name);
+const teamStagePts = (x, tm) => { const r = stageEntries(x).find(z => z.tm.id === tm.id && z.ok), ms = r ? r.e.pilots.map(p => p.name) : []; // only entered teams, with their entered line-up
   const best = ms.map(n => TEAM_TBL[bandOf(stagePlace(x, n))] ?? 0).sort((a, b) => b - a).slice(0, 2).reduce((s, v) => s + v, 0);
   return Math.round((best + Math.max(0, ...ms.map(n => qualBonus(x, n)))) * factorOf(x)); };
 const liveRound = x => BR_ROUNDS.indexOf(x.status);
@@ -2664,6 +2722,9 @@ function tournament(id) {
   <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(x.dates)}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
   <details class="box panel br-box" ${liveRound(x) >= 0 ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) ? "" : `<span class="note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
+  ${stageEntries(x).length ? `<section class="stack"><div><h3>${t("stageTeamEntries")} · ${stageEntries(x).filter(r => r.ok).length}/${SETTINGS.maxTeamsStage}</h3><p class="note">${t("stageTeamEntriesNote")}</p></div>
+    <div class="treg-list">${stageEntries(x).map((r, i) => `<div class="treg-item ${r.ok ? "" : "over"}"><span class="mono muted">${i + 1}</span>${logo(r.tm)}<span class="stack" style="gap:.15rem;min-width:0"><b>${esc(r.tm.name)}</b>
+      <span class="note">${r.e.pilots.map(p => esc(p.nick)).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div></section>` : ""}
   ${`<section class="stack"><h3>${t("qual")}</h3>
   <div class="tablebox panel"><table>
     <thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("group")}</th><th>${t("try1")}</th><th>${t("try2")}</th><th>${t("best")}</th></tr></thead>
@@ -2671,7 +2732,7 @@ function tournament(id) {
       <td class="mono">${cell(p.a)}</td><td class="mono">${cell(p.b)}</td><td class="mono best">${p.best < 0 ? "—" : p.best.toFixed(1)}</td></tr>`).join("")}</tbody>
   </table></div></section>`}
   ${runs ? (() => {
-    const tr = allTeams().filter(tm => !x.teamsOut.includes(tm.id)).map(tm => { const m = rows.filter(p => p.team === tm.id && p.best >= 0);
+    const tr = stageEntries(x).filter(r => r.ok).map(({ tm, e }) => { const ns = new Set(e.pilots.map(p => p.name)), m = rows.filter(p => ns.has(p.name) && p.best >= 0);
       return { tm, n: m.length, pts: m.map(p => p.best).sort((a, b) => b - a).slice(0, 2).reduce((s, v) => s + v, 0) }; }).filter(r => r.n).sort((a, b) => b.pts - a.pts);
     return `<section class="stack"><div><h3>${t("stageTeams")}</h3><p class="note">${t("stageTeamsNote")}</p></div>
       <div class="tablebox panel"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
@@ -2764,6 +2825,9 @@ function teamPage(id) {
       <p class="tm-lead ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tr(tm.desc)) : t("noDescShort")}</p>${tmStatus(tm)}</div>
     ${statRow([[`#${rank}`, "teamPlace"], [teamPts(tm), "points"], [`${ms.length}/${maxTeam()}`, "drivers"]])}
   </section>
+  ${teamAchList(tm).length ? `<section class="stack sec"><div class="sec-head"><span class="label idx">${t("achievements")}</span></div>
+    <div class="ach-grid">${teamAchList(tm).map(a => { const l = S.lang === "en" ? 3 : 2;
+      return `<div class="ach on"><span class="ach-ic" aria-hidden="true">${esc(a[0])}</span><span><b>${esc(a[l][0] || tr(a[2][0]))}</b><span class="ach-d">${esc(a[l][1] || tr(a[2][1]))}</span></span></div>`; }).join("")}</div></section>` : ""}
   <section class="stack sec"><div class="sec-head"><span class="label idx">01 — ${t("rosterL")}</span><h2>${t("rosterTitle")}</h2></div>
     ${ms.length ? `<div class="pl-grid">${ms.map((p, i) => `<a class="pl-card" href="${pHref(p.name)}" style="--i:${i}">${pAva(p, "pl-ava")}
       <span class="stack" style="gap:.2rem;min-width:0"><b>${esc(p.name)}${i === 0 ? ' <span class="cap" title="Captain">C</span>' : ""}</b><span class="note">${esc(p.car || "—")}</span></span>
@@ -2853,6 +2917,64 @@ const TEAM_RULES = [
   ["Соблюдение решений судей", "Решения судейского состава уважаются всеми участниками команды. Спорные ситуации обсуждаются только в порядке, установленном организаторами."],
   ["Замены участников", "Замена участника после начала этапа допускается только с разрешения организаторов и в случаях, предусмотренных регламентом."],
   ["Наказание команды", "За серьёзные или систематические нарушения к команде могут быть применены предупреждение, штрафные санкции или дисквалификация."],
+  ["Регистрация команды на этап", `**3.1** Для участия в командном зачёте основатель обязан зарегистрировать команду на соответствующий этап LDS.
+
+**3.2** Регистрация осуществляется способом, указанным в официальном объявлении соответствующего этапа.
+
+**3.3** В регистрационной заявке указываются:
+- Название команды.
+- Игровой никнейм основателя.
+- Игровые никнеймы всех заявленных пилотов.
+
+**3.4** Основатель обязан проверить правильность всех указанных данных перед отправкой заявки.
+
+**3.5** Регистрация считается завершённой после отправки заявки со всеми сведениями, перечисленными в пункте 3.3.
+
+**3.6** Максимальное количество команд, допускаемых к участию в командном зачёте одного этапа, составляет 32 команды.
+
+**3.7** При достижении лимита, установленного пунктом 3.6, регистрация новых команд прекращается.
+
+**3.8** Если количество заявок превышает доступное количество мест, приоритет предоставляется командам, чьи корректно заполненные заявки поступили раньше.
+
+**3.9** Регистрация команды на предыдущий этап не распространяется на последующие этапы. Для участия в командном зачёте каждого нового этапа основатель должен подать отдельную заявку.
+
+**3.10** Команда, не зарегистрированная на соответствующий этап, не участвует в командном зачёте этого этапа. Условия участия её пилотов в личном зачёте определяются спортивным регламентом LDS.
+
+**3.11** Сроки начала и окончания регистрации указываются в официальном объявлении соответствующего этапа. После окончания регистрации новые заявки не принимаются, если организаторы официально не объявили о её продлении.`],
+  ["Изменение состава команды", `**4.1** До окончания регистрации основатель вправе изменять состав команды и исправлять сведения в заявке.
+
+**4.2** Если самостоятельное редактирование заявки невозможно, основатель должен обратиться к организаторам с просьбой внести необходимые изменения.
+
+**4.3** После окончания регистрации состав команды считается зафиксированным для соответствующего этапа.
+
+**4.4** После фиксации состава замена, добавление или исключение пилота допускаются только с разрешения организаторов.
+
+**4.5** Запрос на изменение состава после окончания регистрации должен содержать:
+- Название команды.
+- Причину изменения.
+- Игровой никнейм участника, которого необходимо исключить или заменить, если применимо.
+- Игровой никнейм нового участника, если запрашивается замена или добавление.
+
+**4.6** Изменение состава считается согласованным только после подтверждения организаторами.
+
+**4.7** До получения подтверждения действует ранее зарегистрированный состав команды.
+
+**4.8** После внесения изменений состав команды должен соответствовать ограничению, установленному пунктом 2.1.
+
+**4.9** Состав команды определяется отдельно для каждого этапа в соответствии с разделом 3 настоящего регламента.`],
+  ["Название команды", `**5.1** Каждая команда должна иметь название, позволяющее отличить её от других команд чемпионата.
+
+**5.2** Название команды указывается при регистрации и используется в официальных списках и таблицах результатов.
+
+**5.3** Основатель обязан использовать одинаковое написание названия команды во всех регистрационных заявках.
+
+**5.4** Для изменения названия после регистрации основатель должен сообщить организаторам прежнее и новое название команды.
+
+**5.5** Изменение названия считается согласованным после подтверждения организаторами.
+
+**5.6** До подтверждения изменения в официальных материалах используется ранее зарегистрированное название.
+
+**5.7** Изменение названия само по себе не означает изменения состава команды или создания новой команды.`],
 ];
 // English defaults, already in the editable text form
 const RULES_EN = () => [
@@ -2978,6 +3100,64 @@ const TEAM_RULES_EN = [
   ["Respecting judges' decisions", "All team members respect the judging panel's decisions. Disputes are discussed only in the way set by the organisers."],
   ["Driver changes", "Replacing a driver after the round has started is allowed only with the organisers' permission and in cases covered by the rules."],
   ["Team penalties", "Serious or repeated violations may bring the team a warning, penalties or disqualification."],
+  ["Team entry for a round", `**3.1** To take part in the team standings, the founder must enter the team for the LDS round in question.
+
+**3.2** Entries are made in the way stated in the official announcement of that round.
+
+**3.3** An entry states:
+- The team name.
+- The founder's in-game nickname.
+- The in-game nicknames of all entered drivers.
+
+**3.4** The founder must check that all the details are correct before sending the entry.
+
+**3.5** The entry is complete once it is sent with all the details listed in 3.3.
+
+**3.6** Up to 32 teams may take part in the team standings of one round.
+
+**3.7** Once the limit in 3.6 is reached, registration of new teams stops.
+
+**3.8** If there are more entries than spots, teams whose correctly completed entries arrived earlier have priority.
+
+**3.9** An entry for one round does not carry over to the next. The founder files a separate entry for the team standings of every new round.
+
+**3.10** A team not entered for a round does not take part in that round's team standings. Whether its drivers race in the driver standings is set by the LDS sporting rules.
+
+**3.11** Registration opens and closes as stated in the round's official announcement. No new entries are accepted after it closes unless the organisers officially extend it.`],
+  ["Team line-up changes", `**4.1** Until registration closes, the founder may change the line-up and correct the entry.
+
+**4.2** If the entry cannot be edited, the founder asks the organisers to make the changes.
+
+**4.3** After registration closes, the line-up is fixed for that round.
+
+**4.4** After that, replacing, adding or removing a driver is allowed only with the organisers' permission.
+
+**4.5** A line-up change request after registration closes must state:
+- The team name.
+- The reason for the change.
+- The in-game nickname of the driver to be removed or replaced, if any.
+- The in-game nickname of the new driver, if a replacement or addition is requested.
+
+**4.6** A line-up change is agreed only once the organisers confirm it.
+
+**4.7** Until then, the previously entered line-up stands.
+
+**4.8** After the change, the line-up must still meet the limit in 2.1.
+
+**4.9** The line-up is set separately for every round under section 3 of these rules.`],
+  ["Team name", `**5.1** Every team must have a name that sets it apart from the other teams of the championship.
+
+**5.2** The team name is given at registration and used in official lists and results tables.
+
+**5.3** The founder must spell the team name the same way in every entry.
+
+**5.4** To change the name after registration, the founder tells the organisers the old and the new team name.
+
+**5.5** A name change is agreed once the organisers confirm it.
+
+**5.6** Until then, official materials use the previously registered name.
+
+**5.7** A name change by itself does not change the line-up or create a new team.`],
 ];
 // Editable rules: several regulations per language, each a list of sections in plain text with light markup:
 // "## heading", "- list item", "! warning", "| cell | cell |" table rows (first row = header), "**bold**", blank line = new paragraph.
@@ -3038,16 +3218,20 @@ rulesDoc = migrateRules(S.db?.rules);
 const rulesFor = lang => { const d = rulesDoc || defaultRulesDoc(); return lang === "en" && d.en?.some(x => x.items.length) ? d.en : d.ru; }; // English with no sections yet shows the Russian rules
 const rulesEyebrow = () => `Lateral Drift Series · ${S.lang === "en" ? "Version" : "Версия"} ${esc((rulesDoc || defaultRulesDoc()).version)}`;
 
+// regulations are open; in the contents sidebar each regulation is folded to its title and opens to list its sections.
+// What a visitor folds or opens stays that way while they browse
+const rClosed = new Set(), tocOpenG = new Set();
 function rules() {
   const docs = rulesFor(S.lang), fallback = S.lang === "en" && docs === rulesFor("ru");
   // every regulation is a framed block; its sections are headed blocks inside
   return `<div class="doc-head"><span class="label acc">${rulesEyebrow()}</span><h1>${t("rulesTitle")}</h1>${fallback ? `<p class="note">${t("rulesLang")}</p>` : ""}</div>
   <div class="doc">
-    <aside class="toc" aria-label="Contents">${docs.map((d, di) => `<span class="sep">${esc(d.title)}</span>${d.items.map((s, k) =>
-      `<button data-goto="r${di}-${k}">${esc(s.title)}</button>`).join("")}`).join("")}</aside>
+    <aside class="toc" aria-label="Contents">${docs.map((d, di) => `<details class="toc-g" data-tocg="${di}" ${tocOpenG.has(di) ? "open" : ""}><summary class="sep">${esc(d.title)}</summary>${d.items.map((s, k) =>
+      `<button data-goto="r${di}-${k}" style="--i:${k}">${esc(s.title)}</button>`).join("")}</details>`).join("")}</aside>
     <div class="prose">
-      ${docs.map((d, di) => `<section class="teamrules panel"><span class="label acc">Lateral Drift Series</span><h3>${esc(d.title)}</h3>${d.items.map((s, k) =>
-        `<div class="stack rule-block" id="r${di}-${k}"><h4>${esc(s.title)}</h4>${textToHtml(s.text)}</div>`).join("")}</section>`).join("")}
+      ${docs.map((d, di) => `<details class="teamrules panel rdoc" data-rdoc="${di}" ${rClosed.has(di) ? "" : "open"}><summary><span class="stack" style="gap:.3rem"><span class="label acc">Lateral Drift Series</span><h3>${esc(d.title)}</h3></span>
+          <span class="row" style="gap:.8rem"><span class="note">${d.items.length} ${t("sectionsN")}</span><i class="ach-chev" aria-hidden="true"></i></span></summary>${d.items.map((s, k) =>
+        `<div class="stack rule-block" id="r${di}-${k}"><h4>${esc(s.title)}</h4>${textToHtml(s.text)}</div>`).join("")}</details>`).join("")}
     </div>
   </div>`;
 }
@@ -3169,6 +3353,58 @@ function leaderTools(tm) {
       ${inv.length ? `<div class="row" style="gap:.5rem">${inv.map(n => `<span class="chip-inv">${esc(n)}<button data-act="cancelInvite" data-name="${esc(n)}" aria-label="${t("cancelPick")}">×</button></span>`).join("")}</div>` : `<span class="note">${t("noInv")}</span>`}</div>
   </div>`;
 }
+// ---- team entry for a stage (team regulation, section 3): the founder files it from the profile while the stage takes
+// registrations; the earliest complete entries take the spots; after registration closes the line-up is fixed and changes,
+// like a new team name, go through requests the organisers approve. Organisers' edits and approvals live in the league data.
+const founderOf = tm => tm.owner ? (S.user ? { name: S.user.name, regs: S.teamRegs || {}, reqs: S.teamReqs || [] } : null)
+  : (p => p ? { name: p.name, regs: p.teamRegs || {}, reqs: p.teamReqs || [] } : null)(PILOTS.find(p => p.created && teamIdOf(p.steamId) === tm.id));
+const teamEntry = (x, tm) => { const o = TEAM_ENTRIES[x.id]?.[tm.id]; return o ? (o.removed ? null : o) : founderOf(tm)?.regs?.[x.id] || null; };
+const stageEntries = x => allTeams().map(tm => ({ tm, e: teamEntry(x, tm) })).filter(r => r.e?.pilots?.length).sort((a, b) => a.e.at - b.e.at)
+  .map((r, i) => ({ ...r, ok: i < SETTINGS.maxTeamsStage }));
+// a pilot can be entered for one team per stage
+const inOtherEntry = (x, tm, names) => stageEntries(x).filter(r => r.tm.id !== tm.id).flatMap(r => r.e.pilots.map(p => p.name)).filter(n => names.includes(n));
+const teamRegOpen = x => !!x && x === currentTour() && x.status === "reg" && SETTINGS.regOpen;
+const reqsOf = tm => founderOf(tm)?.reqs || [];
+const reqStat = (tm, r) => REQ_STATUS[`${tm.id}:${r.id}`]?.status || "new";
+const reqPill = (tm, r) => { const s = reqStat(tm, r); return `<span class="pill plain ${s === "approved" ? "s-reg" : s === "rejected" ? "err" : ""}">${t("rq_" + s)}</span>`; };
+const reqText = r => r.type === "name" ? `${esc(r.oldName)} → ${esc(r.newName)}`
+  : `${r.out ? `− ${esc(r.out)} ` : ""}${r.in ? `+ ${esc(r.in)}` : ""}<span class="note"> · ${esc(r.reason)}</span>`;
+function entryForm(id, x, tm, e) {
+  const picked = new Map((e?.pilots || []).map(p => [p.name, p.nick]));
+  const names = [...new Set([...membersOf(tm).map(p => p.name), ...picked.keys()])];
+  return `<form class="stack treg-form" id="${id}" data-tour="${x.id}" data-team="${tm.id}">
+    <div class="treg-row"><label class="fieldlabel">${t("teamName")}<input class="field" value="${esc(tm.name)}" disabled></label>
+      <label class="fieldlabel">${t("founderNick")}<input class="field" name="founder" maxlength="32" value="${esc(e?.founderNick || founderOf(tm)?.name || "")}"></label></div>
+    <span class="label">${t("entryPilots")} · ${t("upTo")} ${SETTINGS.teamStageMax}</span>
+    <div class="treg-pilots">${names.map(n => { const p = roster().find(z => z.name === n) || { name: n };
+      return `<label class="treg-p"><input type="checkbox" name="p" value="${esc(n)}" ${picked.has(n) ? "checked" : ""}>${pAva(p, "t-ava")}<span class="treg-n">${esc(n)}</span>
+        <input class="field" name="nick:${esc(n)}" maxlength="32" value="${esc(picked.get(n) || n)}" placeholder="${t("gameNick")}" aria-label="${t("gameNick")}: ${esc(n)}"></label>`; }).join("") || `<p class="note">${t("noMembers")}</p>`}</div>
+    <p class="note">${t("entryCheck")}</p>
+    <div class="row"><button class="btn sm">${t(e ? "entrySave" : "entrySend")}</button><span class="note err" role="status" id="${id}-msg"></span></div></form>`;
+}
+function teamRegBox(tm) {
+  const x = currentTour();
+  if (!x) return "";
+  const e = teamEntry(x, tm), open = teamRegOpen(x), list = stageEntries(x), mine = list.find(r => r.tm.id === tm.id), taken = list.filter(r => r.ok).length;
+  const reqs = reqsOf(tm), rq = reqs.filter(r => r.type === "name" || r.tour === x.id);
+  let body;
+  if (open && (e || taken < SETTINGS.maxTeamsStage)) body = `${e ? `<p class="note ok-note">✓ ${t(mine?.ok ? "teamRegDone" : "entryOver")}</p>` : ""}${entryForm("teamregform", x, tm, e)}
+    ${e ? `<div><button class="btn text sm danger" data-act="teamUnreg" data-id="${x.id}">${t("teamUnreg")}</button></div>` : ""}`;
+  else if (open) body = `<p class="note err">${t("teamRegFull")}</p>`;
+  else if (e) body = `<div class="treg-fixed"><span class="label">${t("entryFixed")}</span><b>${esc(tm.name)}</b><span class="note">${t("founderNick")}: ${esc(e.founderNick)}</span>
+      <div class="row" style="gap:.35rem">${e.pilots.map(p => `<span class="chip4">${esc(p.nick)}</span>`).join("")}</div>${mine?.ok ? "" : `<p class="note err">${t("entryOver")}</p>`}</div>
+    <form class="stack treg-form2" id="rosterreq" data-tour="${x.id}"><span class="label">${t("rosterReq")}</span>
+      <label class="fieldlabel">${t("reqReason")}<input class="field" name="reason" maxlength="200" required></label>
+      <div class="treg-row"><label class="fieldlabel">${t("reqOut")}<select class="field" name="out"><option value="">—</option>${e.pilots.map(p => `<option>${esc(p.nick)}</option>`).join("")}</select></label>
+        <label class="fieldlabel">${t("reqIn")}<input class="field" name="in" maxlength="32"></label></div>
+      <div class="row"><button class="btn line sm">${t("reqSend")}</button><span class="note err" role="status" id="rosterreq-msg"></span></div></form>`;
+  else body = `<p class="note">${t(x.status === "reg" ? "teamRegClosed" : "teamRegNotIn")}</p>`;
+  return `<div class="treg"><div class="treg-head"><span class="label acc">${t("teamRegL")} · ${t("stage")} ${x.stage} · ${esc(x.track)}</span><span class="note">${taken} / ${SETTINGS.maxTeamsStage}</span></div>
+    ${body}
+    ${rq.length ? `<div class="stack" style="gap:.4rem"><span class="label">${t("reqList")}</span><ul class="my-prot">${rq.map(r => `<li><span class="label">${t(r.type === "name" ? "reqName" : "reqRoster")}</span><span>${reqText(r)}</span>${reqPill(tm, r)}</li>`).join("")}</ul></div>` : ""}
+    <form class="row treg-name" id="namereq"><input class="field" name="name" maxlength="32" placeholder="${t("newTeamName")}" aria-label="${t("newTeamName")}"><button class="btn line sm">${t("nameReq")}</button><span class="note err" role="status" id="namereq-msg"></span></form>
+  </div>`;
+}
 function myTeamBox() {
   const tm = teamById(S.team);
   const canLogo = tm && (tm.owner || isAdmin());
@@ -3177,6 +3413,7 @@ function myTeamBox() {
       <input id="teamlogo" type="file" accept="image/png,image/jpeg,image/webp" hidden>${tm.img ? `<button class="btn text sm danger" data-act="delLogo">${t("removeLogo")}</button>` : ""}
       <span class="note">${t("logoHint")}</span><span class="note err" role="status">${teamMsg}</span></div>` : ""}
     ${canLogo ? leaderTools(tm) : ""}
+    ${tm.owner ? teamRegBox(tm) : ""}
     ${tm.owner ? descBlock(tm) : ""}${memberRows(tm)}<p class="note">${t("rosterNote")(membersOf(tm).length)}</p>
     <div style="text-align:center"><button class="btn text" data-act="leave">${tm.owner ? t("disband") : t("leave")}</button></div>`;
   const mine = S.user ? invitesFor(S.user.name) : [];
@@ -3279,6 +3516,9 @@ const OLD_ACH = new Set(["win", "first", "defend", "hat", "clean", "podium", "ri
 ACHIEVEMENTS.splice(0, ACHIEVEMENTS.length, ...ACHIEVEMENTS.filter(a => !OLD_ACH.has(a[1])));
 // achievements are made and handed out by admins: AWARDS[id] = names of the pilots who have it
 const achUnlocked = name => new Set(ACHIEVEMENTS.filter(a => AWARDS[a[1]]?.includes(name)).map(a => a[1]));
+// teams get achievements too: stored with the pilots' as "t:<teamId>"
+const teamAchList = tm => ACHIEVEMENTS.filter(a => AWARDS[a[1]]?.includes(`t:${tm.id}`));
+const achHolder = h => h.startsWith("t:") ? `🏁 ${teamById(+h.slice(2))?.name ?? "?"}` : h;
 const achBlock = name => { const got = achUnlocked(name), lang = S.lang === "en" ? 3 : 2;
   if (!ACHIEVEMENTS.length) return `<p class="note">${t("noAch")}</p>`;
   return `<div class="ach-grid">${ACHIEVEMENTS.map(a => { const on = got.has(a[1]), title = a[lang][0] || tr(a[2][0]), desc = a[lang][1] || tr(a[2][1]);
@@ -3318,7 +3558,7 @@ function profile() {
 // shortcut: admin role is a client-side demo toggle; real admin rights must be checked on a server
 // admAnim: set when the admin moves to another section, so only navigation animates, not every saved field
 let admAnim = false;
-let aTab = "seasons", aSeason = 0, aTour = 0, aSub = "main", adminMsg = "", pending = null;
+let aEditTeam = 0, aTab = "seasons", aSeason = 0, aTour = 0, aSub = "main", adminMsg = "", pending = null;
 const stageMax = x => x.max ?? SETTINGS.maxStage; // per stage, falling back to the settings default
 const sel = (attr, list, cur, label, cls = "ai wide") => `<select class="${cls}" data-a="${attr}" aria-label="${label}">${list.map(s => `<option value="${s}" ${s === cur ? "selected" : ""}>${t(s)}</option>`).join("")}</select>`;
 const seasonPill = s => `<span class="pill ${s === "live" ? "s-reg" : "s-done"} ${s === "plan" ? "plain" : ""}">${t(s)}</span>`;
@@ -3375,9 +3615,22 @@ function adminTour(x) {
     roster().map((p, i) => `<tr><td><input type="checkbox" data-a="out:${x.id}:${i}" ${inRows.has(p.name) ? "checked" : ""} aria-label="${t("inStage")}: ${esc(p.name)}"></td>
       <td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}${p.test ? ` <span class="label">${t("testTag")}</span>` : ""}${isBanned(p.name) ? ` <span class="pill plain err" style="font-size:.65rem">${t("ban")}</span>` : ""}</td><td class="muted">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</td>
       <td><select class="ai" data-a="grp:${x.id}:${i}" ${inRows.has(p.name) ? "" : "disabled"} aria-label="${t("group")} ${esc(p.name)}"><option value="">—</option>${GROUPS.map(g => `<option ${groupOf(x, p.name) === g ? "selected" : ""}>${g}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table></div>`; }
-  if (aSub === "teams") body = `<p class="note">${t("teamsHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("teamScore")}</th><th></th><th>${t("team")}</th><th>${t("onStage")}</th></tr></thead><tbody>${
-    allTeams().map(tm => `<tr><td><input type="checkbox" data-a="tout:${x.id}:${tm.id}" ${x.teamsOut.includes(tm.id) ? "" : "checked"} aria-label="${t("teamScore")}: ${esc(tm.name)}"></td>
-      <td>${logo(tm)}</td><td>${esc(tm.name)}</td><td class="mono muted">${stageRows(x).filter(([p]) => p.team === tm.id).length}/${maxTeam()}</td></tr>`).join("")}</tbody></table></div>`;
+  if (aSub === "teams") { const list = stageEntries(x), free = allTeams().filter(tm => !list.some(r => r.tm.id === tm.id)), editing = list.find(r => r.tm.id === aEditTeam);
+    const reqs = allTeams().flatMap(tm => reqsOf(tm).filter(r => r.type === "roster" && r.tour === x.id).map(r => ({ tm, r })));
+    const when = at => new Date(at).toLocaleString(S.lang === "en" ? "en-GB" : "ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    body = `<p class="note">${t("teamRegAdminHint")} <b>${list.filter(r => r.ok).length} / ${SETTINGS.maxTeamsStage}</b></p>
+    <div class="tablebox panel"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("founderNick")}</th><th>${t("entryPilots")}</th><th>${t("filedAt")}</th><th></th></tr></thead><tbody>${
+      list.map((r, i) => `<tr class="${r.ok ? "" : "out-br"}"><td class="mono muted">${i + 1}</td><td><div class="row" style="gap:.5rem;flex-wrap:nowrap">${logo(r.tm)}<b>${esc(r.tm.name)}</b></div>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</td>
+        <td>${esc(r.e.founderNick)}</td><td style="white-space:normal">${r.e.pilots.map(p => esc(p.nick)).join(", ")}</td><td class="mono muted">${when(r.e.at)}</td>
+        <td><div class="row" style="gap:.3rem;flex-wrap:nowrap"><button class="btn line sm" data-act="teamEdit" data-id="${r.tm.id}">${t("teamEdit")}</button>
+          <button class="btn text sm danger" data-act="teamRemove" data-id="${r.tm.id}" data-v="${x.id}">${pending === `te${x.id}-${r.tm.id}` ? t("delSure") : t("del")}</button></div></td></tr>`).join("")
+      || `<tr><td colspan="6" class="muted">${t("noEntries")}</td></tr>`}</tbody></table></div>
+    ${editing ? `<div class="box panel"><div class="head"><h3>${esc(editing.tm.name)}</h3><button class="btn text sm" data-act="teamEdit" data-id="0">${t("cancel")}</button></div>${entryForm("tentryform", x, editing.tm, editing.e)}</div>` : ""}
+    ${free.length ? `<div class="row" style="gap:.5rem"><select class="ai" id="teamadd" style="min-width:12rem" aria-label="${t("team")}">${free.map(tm => `<option value="${tm.id}">${esc(tm.name)}</option>`).join("")}</select>
+      <button class="btn line sm" data-act="teamAdd" data-id="${x.id}">${t("teamAdd")}</button></div>` : ""}
+    <section class="stack" style="gap:.6rem"><h3>${t("rosterReqs")}</h3>${reqs.length ? `<ul class="my-prot">${reqs.map(({ tm, r }) => `<li><b>${esc(tm.name)}</b><span>${reqText(r)}</span>${reqPill(tm, r)}
+      ${reqStat(tm, r) === "new" ? `<span class="row" style="gap:.3rem;margin-left:auto"><button class="btn sm" data-act="reqApprove" data-id="${tm.id}" data-v="${r.id}">${t("reqApprove")}</button><button class="btn text sm danger" data-act="reqReject" data-id="${tm.id}" data-v="${r.id}">${t("reqReject")}</button></span>` : ""}</li>`).join("")}</ul>`
+      : `<p class="note">${t("noReqs")}</p>`}</section>`; }
   return head + body;
 }
 
@@ -3401,7 +3654,11 @@ function adminPilots() {
         <td><div class="row" style="flex-wrap:nowrap;gap:.35rem"><select class="ai" id="sanc-${i}" aria-label="${t("sanctions")} ${esc(p.name)}">${["warn", "dq", "ban"].map(s => `<option value="${s}">${t(s)}</option>`).join("")}</select>
           <button class="btn line sm" data-act="giveSanction" data-id="${i}">${t("give")}</button>${extra}</div></td></tr>`; }).join("")}</tbody></table></div>`;
 }
-const adminTeams = () => `<h2>${t("aTeams")}</h2><div class="tablebox panel"><table><thead><tr><th></th><th>${t("team")}</th><th>${t("drivers")}</th><th>${t("teamDesc")}</th><th></th></tr></thead><tbody>${allTeams().map(tm => `<tr>
+const nameReqs = () => allTeams().flatMap(tm => reqsOf(tm).filter(r => r.type === "name").map(r => ({ tm, r })));
+const adminTeams = () => `<h2>${t("aTeams")}</h2>
+  ${nameReqs().length ? `<section class="stack" style="gap:.6rem"><h3>${t("nameReqs")}</h3><ul class="my-prot">${nameReqs().map(({ tm, r }) => `<li><span>${reqText(r)}</span>${reqPill(tm, r)}
+    ${reqStat(tm, r) === "new" ? `<span class="row" style="gap:.3rem;margin-left:auto"><button class="btn sm" data-act="reqApprove" data-id="${tm.id}" data-v="${r.id}">${t("reqApprove")}</button><button class="btn text sm danger" data-act="reqReject" data-id="${tm.id}" data-v="${r.id}">${t("reqReject")}</button></span>` : ""}</li>`).join("")}</ul></section>` : ""}
+  <div class="tablebox panel"><table><thead><tr><th></th><th>${t("team")}</th><th>${t("drivers")}</th><th>${t("teamDesc")}</th><th></th></tr></thead><tbody>${allTeams().map(tm => `<tr>
     <td>${logo(tm)}</td><td>${esc(tm.name)}</td><td class="mono muted">${membersOf(tm).length}/${maxTeam()}</td>
     <td style="white-space:normal;min-width:16rem"><textarea class="ai" style="width:100%;min-height:60px;font-family:var(--f-body)" maxlength="300" data-a="team:${tm.id}:desc" aria-label="${t("teamDesc")} ${esc(tm.name)}">${esc(tm.desc || "")}</textarea></td>
     <td><button class="btn text danger" data-act="delTeam" data-id="${tm.id}">${pending === tm.id ? t("delSure") : t("del")}</button></td></tr>`).join("")}</tbody></table></div>`;
@@ -3410,6 +3667,7 @@ const adminTeams = () => `<h2>${t("aTeams")}</h2><div class="tablebox panel"><ta
 const adminAch = () => `<div class="head"><p class="note" style="margin:0">${t("achAdminHint2")}</p><button class="btn" data-act="newAch">${t("addAch")}</button></div>
   ${ACHIEVEMENTS.length ? `<div class="ach-eds">${ACHIEVEMENTS.map((a, i) => { const who = AWARDS[a[1]] || [];
     return `<article class="box panel ach-ed">
+      <div class="ach-move"><button class="btn text sm" data-act="achMove" data-id="${i}" data-v="-1" ${i === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button><button class="btn text sm" data-act="achMove" data-id="${i}" data-v="1" ${i === ACHIEVEMENTS.length - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button></div>
       <div class="ach-ed-top"><input class="field ach-ic-in" data-a="ach:${i}:ic" value="${esc(a[0])}" maxlength="8" aria-label="${t("achIcon")}">
         <label class="fieldlabel">${t("achTitle")} RU<input class="field" data-a="ach:${i}:ruT" value="${esc(a[2][0])}" maxlength="40"></label>
         <label class="fieldlabel">${t("achTitle")} EN<input class="field" data-a="ach:${i}:enT" value="${esc(a[3][0])}" maxlength="40"></label>
@@ -3417,8 +3675,10 @@ const adminAch = () => `<div class="head"><p class="note" style="margin:0">${t("
       <div class="ach-ed-desc"><label class="fieldlabel">${t("achDesc")} RU<input class="field" data-a="ach:${i}:ruD" value="${esc(a[2][1])}" maxlength="120"></label>
         <label class="fieldlabel">${t("achDesc")} EN<input class="field" data-a="ach:${i}:enD" value="${esc(a[3][1])}" maxlength="120"></label></div>
       <div class="ach-ed-who"><span class="label">${t("achHolders")} · ${who.length}</span>
-        <div class="row" style="gap:.35rem">${who.map(n => `<span class="chip-s">${esc(n)}<button data-act="achTake" data-id="${i}" data-name="${esc(n)}" aria-label="${t("del")}">×</button></span>`).join("") || `<span class="muted">—</span>`}</div>
-        <div class="row" style="gap:.4rem;flex-wrap:nowrap"><select class="ai" id="achp-${i}" aria-label="${t("pilot")}">${roster().filter(p => !who.includes(p.name)).map(p => `<option>${esc(p.name)}</option>`).join("")}</select>
+        <div class="row" style="gap:.35rem">${who.map(n => `<span class="chip-s">${esc(achHolder(n))}<button data-act="achTake" data-id="${i}" data-name="${esc(n)}" aria-label="${t("del")}">×</button></span>`).join("") || `<span class="muted">—</span>`}</div>
+        <div class="row" style="gap:.4rem;flex-wrap:nowrap"><select class="ai" id="achp-${i}" aria-label="${t("pilot")}">
+          <optgroup label="${t("tabPilots")}">${roster().filter(p => !who.includes(p.name)).map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("")}</optgroup>
+          <optgroup label="${t("tabTeams")}">${allTeams().filter(tm => !who.includes(`t:${tm.id}`)).map(tm => `<option value="t:${tm.id}">${esc(tm.name)}</option>`).join("")}</optgroup></select>
           <button class="btn line sm" data-act="achGive" data-id="${i}">${t("give")}</button></div></div></article>`; }).join("")}</div>`
     : `<div class="box panel empty"><p class="note">${t("noAchAdmin")}</p></div>`}`;
 const spImg = s => /^data:image\/(webp|jpeg|png);base64,/.test(s.img || "") ? `<img src="${s.img}" alt="">` : `<span>${esc((s.name || "?").slice(0, 2).toUpperCase())}</span>`;
@@ -3441,7 +3701,7 @@ function adminSettings() {
   const num = (key, label, min, max) => `<label class="fieldlabel">${t(label)}<input class="field" type="number" min="${min}" max="${max}" data-a="setting:${key}" value="${SETTINGS[key]}"></label>`;
   const body = {
     general: () => `<div class="box panel"><label class="row" style="gap:.7rem"><input type="checkbox" data-a="setting:regOpen" ${SETTINGS.regOpen ? "checked" : ""}>${t("regOpenL")}</label>
-      <div class="set-grid">${num("maxTeam", "maxTeamL", 1, 15)}${num("maxStage", "maxStageDefL", 2, 256)}${num("hpMin", "hpMinL", 50, 3000)}${num("hpMax", "hpMaxL", 50, 3000)}</div></div>
+      <div class="set-grid">${num("maxTeam", "maxTeamL", 1, 15)}${num("maxStage", "maxStageDefL", 2, 256)}${num("maxTeamsStage", "maxTeamsStageL", 1, 64)}${num("teamStageMax", "teamStageMaxL", 1, 15)}${num("hpMin", "hpMinL", 50, 3000)}${num("hpMax", "hpMaxL", 50, 3000)}</div></div>
       <div class="box panel"><p class="note">${t("adminNote")}</p><div><button class="btn text danger" data-act="resetDemo">${pending === "reset" ? t("resetSure") : t("resetDemo")}</button></div></div>`,
     socials: () => `<div class="box panel"><div class="set-grid">${SOCIALS.map(([n]) =>
       `<label class="fieldlabel">${n}<input class="field" data-a="social:${n}" value="${esc(SETTINGS.socials[n] || "")}" maxlength="120" placeholder="https:// / mailto:"></label>`).join("")}</div></div>`,
@@ -3510,14 +3770,18 @@ function adminEdit([kind, id, f, k], v) {
     x.gmax = { ...x.gmax, [f]: n };
     return dbSave();
   }
-  if (kind === "tout") {
-    // checkbox checked = takes part; unchecked = listed in out / teamsOut
-    const x = TOURS.find(z => z.id === +id), list = kind === "out" ? x.out : x.teamsOut, key = kind === "out" ? roster()[+f]?.name : +f;
-    if (key == null) return;
-    const at = list.indexOf(key);
-    if (v && at >= 0) list.splice(at, 1);
-    if (!v && at < 0) list.push(key);
-    return dbSave();
+
+  if (kind === "jpart") {
+    // three judges per run (angle, line, style); the run's score is their sum once all three are in
+    const [run, j] = f.split("-").map(Number), p = roster()[+k], n = Number(v), max = JUDGE_PARTS[j]?.[1];
+    if (!p || max == null || (run !== 0 && run !== 1) || (v !== "" && !Number.isFinite(n))) return render();
+    const b = bcState(), tid = +id;
+    if ((b.tour ?? bcTour(b)?.id) !== tid) Object.assign(b, { onTrack: null, leader: null, chaser: null, label: "", votes: [null, null, null] });
+    S.bc = { ...b, tour: tid, onTrack: b.onTrack || p.name };
+    const o = (S.scores[`${id}:${p.name}`] ??= {}), ps = ((o.p ??= {})[run] ??= [null, null, null]);
+    ps[j] = v === "" ? null : Math.min(max, Math.max(0, Math.round(n * 10) / 10));
+    o[run] = ps.every(z => z != null) ? Math.round(ps.reduce((s, z) => s + z, 0) * 10) / 10 : null;
+    return save();
   }
   if (kind === "jscore") {
     // a score typed in the judges island puts that stage and that pilot on air
@@ -3588,6 +3852,8 @@ function adminEdit([kind, id, f, k], v) {
     if (id === "hpMin" || id === "hpMax") { const n = Math.round(Number(v)), lo = id === "hpMin" ? n : SETTINGS.hpMin, hi = id === "hpMax" ? n : SETTINGS.hpMax;
       if (n >= 50 && n <= 3000 && lo < hi) SETTINGS[id] = n; else adminMsg = t("hpBad"); }
     if (id === "maxStage") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) SETTINGS.maxStage = n; }
+    if (id === "maxTeamsStage") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) SETTINGS.maxTeamsStage = n; }
+    if (id === "teamStageMax") { const n = Math.round(Number(v)); if (n >= 1 && n <= 15) SETTINGS.teamStageMax = n; }
     return dbSave();
   }
   if (kind === "social" && SETTINGS.socials[id] !== undefined) {
@@ -3665,6 +3931,24 @@ function toast(msg) {
   const el = document.createElement("div");
   el.className = "toast"; el.setAttribute("role", "status"); el.textContent = msg;
   document.body.appendChild(el); setTimeout(() => el.remove(), 2200);
+}
+// organisers decide on a founder's request; an approved roster change rewrites that stage's entry, an approved name renames the team
+function reqDecide(teamId, reqId, status) {
+  const tm = teamById(teamId), r = tm && reqsOf(tm).find(z => z.id === reqId);
+  if (!r) return;
+  if (status === "approved" && r.type === "name") TEAM_NAMES[tm.id] = r.newName;
+  if (status === "approved" && r.type === "roster") {
+    const x = TOURS.find(z => z.id === r.tour), e = x && teamEntry(x, tm);
+    if (!e) { adminMsg = t("reqNoEntry"); return render(); }
+    const pilots = e.pilots.filter(p => p.nick !== r.out && p.name !== r.out);
+    if (r.in) pilots.push({ name: roster().find(p => p.name === r.in)?.name || r.in, nick: r.in });
+    const dup = inOtherEntry(x, tm, pilots.map(p => p.name));
+    if (dup.length) { adminMsg = `${t("entryDup")}: ${dup.join(", ")}`; return render(); }
+    if (pilots.length > SETTINGS.teamStageMax) { adminMsg = `${t("entryTooMany")} ${SETTINGS.teamStageMax}`; return render(); }
+    (TEAM_ENTRIES[x.id] ??= {})[tm.id] = { ...e, pilots };
+  }
+  REQ_STATUS[`${tm.id}:${r.id}`] = { status, at: Date.now() };
+  dbSave();
 }
 function confirmTwice(key, fn) {
   if (pending !== key) { pending = key; return render(); }
@@ -3911,9 +4195,10 @@ function judgeIsland(x) {
   <div class="island">
     <section class="box panel"><div class="head"><h3>${t("qualJudge")}</h3><a class="btn text sm" href="#broadcast">${t("broadcastBtn")}</a></div>
       <span class="note">${t("pickFromList")}</span>
-      ${p ? `<div class="cols" style="gap:.8rem;grid-template-columns:repeat(2,minmax(0,1fr))">
-          <label class="fieldlabel">${t("try1")}<input class="field" type="number" min="0" max="100" step="0.1" data-a="jscore:${x.id}:0:${p.i}" value="${p.a ?? ""}"></label>
-          <label class="fieldlabel">${t("try2")}<input class="field" type="number" min="0" max="100" step="0.1" data-a="jscore:${x.id}:1:${p.i}" value="${p.b ?? ""}"></label></div>
+      ${p ? `<div class="jparts" role="group" aria-label="${t("qualJudge")}"><span></span>${JUDGE_PARTS.map(([k, max]) => `<span class="label jp-h">${t(k)}<small>0–${max}</small></span>`).join("")}<span class="label jp-h">${t("sumL")}<small>&nbsp;</small></span>
+          ${[0, 1].map(run => { const ps = S.scores[`${x.id}:${p.name}`]?.p?.[run] || [];
+            return `<span class="label">${t(run ? "try2" : "try1")}</span>${JUDGE_PARTS.map(([k, max], j) => `<input class="field" type="number" min="0" max="${max}" step="0.1" data-a="jpart:${x.id}:${run}-${j}:${p.i}" value="${ps[j] ?? ""}" aria-label="${t(run ? "try2" : "try1")} · ${t(k)}">`).join("")}
+              <b class="mono acc">${fmt(run ? p.b : p.a)}</b>`; }).join("")}</div>
         <div class="row" style="justify-content:space-between"><span class="note">${t("best")}: <b class="acc mono">${fmt(p.best)}</b></span>
           <button class="btn line sm" data-act="nextPilot" data-id="${x.id}">${t("nextPilot")} →</button></div>` : `<p class="note">${t("pickToScore")}</p>`}
       <div class="row" style="justify-content:space-between"><span class="label">${t("regOrder")}</span><button class="btn text sm danger" data-act="clearScores" data-id="${x.id}">${pending === `cs${x.id}` ? t("clearSure") : t("clearScores")}</button></div>
@@ -3959,6 +4244,7 @@ function reloadState(raw) {
   Object.assign(ROLES, n.db?.roles || Object.fromEntries((n.db?.admins || []).map((x, i) => [x, i ? "admin" : "owner"])));
   syncInto(ACHIEVEMENTS, (n.db?.achievements || []).filter(a => !OLD_ACH.has(a[1])), []);
   Object.keys(AWARDS).forEach(k => delete AWARDS[k]); Object.assign(AWARDS, n.db?.awards);
+  for (const [obj, src] of [[TEAM_ENTRIES, n.db?.teamEntries], [REQ_STATUS, n.db?.reqStatus], [TEAM_NAMES, n.db?.teamNames]]) { Object.keys(obj).forEach(k => delete obj[k]); Object.assign(obj, src); }
   Object.keys(TRACK_DIFF).forEach(k => delete TRACK_DIFF[k]); Object.assign(TRACK_DIFF, n.db?.trackDiff);
 }
 try { lastRaw = localStorage.getItem("lds"); } catch {}
@@ -4006,15 +4292,18 @@ async function api(path, opt = {}) {
   if (!r.ok) throw new Error(String(r.status));
   return r.json();
 }
-const meBody = () => JSON.stringify({ team: S.team, num: S.num, car: S.car, about: S.about || {}, regs: S.regs, regAt: S.regAt || {}, created: S.created, declined: S.declined || [] });
+const meBody = () => JSON.stringify({ team: S.team, num: S.num, car: S.car, about: S.about || {}, regs: S.regs, regAt: S.regAt || {}, created: S.created, declined: S.declined || [],
+  teamRegs: S.teamRegs || {}, teamReqs: S.teamReqs || [] });
 const dbBody = () => S.db ? JSON.stringify({ ...S.db, pilots: undefined, testPilots: PILOTS.filter(p => p.test), roleIds: Object.fromEntries(USERS.filter(u => ROLE_LIST.includes(ROLES[u.name])).map(u => [u.steamId, ROLES[u.name]])) }) : ""; // the server checks roles by SteamID
 function pushRemote() {
   if (!HOSTED || !token || !S.user) return;
   clearTimeout(pushTimer); pushing = true;
   pushTimer = setTimeout(async () => {
-    const jobs = [], put = (path, body) => jobs.push(api(path, { method: "PUT", body }).catch(() => { toast(t("netErr")); return "fail"; }));
-    const m = meBody(); if (m !== sentMe) { sentMe = m; put("/api/me", m); }
-    // shortcut: the server still lets only admins write; judge, streamer and tech writes need per-role checks there before going live
+    const jobs = [], put = (path, body, then) => jobs.push(api(path, { method: "PUT", body }).then(then).catch(() => { toast(t("netErr")); return "fail"; }));
+    // the server keeps team entries only while their stage takes registrations: take its answer, and say so when one was refused
+    const m = meBody(); if (m !== sentMe) { sentMe = m; put("/api/me", m, r => { if (!r?.teamRegs) return;
+      const refused = Object.keys(S.teamRegs || {}).some(k => !r.teamRegs[k]); S.teamRegs = r.teamRegs; sentMe = meBody(); if (refused) { toast(t("teamRegRefused")); render(); } }); }
+    // the server checks every write against the writer's role
     if (can("edit") || can("rules")) { const d = dbBody(); if (d && d !== sentDb) { sentDb = d; put("/api/db", `{"db":${d}}`); } }
     if (can("judge") || can("bc")) { const l = liveBody(); if (l !== sentLive) { sentLive = l; put("/api/live", l); } }
     const res = await Promise.all(jobs);
@@ -4026,17 +4315,17 @@ function applyMe({ user, admin, owner, role }) {
   meAdmin = !!admin; meOwner = !!owner; meRole = role ?? (owner ? "owner" : admin ? "admin" : ""); OWN_TEAM = teamIdOf(user.steamId);
   S.user = { name: user.name, steamId: user.steamId, avatar: user.avatar || "" };
   Object.assign(S, { team: user.team ?? null, num: user.num ?? null, car: { ...DEFAULT.car, ...user.car }, about: user.about || {}, regs: user.regs || [],
-    regAt: user.regAt || {}, created: user.created || null, declined: user.declined || [] });
+    regAt: user.regAt || {}, created: user.created || null, declined: user.declined || [], teamRegs: user.teamRegs || {}, teamReqs: user.teamReqs || [] });
   sentMe = meBody();
 }
 function applyRemote(st) {
-  const mine = { user: S.user, team: S.team, num: S.num, car: S.car, about: S.about, regs: S.regs, regAt: S.regAt, created: S.created, declined: S.declined, lang: S.lang };
+  const mine = { user: S.user, team: S.team, num: S.num, car: S.car, about: S.about, regs: S.regs, regAt: S.regAt, created: S.created, declined: S.declined, lang: S.lang, teamRegs: S.teamRegs, teamReqs: S.teamReqs };
   reloadState(JSON.stringify({ ...S, db: st.db || undefined, bc: st.live?.bc ?? undefined, scores: st.live?.scores ?? {}, brackets: st.live?.brackets ?? {} }));
   Object.assign(S, mine);
   TOURS.forEach(x => { const v = st.live?.statuses?.[x.id]; if (STATUSES.includes(v)) x.status = v; });
   USERS = st.users || [];
   PILOTS.splice(0, PILOTS.length, ...USERS.filter(u => u.steamId !== S.user?.steamId).map(u => ({ name: u.name, steamId: u.steamId, avatar: u.avatar, rating: 0,
-    team: u.team ?? null, num: u.num ?? null, car: u.car?.car || "", setup: u.car || null, about: u.about || null, regs: u.regs || [], regAt: u.regAt || {}, created: u.created || null })),
+    team: u.team ?? null, num: u.num ?? null, car: u.car?.car || "", setup: u.car || null, about: u.about || null, regs: u.regs || [], regAt: u.regAt || {}, created: u.created || null, teamRegs: u.teamRegs || {}, teamReqs: u.teamReqs || [] })),
     ...clone(st.db?.testPilots || []).map(p => ({ ...p, test: true })));
   sentDb = dbBody(); sentLive = liveBody();
   try { lastRaw = JSON.stringify(S); localStorage.setItem("lds", lastRaw); } catch {}
@@ -4134,7 +4423,7 @@ document.addEventListener("click", e => {
   if (!el) return;
   if (el.matches("tr") && e.target.closest("select, input, label")) return; // inline editors in a table row don't open the row
   if (ACT_PERM[el.dataset.act] && !can(ACT_PERM[el.dataset.act])) return;
-  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
+  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
   if (el.dataset.tab || el.dataset.season || el.dataset.qt || el.dataset.sub) admAnim = true;
   if (el.dataset.tab) { aTab = el.dataset.tab; aSeason = 0; aTour = 0; adminMsg = ""; return render(); }
   if (el.dataset.season) { aSeason = +el.dataset.season; aTour = 0; return render(); }
@@ -4143,7 +4432,9 @@ document.addEventListener("click", e => {
   if (el.dataset.lang) { S.lang = el.dataset.lang; return save(); }
   if (el.dataset.num) return showPick(+el.dataset.num);
   if (el.dataset.sel) { selTeam = selTeam === +el.dataset.sel ? null : +el.dataset.sel; return render(); }
-  if (el.dataset.goto) return document.getElementById(el.dataset.goto)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (el.dataset.goto) { const target = document.getElementById(el.dataset.goto), box = target?.closest("details");
+    if (box && !box.open) { box.open = true; rClosed.delete(+box.dataset.rdoc); } // a link into a folded regulation unfolds it
+    return target?.scrollIntoView({ behavior: "smooth", block: "start" }); }
   const id = +el.dataset.id;
   e.preventDefault();
   ({
@@ -4199,7 +4490,9 @@ document.addEventListener("click", e => {
     newSponsor: () => { SPONSORS.push({ name: "Новый спонсор", role: SPONSORS.some(s => s.role === "general") ? "partner" : "general", url: "" }); dbSave(); },
     newAch: () => { ACHIEVEMENTS.push(["🏁", "c" + Date.now().toString(36), [t("achNewRu"), ""], ["", ""]]); dbSave(); },
     delAch: () => { confirmTwice(`ach${id}`, () => { delete AWARDS[ACHIEVEMENTS[id]?.[1]]; ACHIEVEMENTS.splice(id, 1); dbSave(); }); },
-    achGive: () => { const a = ACHIEVEMENTS[id], n = document.getElementById(`achp-${id}`)?.value; if (!a || !roster().some(p => p.name === n)) return;
+    achMove: () => { const j = id + +el.dataset.v; if (j < 0 || j >= ACHIEVEMENTS.length) return; [ACHIEVEMENTS[id], ACHIEVEMENTS[j]] = [ACHIEVEMENTS[j], ACHIEVEMENTS[id]]; dbSave(); },
+    achGive: () => { const a = ACHIEVEMENTS[id], n = document.getElementById(`achp-${id}`)?.value;
+      if (!a || !(roster().some(p => p.name === n) || (n?.startsWith("t:") && teamById(+n.slice(2))))) return;
       AWARDS[a[1]] = [...new Set([...(AWARDS[a[1]] || []), n])]; dbSave(); toast(t("achGiven")); },
     achTake: () => { const a = ACHIEVEMENTS[id]; if (!a) return; AWARDS[a[1]] = (AWARDS[a[1]] || []).filter(n => n !== el.dataset.name); dbSave(); },
     spLogoDel: () => { const s = SPONSORS[id]; if (!s) return; delete s.img; dbSave(); },
@@ -4220,6 +4513,14 @@ document.addEventListener("click", e => {
       if (membersOf(x).length >= maxTeam()) { teamMsg = t("full"); return dbSave(); }
       S.team = id; dbSave(); },
     declineInvite: () => { const x = teamById(id); if (!x || !S.user) return; if (HOSTED) { S.declined = [...new Set([...(S.declined || []), id])]; return save(); } x.invites = (x.invites || []).filter(n => n !== S.user.name); dbSave(); },
+    teamUnreg: () => { const x = TOURS.find(z => z.id === id); if (!teamRegOpen(x) || !S.teamRegs?.[id]) return; const r = { ...S.teamRegs }; delete r[id]; S.teamRegs = r; save(); },
+    teamEdit: () => { aEditTeam = id; render(); },
+    teamRemove: () => { const x = +el.dataset.v; confirmTwice(`te${x}-${id}`, () => { (TEAM_ENTRIES[x] ??= {})[id] = { removed: true }; if (aEditTeam === id) aEditTeam = 0; dbSave(); }); },
+    teamAdd: () => { const tm = teamById(+document.getElementById("teamadd")?.value); if (!tm) return;
+      (TEAM_ENTRIES[id] ??= {})[tm.id] = { at: Date.now(), founderNick: founderOf(tm)?.name || tm.name, pilots: membersOf(tm).slice(0, SETTINGS.teamStageMax).map(p => ({ name: p.name, nick: p.name })) };
+      aEditTeam = tm.id; dbSave(); },
+    reqApprove: () => reqDecide(id, +el.dataset.v, "approved"),
+    reqReject: () => reqDecide(id, +el.dataset.v, "rejected"),
     leave: () => { if (S.team === OWN_TEAM) S.created = null; S.team = null; save(); },
   })[el.dataset.act]?.();
 });
@@ -4239,6 +4540,38 @@ document.addEventListener("submit", e => {
     if (HOSTED && !isAdmin()) { api("/api/protest", { method: "POST", body: JSON.stringify({ tour: +e.target.dataset.tour, against, text }) }).then(() => { apiV = null; }, () => toast(t("netErr"))); return render(); }
     PROTESTS.push({ id: Math.max(0, ...PROTESTS.map(p => p.id)) + 1, tour: +e.target.dataset.tour, from: S.user.name, against, text, status: "new", verdict: "" });
     dbSave();
+  }
+  if (e.target.matches?.(".treg-form")) {
+    // a team entry: the founder while registration is open, or an organiser at any time
+    const f = e.target, x = TOURS.find(z => z.id === +f.dataset.tour), tm = teamById(+f.dataset.team), fd = new FormData(f), byAdmin = f.id === "tentryform";
+    const msg = m => { const el = document.getElementById(`${f.id}-msg`); if (el) el.textContent = m; };
+    if (!x || !tm) return;
+    const names = fd.getAll("p"), founderNick = String(fd.get("founder") || "").trim().slice(0, 32);
+    if (!founderNick) return msg(t("entryNeedFounder"));
+    if (!names.length) return msg(t("entryNeedPilots"));
+    if (names.length > SETTINGS.teamStageMax) return msg(`${t("entryTooMany")} ${SETTINGS.teamStageMax}`);
+    const pilots = names.map(n => ({ name: n, nick: String(fd.get(`nick:${n}`) || "").trim().slice(0, 32) || n }));
+    const dup = inOtherEntry(x, tm, names);
+    if (dup.length) return msg(`${t("entryDup")}: ${dup.join(", ")}`);
+    if (byAdmin) { if (!isAdmin()) return; (TEAM_ENTRIES[x.id] ??= {})[tm.id] = { at: teamEntry(x, tm)?.at ?? Date.now(), founderNick, pilots }; aEditTeam = 0; toast(t("saved")); return dbSave(); }
+    if (!tm.owner || !teamRegOpen(x)) return;
+    const cur = S.teamRegs?.[x.id];
+    if (!cur && stageEntries(x).filter(r => r.ok).length >= SETTINGS.maxTeamsStage) return msg(t("teamRegFull"));
+    S.teamRegs = { ...S.teamRegs, [x.id]: { at: cur?.at ?? Date.now(), founderNick, pilots } }; // edits keep the original filing time: earlier entries keep priority
+    toast(t("entrySaved"));
+    return save();
+  }
+  if (e.target.id === "rosterreq" || e.target.id === "namereq") {
+    const f = e.target, fd = new FormData(f), tm = teamById(S.team), msg = m => { document.getElementById(`${f.id}-msg`).textContent = m; };
+    if (!tm?.owner) return;
+    const req = f.id === "namereq"
+      ? { type: "name", oldName: tm.name, newName: String(fd.get("name") || "").trim().slice(0, 32) }
+      : { type: "roster", tour: +f.dataset.tour, reason: String(fd.get("reason") || "").trim().slice(0, 200), out: String(fd.get("out") || ""), in: String(fd.get("in") || "").trim().slice(0, 32) };
+    if (req.type === "name" && (!req.newName || req.newName === tm.name)) return msg(t("nameNeed"));
+    if (req.type === "roster" && (!req.reason || (!req.out && !req.in))) return msg(t("reqNeed"));
+    S.teamReqs = [...(S.teamReqs || []), { id: Date.now(), at: Date.now(), ...req }];
+    toast(t("reqSent"));
+    return save();
   }
   if (e.target.id === "teamform") {
     const name = document.getElementById("tname").value.trim().slice(0, 32), tag = document.getElementById("ttag").value.trim().toUpperCase().slice(0, 4);
@@ -4265,7 +4598,9 @@ document.addEventListener("input", e => {
     document.getElementById("desccount").textContent = `${S.created.desc.length} / 300`;
   }
 });
-document.addEventListener("toggle", e => { if (e.target.id === "ach-box") { S.achOpen = e.target.open; persist(); } }, true);
+document.addEventListener("toggle", e => { if (e.target.id === "ach-box") { S.achOpen = e.target.open; persist(); }
+  if (e.target.dataset?.tocg != null) e.target.open ? tocOpenG.add(+e.target.dataset.tocg) : tocOpenG.delete(+e.target.dataset.tocg);
+  if (e.target.dataset?.rdoc != null) e.target.open ? rClosed.delete(+e.target.dataset.rdoc) : rClosed.add(+e.target.dataset.rdoc); }, true);
 document.addEventListener("change", e => {
   if (e.target.id === "teamlogo") return setTeamLogo(e.target.files?.[0]);
   if (e.target.dataset.splogo && isAdmin()) { const s = SPONSORS[+e.target.dataset.splogo], f = e.target.files?.[0];

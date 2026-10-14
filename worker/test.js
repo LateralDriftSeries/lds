@@ -64,6 +64,19 @@ ok(st.db.roleIds[PILOT] === "admin", "admin cannot change roles");
 await setRole("");
 ok((await (await call("/api/me", { token: pilot })).json()).role === "", "role removed");
 
+// team entries: only while the stage takes registrations; the filing time comes from the server
+const entry = { founderNick: "Pilot", pilots: [{ name: "Test Pilot", nick: "TP" }], at: 1 };
+const regsOf = async () => (await (await call("/api/state")).json()).users.find(u => u.steamId === PILOT).teamRegs;
+await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ teamRegs: { 203: entry } }) });
+ok(!(await regsOf())[203], "no team entry while the stage is not in registration");
+await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: { 203: "reg" } }) });
+await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ teamRegs: { 203: entry } }) });
+let regs = await regsOf();
+ok(regs[203]?.pilots[0].nick === "TP" && regs[203].at > 1e12, "team entry saved with the server's time");
+await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: {} }) });
+await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ teamRegs: {} }) });
+ok((await regsOf())[203]?.pilots[0].nick === "TP", "after registration the entry can't be changed or withdrawn");
+
 // protests: only while the stage runs, only by its pilots, once per opponent; it lands under the pilot's Steam name
 const protest = (tour, token = pilot) => call("/api/protest", { method: "POST", token, body: JSON.stringify({ tour, against: "Someone", text: "contact" }) });
 ok((await protest(203)).status === 409, "no protest before the stage runs");
