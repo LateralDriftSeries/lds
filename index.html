@@ -2375,12 +2375,13 @@ const teamPts = tm => membersOf(tm).map(p => p.pts).sort((a, b) => b - a).slice(
 const CROWN = '<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18M4 15l-1-9 5 4 4-6 4 6 5-4-1 9z"/></svg>';
 function leaderboard() {
   const top = lbTab === "teams"
-    ? allTeams().map(tm => ({ ava: tm.tag, name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: teamPts(tm) }))
+    ? allTeams().map(tm => ({ ava: tm.tag, logo: tm.img, name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: teamPts(tm) }))
     : roster().map(p => { const tm = teamById(p.team); return { ava: p.name[0], img: p.avatar, name: p.name, sub: [tm ? tm.name : t("freeAgent"), p.car].join(" · "), pts: p.pts }; });
   const podium = top.sort((a, b) => b.pts - a.pts).slice(0, 3);
   return `<div class="lb-grid">${podium.map((r, i) => `<article class="lb-card panel place-${i + 1}" data-place="${i + 1}">
       <div class="lb-top"><span class="lb-place">${i + 1}</span><span class="label acc">${t(["lbFirst", "lbSecond", "lbThird"][i])}</span>${i === 0 ? CROWN : ""}</div>
-      <div class="lb-who">${r.img ? pAva({ name: r.ava, avatar: r.img }, "lb-ava") : `<span class="lb-ava">${esc(r.ava)}</span>`}<div class="stack" style="gap:.3rem;min-width:0"><b>${esc(r.name)}</b><span class="lb-sub">${esc(r.sub)}</span></div></div>
+      <div class="lb-who">${r.img ? pAva({ name: r.ava, avatar: r.img }, "lb-ava") : /^data:image\/(webp|jpeg|png);base64,/.test(r.logo || "")
+        ? `<span class="lb-ava has-img" style="background-image:url(${r.logo})" role="img" aria-label="${esc(r.ava)}">${esc(r.ava)}</span>` : `<span class="lb-ava">${esc(r.ava)}</span>`}<div class="stack" style="gap:.3rem;min-width:0"><b>${esc(r.name)}</b><span class="lb-sub">${esc(r.sub)}</span></div></div>
       <div class="lb-pts"><span class="label">${t("totalPts")}</span><b>${r.pts}</b></div></article>`).join("")}</div>`;
 }
 // start time of a stage: parsed from the admin-editable "DD.MM.YYYY HH:MM" (Moscow time), falling back to the built-in date
