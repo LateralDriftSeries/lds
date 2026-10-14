@@ -87,6 +87,11 @@ await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team
 await team("/api/team", { id: TID, closed: false, invites: [] }, pilot, "PUT");
 await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: TID }) });
 ok(await teamOf(THIRD) === TID, "anyone joins an open team");
+// the representative edits the description and logo, nothing else
+await team("/api/team", { id: TID, rep: "Test Third" }, pilot, "PUT");
+ok((await team("/api/team", { id: TID, desc: "by rep", closed: true, invites: ["x"] }, third, "PUT")).ok, "representative may save");
+tmNow = await teamNow();
+ok(tmNow.desc === "by rep" && !tmNow.closed && !tmNow.invites.length, "representative changed the description only");
 ok((await team("/api/team", { id: TID, founder: THIRD }, pilot, "PUT")).ok && (await teamNow()).founder === THIRD, "founder role handed over");
 ok((await team("/api/team", { id: TID, desc: "x" }, pilot, "PUT")).status === 403, "the former founder cannot edit any more");
 // stage entries live with the team: only while the stage takes registrations, with the server's filing time

@@ -2010,7 +2010,8 @@ const I18N = {
     howCarT: "Заполните профиль", howCarD: "Машина, двигатель, КПП, мощность и стартовый номер от 1 до 999.",
     howRegT: "Запишитесь на этап", howRegD: "Регистрация открывается заранее и закрывается перед стартом этапа.",
     howRaceT: "Квалификация и парные", howRaceD: "Две попытки в квалификации, затем сетка Топ 32 вплоть до финала.",
-    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", joinTeam: "Вступить в команду", joinedTeam: "Вы вступили в команду", leaveFirst: "Вы уже в команде. Чтобы перейти, сначала выйдите из неё.",
+    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", teamLook: "Оформление команды", repRights: "Как представитель команды вы можете менять описание и аватар. Остальным управляет основатель.",
+    repDescHint: "Описание видят все. Его могут менять основатель и представитель.", joinTeam: "Вступить в команду", joinedTeam: "Вы вступили в команду", leaveFirst: "Вы уже в команде. Чтобы перейти, сначала выйдите из неё.",
     joinRefused: "Не получилось вступить: команда закрыта или заполнена.", repHint: "Один участник команды, метка R в составе.", rolesNoMembers: "В команде пока нет других участников.", staffName: "Организаторы LDS", staffDesc: "Главный администратор, администраторы, судьи, стримеры и технические помощники чемпионата.",
     staffBadge: "Организаторы", staffN: "в составе", staffRoster: "Состав организаторов", repL: "Представитель", repPick: "Представитель команды", founderPass: "Передать права основателя", founderPassBtn: "Передать",
     founderPassHint: "После передачи вы станете обычным участником, управление командой перейдёт к новому основателю.", founderPassed: "Права основателя переданы", createdKeep: "Вы уже создали команду — она продолжает существовать. Новую создать нельзя.", founderAssigned: "Вы основатель команды. Чтобы выйти из неё, сначала передайте права основателя другому участнику.", teamSend: "Отправка участников от команды", teamSendSoon: "Отправка участников откроется, когда этап перейдёт в статус «Регистрация».",
@@ -2148,7 +2149,8 @@ const I18N = {
     howCarT: "Set up your profile", howCarD: "Car, engine, gearbox, power and a race number from 1 to 999.",
     howRegT: "Sign up for a round", howRegD: "Registration opens in advance and closes before the round starts.",
     howRaceT: "Qualify and battle", howRaceD: "Two qualifying runs, then a Top 32 bracket all the way to the final.",
-    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", joinTeam: "Join the team", joinedTeam: "You joined the team", leaveFirst: "You are already in a team. Leave it first to move.",
+    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", teamLook: "Team look", repRights: "As the team's representative you can change the description and the logo. The founder manages the rest.",
+    repDescHint: "Everyone sees the description. The founder and the representative can change it.", joinTeam: "Join the team", joinedTeam: "You joined the team", leaveFirst: "You are already in a team. Leave it first to move.",
     joinRefused: "Couldn't join: the team is closed or full.", repHint: "One team member, marked R in the line-up.", rolesNoMembers: "No other members in the team yet.", staffName: "LDS organisers", staffDesc: "The championship's head admin, admins, judges, streamers and technical assistants.",
     staffBadge: "Organisers", staffN: "members", staffRoster: "The organisers", repL: "Representative", repPick: "Team representative", founderPass: "Hand over the founder role", founderPassBtn: "Hand over",
     founderPassHint: "After the hand-over you become a regular member; team management moves to the new founder.", founderPassed: "Founder role handed over", createdKeep: "You already created a team and it still exists. You can't create a new one.", founderAssigned: "You are the team's founder. To leave it, first hand the founder role to another member.", teamSend: "Send the team's drivers", teamSendSoon: "Sending drivers opens when the round moves to Registration.",
@@ -2858,9 +2860,9 @@ function rating() {
 
 const memberRows = tm => `<ul class="members">${membersOf(tm).map((p, i) =>
   `<li><span class="n">${p.num ?? "—"}</span>${esc(p.name)}${founderTag(tm, p)}</li>`).join("")}</ul>`;
-const descBlock = tm => isFounder(tm)
+const descBlock = tm => isFounder(tm) || isRep(tm)
   ? `<label class="fieldlabel" for="teamdesc">${t("teamDesc")}<textarea id="teamdesc" maxlength="300" placeholder="${t("descPh")}">${esc(tm.desc || "")}</textarea>
-     <span class="counter" id="desccount">${(tm.desc || "").length} / 300</span></label><p class="note">${t("ownerHint")}</p>`
+     <span class="counter" id="desccount">${(tm.desc || "").length} / 300</span></label><p class="note">${t(isFounder(tm) ? "ownerHint" : "repDescHint")}</p>`
   : `<p class="desc">${tm.desc ? esc(tr(tm.desc)) : `<span class="muted">${t("noDesc")}</span>`}</p>`;
 
 let selTeam = null;
@@ -3475,6 +3477,7 @@ const founderOf = tm => {
   return { name: who, regs: p?.teamRegs || {}, reqs: p?.teamReqs || [] };
 };
 const isFounder = tm => !!tm && !!S.user && founderOf(tm)?.name === S.user.name;
+const isRep = tm => !!tm && !!S.user && !tm.staff && repName(tm) === S.user.name;
 const teamEntry = (x, tm) => { const o = TEAM_ENTRIES[x.id]?.[tm.id]; return o ? (o.removed ? null : o) : founderOf(tm)?.regs?.[x.id] || null; };
 const stageEntries = x => allTeams().map(tm => ({ tm, e: teamEntry(x, tm) })).filter(r => r.e?.pilots?.length).sort((a, b) => a.e.at - b.e.at)
   .map((r, i) => ({ ...r, ok: i < SETTINGS.maxTeamsStage }));
@@ -3527,7 +3530,8 @@ function teamRegBox(tm) {
 let passTo = "";
 function teamManage() {
   const tm = teamById(S.team);
-  if (!isFounder(tm)) return ""; // only the founder manages the team; other members don't see this block
+  // the representative (R) gets the team's look only: description here, logo in the team block; other members see nothing
+  if (!isFounder(tm)) return isRep(tm) ? psec(t("teamLook"), `<div class="tm-desc-ed">${descBlock(tm)}</div><p class="note">${t("repRights")}</p>`) : "";
   const others = membersOf(tm).filter(p => p.name !== S.user.name);
   const none = !others.length;
   const roles = `<div class="tm-roles">
@@ -3542,7 +3546,7 @@ function teamManage() {
 }
 function myTeamBox() {
   const tm = teamById(S.team);
-  const canLogo = isFounder(tm);
+  const canLogo = isFounder(tm) || isRep(tm);
   if (tm) return `${tmCard(tm, true)}
     ${canLogo ? `<div class="logo-up"><label class="btn line sm" for="teamlogo">${tm.img ? t("changeLogo") : t("uploadLogo")}</label>
       <input id="teamlogo" type="file" accept="image/png,image/jpeg,image/webp" hidden>${tm.img ? `<button class="btn text sm danger" data-act="delLogo">${t("removeLogo")}</button>` : ""}
@@ -4515,6 +4519,10 @@ function applyRemote(st) {
   Object.assign(S, mine);
   TOURS.forEach(x => { const v = st.live?.statuses?.[x.id]; if (STATUSES.includes(v)) x.status = v; });
   USERS = st.users || []; SRV_TEAMS = st.teams || [];
+  // own number and team as the server has them: the head admin may change a number, the server may refuse a join;
+  // keeping the local copy showed a stale number and sent it back over the admin's change
+  const meU = USERS.find(u => u.steamId === S.user?.steamId);
+  if (meU) { S.num = meU.num ?? null; S.team = meU.team ?? null; sentMe = meBody(); }
   PILOTS.splice(0, PILOTS.length, ...USERS.filter(u => u.steamId !== S.user?.steamId).map(u => ({ name: u.name, steamId: u.steamId, avatar: u.avatar, rating: 0,
     team: u.team ?? null, num: u.num ?? null, car: u.car?.car || "", setup: u.car || null, about: u.about || null, regs: u.regs || [], regAt: u.regAt || {}, created: u.created || null, teamRegs: u.teamRegs || {}, teamReqs: u.teamReqs || [] })),
     ...clone(st.db?.testPilots || []).map(p => ({ ...p, test: true })));
@@ -4811,7 +4819,7 @@ document.addEventListener("input", e => {
     S.about = { ...S.about, [key]: e.target.value.slice(0, ABOUT_MAX) }; persist();
     document.getElementById("cnt-" + key).textContent = `${S.about[key].length} / ${ABOUT_MAX}`;
   }
-  if (e.target.id === "teamdesc" && isFounder(teamById(S.team))) {
+  if (e.target.id === "teamdesc" && (isFounder(teamById(S.team)) || isRep(teamById(S.team)))) {
     // a created team keeps its description in the founder's profile, a league team in the league data
     const ref = myTeamRef(); if (!ref) return;
     ref.desc = e.target.value.slice(0, 300); isSrv(ref) ? teamPutSoon(ref) : S.team === OWN_TEAM ? persist() : dbSave(false);

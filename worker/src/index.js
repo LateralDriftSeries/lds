@@ -270,10 +270,13 @@ async function createTeam(req, env, sid) {
 async function putTeam(req, env, sid) {
   const body = await readJson(req, 400_000), tm = await getTeam(env, Number(body.id));
   if (!tm) throw new HttpError(404, "no such team");
-  const role = await roleOf(env, sid);
-  if (tm.founder !== sid && role !== "owner" && role !== "admin") throw new HttpError(403, "founder only");
+  const role = await roleOf(env, sid), me = await getUser(env, sid);
+  // the representative (R) may change only the description and the logo; everything else stays with the founder (or an admin)
+  const rep = !!me && !!tm.rep && me.name === tm.rep && me.team === tm.id;
+  if (tm.founder !== sid && role !== "owner" && role !== "admin" && !rep) throw new HttpError(403, "founder only");
   if ("desc" in body) tm.desc = String(body.desc || "").slice(0, 300);
   if ("img" in body) tm.img = /^data:image\/(webp|jpeg|png);base64,/.test(body.img || "") && body.img.length < 300_000 ? body.img : undefined;
+  if (rep && tm.founder !== sid && role !== "owner" && role !== "admin") { await setTeam(env, tm); await bump(env); return json({ ok: true, regs: tm.regs }); }
   if ("closed" in body) tm.closed = !!body.closed;
   if ("invites" in body) tm.invites = (Array.isArray(body.invites) ? body.invites : []).slice(0, 50).map(n => String(n).slice(0, 40));
   if ("rep" in body) tm.rep = body.rep ? String(body.rep).slice(0, 40) : undefined;
