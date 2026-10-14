@@ -6,7 +6,7 @@ compatibility_date = "2025-06-01"
 # the GitHub Pages address of the site, e.g. "https://yourname.github.io" (several: comma separated)
 SITE_ORIGIN = "https://lateraldriftseries.github.io"
 # your own SteamID64 (17 digits): this account is always an admin
-OWNER_STEAM_IDS = "76561199231338901"
+OWNER_STEAM_IDS = "76561199231338901,76561199052322995"
 
 [[d1_databases]]
 binding = "DB"
