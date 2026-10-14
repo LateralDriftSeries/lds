@@ -88,6 +88,22 @@ st = await (await call("/api/state")).json();
 // cheap poll when nothing changed
 ok(Object.keys(await (await call("/api/state?v=" + st.v)).json()).join() === "v", "unchanged state answers with version only");
 
+// long poll: held while nothing changes, answers as soon as something does
+let t0 = Date.now(), held = await (await call(`/api/state?v=${st.v}&wait=2`)).json();
+ok(Object.keys(held).join() === "v" && Date.now() - t0 >= 1800, "long poll waits when nothing changed");
+t0 = Date.now();
+const waiting = call(`/api/state?v=${st.v}&wait=20`).then(r => r.json());
+setTimeout(() => call("/api/me", { method: "PUT", token: owner, body: JSON.stringify({ num: 9 }) }), 1200);
+held = await waiting;
+ok("users" in held && Date.now() - t0 < 6000, "long poll answers right after a change");
+
+// translation: Russian is translated once and cached, other text passes through
+const tr1 = await (await call("/api/translate", { method: "POST", body: JSON.stringify({ q: ["Привет", "LDS 2.0"] }) })).json();
+ok(typeof tr1.t[0] === "string" && !/[А-Яа-я]/.test(tr1.t[0]) && tr1.t[1] === "LDS 2.0", "translates Russian, keeps the rest");
+t0 = Date.now();
+const tr2 = await (await call("/api/translate", { method: "POST", body: JSON.stringify({ q: ["Привет"] }) })).json();
+ok(tr2.t[0] === tr1.t[0], "second time comes from the cache");
+
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");
 ok(!(await fetch(API + "/api/state", { headers: { origin: "https://evil.example" } })).headers.get("access-control-allow-origin"), "no CORS for other sites");

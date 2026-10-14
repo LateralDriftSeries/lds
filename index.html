@@ -2283,7 +2283,9 @@ async function runTr() {
   if (trBusy) return; trBusy = true;
   const list = [...trQueue].slice(0, 40); list.forEach(s => trQueue.delete(s));
   let out = null;
-  try {
+  // hosted site: our server translates once and shares the result with everyone (a visitor's browser may be blocked by Google)
+  if (HOSTED) try { out = (await api("/api/translate", { method: "POST", body: JSON.stringify({ q: list }) })).t; } catch {}
+  if (!Array.isArray(out) || out.length !== list.length || out.some(v => !v)) try {
     const sample = window.claude ? await window.claude.use("sample") : null;
     if (sample) out = await sample.json(`Translate each Russian string in this JSON array into natural English for a drift racing league website. Keep names, numbers, emoji and punctuation. Reply with only a JSON array of the same length, in the same order.\n${JSON.stringify(list)}`, { modelTier: "quick" });
   } catch {}
@@ -2291,7 +2293,7 @@ async function runTr() {
     out = await Promise.all(list.map(s => fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ru&tl=en&dt=t&q=${encodeURIComponent(s)}`)
       .then(r => r.json()).then(j => j[0].map(p => p[0]).join("")).catch(() => null)));
   let got = 0;
-  list.forEach((s, i) => { if (typeof out[i] === "string" && out[i].trim()) { TR[s] = out[i]; got++; } else trFailed.add(s); }); // a failure isn't retried this visit
+  list.forEach((s, i) => { if (typeof out[i] === "string" && out[i].trim()) { TR[s] = out[i]; got++; } else { trFailed.add(s); setTimeout(() => trFailed.delete(s), 30000); } }); // a failure is retried after 30 s
   try { localStorage.setItem("lds_tr", JSON.stringify(TR)); } catch {}
   trBusy = false;
   if (trQueue.size) runTr();
@@ -3919,14 +3921,33 @@ function applyRemote(st) {
   sentDb = dbBody(); sentLive = liveBody();
   try { lastRaw = JSON.stringify(S); localStorage.setItem("lds", lastRaw); } catch {}
 }
+// long poll: the server holds the request until something changes (up to 25 s), so changes show up within about a second;
+// a hidden tab just checks every 30 s and catches up the moment it is shown again
+let pollTimer = 0, pollBusy = false, heldState = null;
 async function poll() {
+  clearTimeout(pollTimer);
+  if (pollBusy) return;
+  pollBusy = true;
   const h = location.hash, live = h.startsWith("#obs-") || h === "#broadcast" || h === "#admin";
+  let retry = 0;
   try {
-    const st = await api("/api/state" + (apiV != null ? `?v=${apiV}` : ""));
-    // don't pull under someone's fingers: skip while this tab is typing or still sending its own edit
-    if ("users" in st && !pushing && (live || !document.activeElement?.matches?.("input, textarea, select"))) { applyRemote(st); apiV = st.v; render(); }
-  } catch {}
-  setTimeout(poll, document.hidden ? 15000 : live ? 1500 : 5000);
+    const st = await api("/api/state" + (apiV != null ? `?v=${apiV}${document.hidden ? "" : "&wait=25"}` : ""));
+    if (pushing) retry = 500; // our own edit is still on its way: ask again once it has landed
+    else if ("users" in st) {
+      apiV = st.v;
+      // don't pull under someone's fingers: while this tab is typing, keep the news and apply it when the field loses focus
+      if (!live && document.activeElement?.matches?.("input, textarea, select")) heldState = st;
+      else { heldState = null; applyRemote(st); render(); }
+    }
+  } catch { retry = 5000; }
+  pollBusy = false;
+  pollTimer = setTimeout(poll, retry || (document.hidden ? 30000 : 150));
+}
+if (HOSTED) {
+  addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });
+  document.addEventListener("focusout", () => setTimeout(() => {
+    if (heldState && !document.activeElement?.matches?.("input, textarea, select")) { const st = heldState; heldState = null; applyRemote(st); render(); }
+  }, 0));
 }
 if (HOSTED) {
   const m = location.hash.match(/^#token=([\w.-]+)$/);
