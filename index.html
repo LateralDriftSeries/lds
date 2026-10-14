@@ -1777,6 +1777,7 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield }
 .rdoc > summary h3 { margin: 0 }
 .rdoc[open] > summary { padding-bottom: 1rem; border-bottom: 1px solid var(--line) }
 .rdoc[open] .ach-chev { transform: rotate(180deg) } .rdoc > summary:hover .ach-chev { border-color: var(--accent) }
+.tm-join { display: flex; justify-content: flex-end; margin-top: -.2rem }
 .tm-status.staff { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, var(--line)) }
 .tm-status.staff::before { background: var(--accent) }
 .pl-right .staff-role { position: static; font-size: .62rem; white-space: nowrap }
@@ -2009,7 +2010,8 @@ const I18N = {
     howCarT: "Заполните профиль", howCarD: "Машина, двигатель, КПП, мощность и стартовый номер от 1 до 999.",
     howRegT: "Запишитесь на этап", howRegD: "Регистрация открывается заранее и закрывается перед стартом этапа.",
     howRaceT: "Квалификация и парные", howRaceD: "Две попытки в квалификации, затем сетка Топ 32 вплоть до финала.",
-    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", repHint: "Один участник команды, метка R в составе.", rolesNoMembers: "В команде пока нет других участников.", staffName: "Организаторы LDS", staffDesc: "Главный администратор, администраторы, судьи, стримеры и технические помощники чемпионата.",
+    partners: "Партнёры", partnersTitle: "Нас поддерживают", seasonCal: "Календарь сезона", joinTeam: "Вступить в команду", joinedTeam: "Вы вступили в команду", leaveFirst: "Вы уже в команде. Чтобы перейти, сначала выйдите из неё.",
+    joinRefused: "Не получилось вступить: команда закрыта или заполнена.", repHint: "Один участник команды, метка R в составе.", rolesNoMembers: "В команде пока нет других участников.", staffName: "Организаторы LDS", staffDesc: "Главный администратор, администраторы, судьи, стримеры и технические помощники чемпионата.",
     staffBadge: "Организаторы", staffN: "в составе", staffRoster: "Состав организаторов", repL: "Представитель", repPick: "Представитель команды", founderPass: "Передать права основателя", founderPassBtn: "Передать",
     founderPassHint: "После передачи вы станете обычным участником, управление командой перейдёт к новому основателю.", founderPassed: "Права основателя переданы", createdKeep: "Вы уже создали команду — она продолжает существовать. Новую создать нельзя.", founderAssigned: "Вы основатель команды. Чтобы выйти из неё, сначала передайте права основателя другому участнику.", teamSend: "Отправка участников от команды", teamSendSoon: "Отправка участников откроется, когда этап перейдёт в статус «Регистрация».",
     teamSendNoStage: "Сейчас нет этапа. Отправка участников откроется вместе с регистрацией на следующий этап.", choose: "Выбрать", teamManage: "Управление командой", founderL: "Основатель", founderStays: "Вы основатель своей команды и остаётесь в ней. Чтобы перейти в другую, сначала распустите свою.",
@@ -2146,7 +2148,8 @@ const I18N = {
     howCarT: "Set up your profile", howCarD: "Car, engine, gearbox, power and a race number from 1 to 999.",
     howRegT: "Sign up for a round", howRegD: "Registration opens in advance and closes before the round starts.",
     howRaceT: "Qualify and battle", howRaceD: "Two qualifying runs, then a Top 32 bracket all the way to the final.",
-    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", repHint: "One team member, marked R in the line-up.", rolesNoMembers: "No other members in the team yet.", staffName: "LDS organisers", staffDesc: "The championship's head admin, admins, judges, streamers and technical assistants.",
+    partners: "Partners", partnersTitle: "Backed by", seasonCal: "Season calendar", joinTeam: "Join the team", joinedTeam: "You joined the team", leaveFirst: "You are already in a team. Leave it first to move.",
+    joinRefused: "Couldn't join: the team is closed or full.", repHint: "One team member, marked R in the line-up.", rolesNoMembers: "No other members in the team yet.", staffName: "LDS organisers", staffDesc: "The championship's head admin, admins, judges, streamers and technical assistants.",
     staffBadge: "Organisers", staffN: "members", staffRoster: "The organisers", repL: "Representative", repPick: "Team representative", founderPass: "Hand over the founder role", founderPassBtn: "Hand over",
     founderPassHint: "After the hand-over you become a regular member; team management moves to the new founder.", founderPassed: "Founder role handed over", createdKeep: "You already created a team and it still exists. You can't create a new one.", founderAssigned: "You are the team's founder. To leave it, first hand the founder role to another member.", teamSend: "Send the team's drivers", teamSendSoon: "Sending drivers opens when the round moves to Registration.",
     teamSendNoStage: "There is no round right now. Sending drivers opens with registration for the next round.", choose: "Choose", teamManage: "Team management", founderL: "Founder", founderStays: "You founded your team and stay in it. To move to another team, disband yours first.",
@@ -2863,6 +2866,12 @@ const descBlock = tm => isFounder(tm)
 let selTeam = null;
 // ---- teams: card grid in the home-page style; each card opens the team page, members open public driver profiles ----
 const avStack = tm => `<span class="av-stack" aria-hidden="true">${membersOf(tm).slice(0, 4).map(p => pAva(p, "", "i")).join("")}</span>`;
+// joining: a signed-in pilot with no team may join an open team that has room; a closed team takes only the pilots it invited
+const joinState = tm => !S.user || tm.staff || teamById(S.team) ? "" : tm.closed ? ((tm.invites || []).includes(S.user.name) ? "invited" : "closed")
+  : membersOf(tm).length >= maxTeam() ? "full" : "open";
+const joinBtn = tm => ({ open: `<button class="btn sm" data-act="join" data-id="${tm.id}">${t("joinTeam")}</button>`,
+  invited: `<a class="btn line sm" href="#profile">${t("yourInvites")} →</a>`, closed: `<span class="note">🔒 ${t("closedHint")}</span>`,
+  full: `<span class="note">${t("full")}</span>` })[joinState(tm)] || "";
 const tmStatus = tm => tm.staff ? `<span class="tm-status staff">${t("staffBadge")}</span>` : `<span class="tm-status ${tm.closed ? "closed" : ""}">${t(tm.closed ? "teamClosedL" : "teamOpenL")}</span>`;
 const tmCard = (tm, link = true, i = 0) => { const tag = link ? "a" : "div";
   return `<${tag} class="tm-card"${link ? ` href="#tm-${tm.id}"` : ""} style="--i:${i}">
@@ -2870,6 +2879,7 @@ const tmCard = (tm, link = true, i = 0) => { const tag = link ? "a" : "div";
     <div class="stack" style="gap:.4rem"><b class="tm-name">${esc(tm.name)}</b><p class="tm-desc ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tr(tm.desc)) : t("noDescShort")}</p></div>
     <div class="tm-foot">${avStack(tm)}${tm.staff ? `<span class="note">${membersOf(tm).length} ${t("staffN")}</span>`
       : `<span class="note">${membersOf(tm).length}/${maxTeam()}</span><span class="tm-pts"><b>${teamPts(tm)}</b><span class="label">${t("pointsShort")}</span></span>`}</div>
+    ${link && joinState(tm) === "open" ? `<div class="tm-join">${joinBtn(tm)}</div>` : ""}
   </${tag}>`; };
 function teams() {
   const list = allTeams();
@@ -2898,7 +2908,8 @@ function teamPage(id) {
   <section class="tm-hero">${logo(tm)}
     <div class="stack" style="gap:.7rem;min-width:0"><span class="label idx">${t("teamWord")}${tm.tag ? ` · ${esc(tm.tag)}` : ""}</span><h1>${esc(tm.name)}</h1>
       <p class="tm-lead ${tm.desc ? "" : "muted"}">${tm.desc ? esc(tr(tm.desc)) : t("noDescShort")}</p>
-      ${founderName(tm) ? `<span class="note">${t("founderL")}: <a href="${pHref(founderName(tm))}">${esc(founderName(tm))}</a></span>` : ""}${tmStatus(tm)}</div>
+      ${founderName(tm) ? `<span class="note">${t("founderL")}: <a href="${pHref(founderName(tm))}">${esc(founderName(tm))}</a></span>` : ""}${tmStatus(tm)}
+      ${joinBtn(tm) ? `<div class="row" style="gap:.6rem">${joinBtn(tm)}</div>` : ""}</div>
     ${statRow([[`#${rank}`, "teamPlace"], [teamPts(tm), "points"], [`${ms.length}/${maxTeam()}`, "drivers"]])}
   </section>
   ${(list => list.length ? `<details class="psec panel ach-box" open><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achTally(list, teamAchGot(tm))}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achGrid(list, teamAchGot(tm))}</details>` : "")(ACHIEVEMENTS.filter(a => achKind(a) === "team"))}
@@ -4480,7 +4491,8 @@ function pushRemote() {
   clearTimeout(pushTimer); pushing = true;
   pushTimer = setTimeout(async () => {
     const jobs = [], put = (path, body, then) => jobs.push(api(path, { method: "PUT", body }).then(then).catch(() => { toast(t("netErr")); return "fail"; }));
-    const m = meBody(); if (m !== sentMe) { sentMe = m; put("/api/me", m); }
+    // the server keeps a team change only if the team takes this pilot (open with room, or invited): follow its answer
+    const m = meBody(); if (m !== sentMe) { sentMe = m; put("/api/me", m, r => { if (r && "team" in r && (r.team ?? null) !== (S.team ?? null)) { S.team = r.team; sentMe = meBody(); toast(t("joinRefused")); render(); } }); }
     // the server checks every write against the writer's role
     if (can("edit") || can("rules")) { const d = dbBody(); if (d && d !== sentDb) { sentDb = d; put("/api/db", `{"db":${d}}`); } }
     if (can("judge") || can("bc")) { const l = liveBody(); if (l !== sentLive) { sentLive = l; put("/api/live", l); } }
@@ -4683,7 +4695,8 @@ document.addEventListener("click", e => {
     toggleAdmin: () => { if (Object.keys(ROLES).length) return; ROLES[S.user.name] = "owner"; dbSave(); }, // demo only, while nobody has a role: the first one becomes head admin
     reg: () => { const x = TOURS.find(z => z.id === id); if (!x) return; if (regCount(x) >= stageMax(x)) return toast(t("stageFull")); if (isBanned(S.user?.name)) return toast(t("youBanned")); if (!carOk()) return toast(t("needCarHere")); S.regs = [...new Set([...S.regs, id])]; S.regAt = { ...S.regAt, [id]: Date.now() }; save(); },
     unreg: () => { S.regs = S.regs.filter(x => x !== id); save(); },
-    join: () => { if (S.created || isFounder(teamById(S.team))) return toast(t("founderStays")); const x = teamById(id); if (x && !x.owner && !x.closed && membersOf(x).length < maxTeam()) { S.team = id; save(); } },
+    join: () => { if (S.created || isFounder(teamById(S.team))) return toast(t("founderStays")); if (teamById(S.team)) return toast(t("leaveFirst"));
+      const x = teamById(id); if (x && !x.owner && !x.staff && !x.closed && membersOf(x).length < maxTeam()) { S.team = id; toast(t("joinedTeam")); save(); } },
     teamOpen: () => { const ref = myTeamRef(); if (!ref) return; ref.closed = el.dataset.v === "closed"; saveTeam(); },
     invite: () => { const ref = myTeamRef(), name = el.dataset.name;
       if (!ref || !name || !roster().some(p => p.name === name) || membersOf(teamById(S.team)).length >= maxTeam()) return;

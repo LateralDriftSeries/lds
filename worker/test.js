@@ -75,7 +75,18 @@ ok(tmNow.tag === "TST" && tmNow.founder === PILOT, "team stored with its founder
 ok((await team("/api/team", { id: TID, desc: "hi" }, third, "PUT")).status === 403, "a non-founder cannot edit the team");
 ok((await team("/api/team", { id: TID, desc: "hi" }, pilot, "PUT")).ok && (await teamNow()).desc === "hi", "founder edits the team");
 ok((await team("/api/team", { id: TID, founder: THIRD }, pilot, "PUT")).status === 400, "founder role only to a team member");
+// joining: a closed team only by invitation, an open one freely
+const teamOf = async sid => (await (await call("/api/state")).json()).users.find(u => u.steamId === sid).team;
+await team("/api/team", { id: TID, closed: true }, pilot, "PUT");
 await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: TID }) });
+ok(await teamOf(THIRD) === null, "a closed team can't be joined without an invitation");
+await team("/api/team", { id: TID, closed: true, invites: ["Test Third"] }, pilot, "PUT");
+await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: TID }) });
+ok(await teamOf(THIRD) === TID, "an invited pilot joins a closed team");
+await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: null }) });
+await team("/api/team", { id: TID, closed: false, invites: [] }, pilot, "PUT");
+await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: TID }) });
+ok(await teamOf(THIRD) === TID, "anyone joins an open team");
 ok((await team("/api/team", { id: TID, founder: THIRD }, pilot, "PUT")).ok && (await teamNow()).founder === THIRD, "founder role handed over");
 ok((await team("/api/team", { id: TID, desc: "x" }, pilot, "PUT")).status === 403, "the former founder cannot edit any more");
 // stage entries live with the team: only while the stage takes registrations, with the server's filing time

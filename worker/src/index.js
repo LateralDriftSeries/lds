@@ -203,13 +203,25 @@ async function putMe(req, env, sid) {
   const body = await readJson(req, MAX_PROFILE);
   const u = await getUser(env, sid);
   if (!u) throw new HttpError(401, "sign in required");
+  const prevTeam = u.team ?? null;
   for (const k of PROFILE_KEYS) if (k in body) u[k] = body[k];
+  // joining a team: an open team with room, or a closed one that invited this pilot; otherwise the pilot stays where they were
+  if ((u.team ?? null) !== prevTeam && u.team != null && !(await canJoin(env, u, Number(u.team)))) u.team = prevTeam;
   // shortcut: field shapes are trusted (number range, team id); validate per field once real abuse shows up
   if (u.num != null && !(Number.isInteger(u.num) && u.num >= 1 && u.num <= 999)) u.num = null;
   if (typeof u.about === "object" && u.about) u.about = { ru: String(u.about.ru || "").slice(0, 60) };
   await setUser(env, sid, u);
   await bump(env);
-  return json({ ok: true });
+  return json({ ok: true, team: u.team ?? null }); // the team actually kept, so the page can show a refused join
+}
+async function canJoin(env, u, id) {
+  const db = await kvGet(env, "db"), tm = (await getTeam(env, id)) || (db?.teams || []).find(x => x.id === id);
+  if (!tm) return false;
+  if (tm.founder === u.steamId) return true;
+  if (tm.closed && !(tm.invites || []).includes(u.name)) return false;
+  const max = db?.settings?.maxTeam ?? 4;
+  const members = (await env.DB.prepare("SELECT data FROM users").all()).results.map(r => JSON.parse(r.data)).filter(x => x.team === id && x.steamId !== u.steamId);
+  return members.length < max;
 }
 
 // ---------- teams: stored on their own, so the founder role can pass to another member with everything the team has ----------
