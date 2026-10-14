@@ -64,18 +64,33 @@ ok(st.db.roleIds[PILOT] === "admin", "admin cannot change roles");
 await setRole("");
 ok((await (await call("/api/me", { token: pilot })).json()).role === "", "role removed");
 
-// team entries: only while the stage takes registrations; the filing time comes from the server
-const entry = { founderNick: "Pilot", pilots: [{ name: "Test Pilot", nick: "TP" }], at: 1 };
-const regsOf = async () => (await (await call("/api/state")).json()).users.find(u => u.steamId === PILOT).teamRegs;
-await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ teamRegs: { 203: entry } }) });
-ok(!(await regsOf())[203], "no team entry while the stage is not in registration");
+// teams: created by a pilot, edited by its founder (or an admin), the founder role goes to a team member
+const THIRD = "76561198000000003", third = await signToken(env, THIRD), TID = 1e6 + Number(PILOT.slice(-6));
+const team = (path, body, token = pilot, method = "POST") => call(path, { method, token, body: JSON.stringify(body) });
+const teamNow = async () => (await (await call("/api/state")).json()).teams.find(z => z.id === TID);
+ok((await team("/api/team/create", { name: "Test Team", tag: "tst" })).ok, "pilot creates a team");
+ok((await team("/api/team/create", { name: "Again", tag: "AG" })).status === 409, "only one created team per pilot");
+let tmNow = await teamNow();
+ok(tmNow.tag === "TST" && tmNow.founder === PILOT, "team stored with its founder");
+ok((await team("/api/team", { id: TID, desc: "hi" }, third, "PUT")).status === 403, "a non-founder cannot edit the team");
+ok((await team("/api/team", { id: TID, desc: "hi" }, pilot, "PUT")).ok && (await teamNow()).desc === "hi", "founder edits the team");
+ok((await team("/api/team", { id: TID, founder: THIRD }, pilot, "PUT")).status === 400, "founder role only to a team member");
+await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: TID }) });
+ok((await team("/api/team", { id: TID, founder: THIRD }, pilot, "PUT")).ok && (await teamNow()).founder === THIRD, "founder role handed over");
+ok((await team("/api/team", { id: TID, desc: "x" }, pilot, "PUT")).status === 403, "the former founder cannot edit any more");
+// stage entries live with the team: only while the stage takes registrations, with the server's filing time
+const entry = { founderNick: "T", pilots: [{ name: "Test Third", nick: "T3" }], at: 1 };
+await team("/api/team", { id: TID, regs: { 203: entry } }, third, "PUT");
+ok(!(await teamNow()).regs[203], "no team entry while the stage is not in registration");
 await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: { 203: "reg" } }) });
-await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ teamRegs: { 203: entry } }) });
-let regs = await regsOf();
-ok(regs[203]?.pilots[0].nick === "TP" && regs[203].at > 1e12, "team entry saved with the server's time");
+await team("/api/team", { id: TID, regs: { 203: entry } }, third, "PUT");
+tmNow = await teamNow();
+ok(tmNow.regs[203]?.pilots[0].nick === "T3" && tmNow.regs[203].at > 1e12, "team entry saved with the server time");
 await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: {} }) });
-await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ teamRegs: {} }) });
-ok((await regsOf())[203]?.pilots[0].nick === "TP", "after registration the entry can't be changed or withdrawn");
+await team("/api/team", { id: TID, regs: {} }, third, "PUT");
+ok((await teamNow()).regs[203]?.pilots[0].nick === "T3", "after registration the entry cannot be changed or withdrawn");
+ok((await team("/api/team/disband", { id: TID }, pilot)).status === 403, "only the founder disbands");
+ok((await team("/api/team/disband", { id: TID }, third)).ok && !(await teamNow()), "founder disbands the team");
 
 // protests: only while the stage runs, only by its pilots, once per opponent; it lands under the pilot's Steam name
 const protest = (tour, token = pilot) => call("/api/protest", { method: "POST", token, body: JSON.stringify({ tour, against: "Someone", text: "contact" }) });

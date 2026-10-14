@@ -39,6 +39,9 @@ async function route(req, env, url) {
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
   if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
+  if (m === "POST" && p === "/api/team/create") return createTeam(req, env, await auth(req, env));
+  if (m === "PUT" && p === "/api/team") return putTeam(req, env, await auth(req, env));
+  if (m === "POST" && p === "/api/team/disband") return disbandTeam(req, env, await auth(req, env));
   if (m === "GET" && p === "/") return json({ ok: true, service: "lds-api" });
   throw new HttpError(404, "not found");
 }
@@ -173,9 +176,9 @@ async function steamProfile(env, sid) {
 
 // ---------- data ----------
 // what a pilot may set on their own profile; name and avatar always come from Steam
-const PROFILE_KEYS = ["team", "num", "car", "about", "regs", "regAt", "created", "declined", "teamRegs", "teamReqs"];
+const PROFILE_KEYS = ["team", "num", "car", "about", "regs", "regAt", "declined"]; // a team itself lives in the teams table
 const publicUser = (u, env) => ({ steamId: u.steamId, name: u.name, avatar: u.avatar, team: u.team ?? null, num: u.num ?? null, car: u.car ?? null,
-  about: u.about ?? null, regs: u.regs ?? [], regAt: u.regAt ?? {}, created: u.created ?? null, teamRegs: u.teamRegs ?? {}, teamReqs: u.teamReqs ?? [],
+  about: u.about ?? null, regs: u.regs ?? [], regAt: u.regAt ?? {},
   owner: isOwner(env, u.steamId) });
 
 // long poll: with ?wait=N the request is held (up to 25 s) until the version changes, so open pages update within about a second
@@ -185,7 +188,8 @@ async function getState(env, url) {
   while (since === String(v) && Date.now() < end) { await new Promise(r => setTimeout(r, 1000)); v = (await kvGet(env, "version")) ?? 0; }
   if (since === String(v)) return json({ v }); // nothing changed: cheap answer
   const [db, live, rows] = await Promise.all([kvGet(env, "db"), kvGet(env, "live"), env.DB.prepare("SELECT data FROM users").all()]);
-  return json({ v, db, live, users: rows.results.map(r => publicUser(JSON.parse(r.data), env)) });
+  const users = rows.results.map(r => JSON.parse(r.data));
+  return json({ v, db, live, users: users.map(u => publicUser(u, env)), teams: await allTeamsMigrated(env, users) });
 }
 
 async function getMe(env, sid) {
@@ -199,29 +203,88 @@ async function putMe(req, env, sid) {
   const body = await readJson(req, MAX_PROFILE);
   const u = await getUser(env, sid);
   if (!u) throw new HttpError(401, "sign in required");
-  const prevRegs = u.teamRegs && typeof u.teamRegs === "object" ? u.teamRegs : {};
   for (const k of PROFILE_KEYS) if (k in body) u[k] = body[k];
-  // team entries: a founder may file or change one only while that stage takes registrations, and the filing time is the
-  // server's (the queue order can't be faked); stages that are not in registration keep what was stored
-  if ("teamRegs" in body) {
-    const [live, db] = await Promise.all([kvGet(env, "live"), kvGet(env, "db")]), given = body.teamRegs && typeof body.teamRegs === "object" && !Array.isArray(body.teamRegs) ? body.teamRegs : {};
-    const next = {};
-    for (const k of new Set([...Object.keys(prevRegs), ...Object.keys(given)])) {
-      // the live status wins; a stage never moved on the judging side still has its status in the league data
-      const status = live?.statuses?.[k] ?? (db?.tours || []).find(x => String(x.id) === k)?.status;
-      const e = status === "reg" ? given[k] : prevRegs[k];
-      if (e && typeof e === "object" && Array.isArray(e.pilots)) next[k] = { founderNick: String(e.founderNick || "").slice(0, 32), at: prevRegs[k]?.at ?? Date.now(),
-        pilots: e.pilots.slice(0, 15).map(p => ({ name: String(p?.name || "").slice(0, 40), nick: String(p?.nick || "").slice(0, 32) })) };
-    }
-    u.teamRegs = next;
-  }
-  if ("teamReqs" in body) u.teamReqs = (Array.isArray(body.teamReqs) ? body.teamReqs : []).slice(-50);
   // shortcut: field shapes are trusted (number range, team id); validate per field once real abuse shows up
   if (u.num != null && !(Number.isInteger(u.num) && u.num >= 1 && u.num <= 999)) u.num = null;
   if (typeof u.about === "object" && u.about) u.about = { ru: String(u.about.ru || "").slice(0, 60) };
   await setUser(env, sid, u);
   await bump(env);
-  return json({ ok: true, teamRegs: u.teamRegs ?? {} }); // what was kept, so the page can show a refused entry
+  return json({ ok: true });
+}
+
+// ---------- teams: stored on their own, so the founder role can pass to another member with everything the team has ----------
+const teamIdOf = sid => 1e6 + Number(String(sid).slice(-6));
+async function getTeam(env, id) { const r = await env.DB.prepare("SELECT data FROM teams WHERE id = ?").bind(id).first(); return r ? JSON.parse(r.data) : null; }
+async function setTeam(env, tm) {
+  await env.DB.prepare("INSERT INTO teams (id, data, updated) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated = excluded.updated")
+    .bind(tm.id, JSON.stringify(tm), Date.now()).run();
+}
+// teams created before this table lived in their creator's profile: move each one over the first time it is missing
+async function allTeamsMigrated(env, users) {
+  const teams = (await env.DB.prepare("SELECT data FROM teams").all()).results.map(r => JSON.parse(r.data)), have = new Set(teams.map(z => z.id));
+  for (const u of users) if (u.created && typeof u.created === "object" && !have.has(teamIdOf(u.steamId))) {
+    const tm = { invites: [], closed: false, desc: "", ...u.created, id: teamIdOf(u.steamId), founder: u.steamId, creator: u.steamId, regs: u.teamRegs || {}, reqs: u.teamReqs || [] };
+    await setTeam(env, tm); teams.push(tm); have.add(tm.id);
+  }
+  return teams;
+}
+// a team's stage entry may be filed or changed only while that stage takes registrations; the filing time is the server's
+async function keepRegs(env, prev, given) {
+  const [live, db] = await Promise.all([kvGet(env, "live"), kvGet(env, "db")]), next = {};
+  given = given && typeof given === "object" && !Array.isArray(given) ? given : {};
+  for (const k of new Set([...Object.keys(prev), ...Object.keys(given)])) {
+    // the live status wins; a stage never moved on the judging side still has its status in the league data
+    const status = live?.statuses?.[k] ?? (db?.tours || []).find(x => String(x.id) === k)?.status;
+    const e = status === "reg" ? given[k] : prev[k];
+    if (e && typeof e === "object" && Array.isArray(e.pilots)) next[k] = { founderNick: String(e.founderNick || "").slice(0, 32), at: prev[k]?.at ?? Date.now(),
+      pilots: e.pilots.slice(0, 15).map(p => ({ name: String(p?.name || "").slice(0, 40), nick: String(p?.nick || "").slice(0, 32) })) };
+  }
+  return next;
+}
+async function createTeam(req, env, sid) {
+  const body = await readJson(req, 2_000), u = await getUser(env, sid);
+  const name = String(body.name || "").trim().slice(0, 32), tag = String(body.tag || "").trim().toUpperCase().slice(0, 4);
+  if (!u || !name || !tag) throw new HttpError(400, "name and tag required");
+  const id = teamIdOf(sid);
+  if (await getTeam(env, id)) throw new HttpError(409, "team already created"); // one created team per pilot
+  const tm = { id, name, tag, desc: "", invites: [], closed: false, founder: sid, creator: sid, regs: {}, reqs: [] };
+  await setTeam(env, tm);
+  u.team = id; delete u.created;
+  await setUser(env, sid, u);
+  await bump(env);
+  return json({ ok: true, team: tm });
+}
+// the founder (or an admin) edits the team; the founder role goes only to a pilot who is in the team
+async function putTeam(req, env, sid) {
+  const body = await readJson(req, 400_000), tm = await getTeam(env, Number(body.id));
+  if (!tm) throw new HttpError(404, "no such team");
+  const role = await roleOf(env, sid);
+  if (tm.founder !== sid && role !== "owner" && role !== "admin") throw new HttpError(403, "founder only");
+  if ("desc" in body) tm.desc = String(body.desc || "").slice(0, 300);
+  if ("img" in body) tm.img = /^data:image\/(webp|jpeg|png);base64,/.test(body.img || "") && body.img.length < 300_000 ? body.img : undefined;
+  if ("closed" in body) tm.closed = !!body.closed;
+  if ("invites" in body) tm.invites = (Array.isArray(body.invites) ? body.invites : []).slice(0, 50).map(n => String(n).slice(0, 40));
+  if ("rep" in body) tm.rep = body.rep ? String(body.rep).slice(0, 40) : undefined;
+  if ("reqs" in body) tm.reqs = (Array.isArray(body.reqs) ? body.reqs : []).slice(-50);
+  if ("regs" in body) tm.regs = await keepRegs(env, tm.regs || {}, body.regs);
+  if ("founder" in body && body.founder !== tm.founder) {
+    const to = await getUser(env, String(body.founder || ""));
+    if (!to || to.team !== tm.id) throw new HttpError(400, "the new founder must be in the team");
+    tm.founder = to.steamId;
+    if (tm.rep === to.name) tm.rep = undefined;
+  }
+  await setTeam(env, tm);
+  await bump(env);
+  return json({ ok: true, regs: tm.regs }); // what was kept, so the page can show a refused stage entry
+}
+async function disbandTeam(req, env, sid) {
+  const body = await readJson(req, 1_000), tm = await getTeam(env, Number(body.id));
+  if (!tm) throw new HttpError(404, "no such team");
+  const role = await roleOf(env, sid);
+  if (tm.founder !== sid && role !== "owner" && role !== "admin") throw new HttpError(403, "founder only");
+  await env.DB.prepare("DELETE FROM teams WHERE id = ?").bind(tm.id).run();
+  await bump(env);
+  return json({ ok: true });
 }
 
 // admins write the league data, but only the head admin changes roles; a technical assistant writes only the rules
