@@ -158,6 +158,19 @@ rd = await (await ready("reset", owner, { at: 1 })).json();
 ok(rd.bc.readyAt > 0, "a stale reset is ignored");
 rd = await (await ready("reset", owner, { at: rd.bc.readyAt })).json();
 ok(!rd.bc.readyAt && !Object.keys(rd.bc.ready).length && rd.bc.gridMini === "k1", "reset clears the buttons, the grid stays folded");
+// Discord: run with --var DISCORD_WEBHOOK:http://127.0.0.1:8769/hook; this script stands in for Discord and counts the posts
+const { createServer } = await import("node:http");
+const hooks = [], hookSrv = createServer((q, s) => { let b = ""; q.on("data", c => b += c); q.on("end", () => { hooks.push(JSON.parse(b)); s.writeHead(204); s.end(); }); }).listen(8769, "127.0.0.1");
+await call("/api/db", { method: "PUT", token: owner, body: JSON.stringify({ db: { tours: [{ id: 901, season: 9, stage: 2, track: "Hook Track @everyone", dates: "1–2 Jan", status: "soon" }], seasons: [{ id: 9, name: "S9" }] } }) });
+const setStatus = s => call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: { 901: s } }) });
+await setStatus("soon"); await setStatus("reg"); await setStatus("reg");
+await new Promise(z => setTimeout(z, 300));
+ok(hooks.length === 1 && hooks[0].embeds[0].title.includes("Регистрация открыта") && hooks[0].embeds[0].url.endsWith("#t-901"), "registration opening is posted once");
+ok(hooks[0].allowed_mentions?.parse?.length === 0, "the post can't ping anyone");
+await setStatus("qualifying"); await setStatus("reg"); await setStatus("qualifying");
+await new Promise(z => setTimeout(z, 300));
+ok(hooks.length === 2 && hooks[1].embeds[0].title.includes("Квалификация началась"), "qualifying start is posted once, flipping back doesn't repeat");
+hookSrv.close();
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");
 ok(!(await fetch(API + "/api/state", { headers: { origin: "https://evil.example" } })).headers.get("access-control-allow-origin"), "no CORS for other sites");

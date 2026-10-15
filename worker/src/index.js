@@ -324,10 +324,43 @@ async function putDb(req, env, { role }) {
 }
 
 async function putLive(req, env) {
-  const body = await readJson(req, MAX_DB);
-  await kvSet(env, "live", keepCrew(await kvGet(env, "live"), body));
+  const body = await readJson(req, MAX_DB), stored = await kvGet(env, "live");
+  await kvSet(env, "live", keepCrew(stored, body));
   await bump(env);
+  await announce(env, stored?.statuses || {}, body?.statuses || {});
   return json({ ok: true });
+}
+
+// Discord: a stage that opens registration or starts qualifying is posted once to the league channel.
+// The webhook address is the DISCORD_WEBHOOK secret (npx wrangler secret put DISCORD_WEBHOOK); without it nothing is sent.
+// Stage statuses travel in the live state, so only its writes are watched; "announced" keeps each stage+status to one post.
+const ANNOUNCE = {
+  reg: { color: 0x2ecc71, title: "Регистрация открыта", text: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", link: "Записаться" },
+  qualifying: { color: 0xff6b1a, title: "Квалификация началась", text: "Пилоты выходят на квалификационные заезды. Результаты обновляются на сайте вживую.", link: "Смотреть результаты" },
+};
+async function announce(env, before, after) {
+  if (!env.DISCORD_WEBHOOK) return;
+  const fresh = Object.entries(after).filter(([k, s]) => ANNOUNCE[s] && before[k] !== s);
+  if (!fresh.length) return;
+  const [db, done] = await Promise.all([kvGet(env, "db"), kvGet(env, "announced")]), seen = done || {};
+  const posts = fresh.filter(([k, s]) => !seen[`${k}:${s}`]);
+  if (!posts.length) return;
+  for (const [k, s] of posts) seen[`${k}:${s}`] = Date.now();
+  await kvSet(env, "announced", seen);
+  await Promise.allSettled(posts.map(([k, s]) => postDiscord(env, db, k, s)));
+}
+async function postDiscord(env, db, id, status) {
+  const x = (db?.tours || []).find(z => String(z.id) === id);
+  if (!x) return;
+  const a = ANNOUNCE[status], season = (db.seasons || []).find(z => z.id === x.season)?.name || "";
+  const site = String(env.SITE_URL || "https://lateraldriftseries.github.io/lds/").replace(/\/?$/, "/") + "#t-" + x.id;
+  const twitch = String(db.settings?.socials?.Twitch || "").match(/twitch\.tv\/([A-Za-z0-9_]{3,25})\/?$/)?.[1];
+  const fields = [x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true }, x.start && { name: "Старт", value: String(x.start).slice(0, 100), inline: true },
+    status === "qualifying" && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
+  const embed = { title: `${a.title} · Этап ${x.stage} — ${String(x.track || "").slice(0, 60)}`, url: site, color: a.color, description: `${a.text}\n\n[${a.link} →](${site})`,
+    fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
+  // allowed_mentions: none, so a track or season name can never ping @everyone
+  await fetch(env.DISCORD_WEBHOOK, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: "LDS", embeds: [embed], allowed_mentions: { parse: [] } }) });
 }
 
 // crew readiness (marshal, judge, streamer) is changed only through /api/ready, one field at a time,
