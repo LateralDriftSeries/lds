@@ -37,6 +37,7 @@ async function route(req, env, url) {
   }
   if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireRole(req, env, ["owner", "admin", "tech"]));
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
+  if (m === "POST" && p === "/api/ready") return postReady(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
   if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
   if (m === "POST" && p === "/api/team/create") return createTeam(req, env, await auth(req, env));
@@ -317,16 +318,45 @@ async function putDb(req, env, { role }) {
   const next = role === "tech" ? { ...stored, rules: body.db.rules ?? stored.rules } : body.db;
   if (role !== "owner") for (const k of ["roleIds", "adminIds", "roles"]) next[k] = stored[k];
   await kvSet(env, "db", next);
-  if (role !== "tech" && body.live && typeof body.live === "object") await kvSet(env, "live", body.live);
+  if (role !== "tech" && body.live && typeof body.live === "object") await kvSet(env, "live", keepCrew(await kvGet(env, "live"), body.live));
   await bump(env);
   return json({ ok: true });
 }
 
 async function putLive(req, env) {
   const body = await readJson(req, MAX_DB);
-  await kvSet(env, "live", body);
+  await kvSet(env, "live", keepCrew(await kvGet(env, "live"), body));
   await bump(env);
   return json({ ok: true });
+}
+
+// crew readiness (marshal, judge, streamer) is changed only through /api/ready, one field at a time,
+// so presses from different machines never overwrite each other through a whole-state write
+const CREW = ["marshal", "judge", "streamer"], CREW_KEYS = ["ready", "readyAt", "gridMini"];
+function keepCrew(stored, next) {
+  if (!next || typeof next !== "object") return next;
+  const bc = next.bc && typeof next.bc === "object" ? { ...next.bc } : null;
+  if (!bc) return next;
+  for (const k of CREW_KEYS) { if (stored?.bc && k in stored.bc) bc[k] = stored.bc[k]; else delete bc[k]; }
+  return { ...next, bc };
+}
+async function postReady(req, env) {
+  const body = await readJson(req, 1_000), v = String(body.v || "");
+  if (!CREW.includes(v) && v !== "reset") throw new HttpError(400, "bad crew role");
+  const live = (await kvGet(env, "live")) || {}, bc = { ...(live.bc || {}) };
+  if (v === "reset") {
+    if (body.at != null && bc.readyAt !== body.at) return json({ ok: true, bc }); // someone already reset or a new round started
+    bc.ready = {}; bc.readyAt = null;
+  } else {
+    bc.ready = { ...(bc.ready || {}), [v]: !bc.ready?.[v] };
+    const all = CREW.every(k => bc.ready[k]);
+    bc.readyAt = all ? Date.now() : null;
+    // the page sends the grid's score key; the grid folds to the top 3 until that key changes (the next run score)
+    if (all && typeof body.key === "string" && body.key.length <= 32) bc.gridMini = body.key;
+  }
+  await kvSet(env, "live", { ...live, bc });
+  await bump(env);
+  return json({ ok: true, bc });
 }
 
 const RUNNING = ["qualifying", "top32", "top16", "top8", "top4", "final"];

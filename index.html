@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Lateral Drift Series — онлайн-чемпионат по дрифту в CarX Drift Racing Online.">
+<link rel="icon" type="image/webp" href="logo.webp">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0a0a0a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lateral Drift Series">
+<meta property="og:title" content="Lateral Drift Series">
+<meta property="og:description" content="Онлайн-чемпионат по дрифту в CarX Drift Racing Online.">
+<meta property="og:url" content="https://lateraldriftseries.github.io/lds/">
+<meta property="og:image" content="https://lateraldriftseries.github.io/lds/logo.webp">
+<meta name="twitter:card" content="summary">
 <script src="config.js"></script>
 </head>
 <body>
@@ -548,7 +558,24 @@ body.obs main { padding: 0; max-width: none }
 .stepper button:hover { border-color: var(--accent); color: var(--text) }
 .stepper button.past { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); background: color-mix(in srgb, var(--accent) 8%, var(--panel-2)) }
 .stepper button.cur { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent) }
-.island { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; align-items: start }
+.island { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; align-items: stretch }
+.island > .box { align-content: start }
+/* crew readiness: marshal, judge, streamer */
+.ready-box .head { display: flex; justify-content: space-between; align-items: center; gap: 1rem }
+.ready-btns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem }
+.ready-btn { display: grid; gap: .35rem; justify-items: center; padding: 1.1rem .8rem; border-radius: var(--r); border: 1px solid var(--line-2); background: var(--panel-2); color: var(--muted); cursor: pointer;
+  transition: background .25s, border-color .25s, color .25s, box-shadow .25s, transform .15s }
+.ready-btn b { font: 600 1rem var(--f-head); color: var(--text) } .ready-btn:hover { border-color: var(--accent) } .ready-btn:active { transform: scale(.97) }
+.ready-btn.on { background: color-mix(in srgb, #2ecc71 16%, var(--panel-2)); border-color: #2ecc71; color: #2ecc71; box-shadow: 0 0 24px -8px #2ecc71 }
+.ready-btn.on b::before { content: "✓ " }
+.ready-btn.tap { animation: readyTap .5s var(--ease) }
+.ready-box.burst .ready-btn { animation: readyAll 1s var(--ease) both } .ready-box.burst .ready-btn:nth-child(2) { animation-delay: .08s } .ready-box.burst .ready-btn:nth-child(3) { animation-delay: .16s }
+@keyframes readyTap { 0% { transform: scale(1) } 35% { transform: scale(.93) } 70% { transform: scale(1.04) } 100% { transform: scale(1) } }
+@keyframes readyAll { 0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, .7) } 40% { transform: translateY(-4px); box-shadow: 0 0 0 10px rgba(46, 204, 113, 0), 0 0 40px -6px #2ecc71 } 100% { transform: none } }
+@media (prefers-reduced-motion: reduce) { .ready-btn.tap, .ready-box.burst .ready-btn { animation: none } }
+.island-hint { margin: 0 0 1.4rem } .ready-box { margin: 1.6rem 0 } .ready-box + section { margin-top: .4rem }
+.bc-ovs .ov-grid li.gone { display: none } /* the panel preview shows the folded grid too */
+@media (max-width: 600px) { .ready-btns { grid-template-columns: 1fr } }
 .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line) }
 .seg button { border: 0; border-radius: 7px; padding: .55rem .3rem; background: none; color: var(--soft); font-weight: 600; font-size: .82rem; cursor: pointer; transition: background .2s, color .2s }
 .seg button:hover { color: var(--text) }
@@ -1528,7 +1555,7 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 .track-body .specs { margin-top: auto; grid-template-columns: 1fr }
 
 /* ---- broadcast panel ---- */
-.bc-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); align-items: stretch; gap: 1.2rem }
+.bc-top { display: grid; grid-template-columns: minmax(0, 1fr); align-items: stretch; gap: 1.2rem }
 .bc-top > .psec { align-content: start }
 @media (max-width: 900px) { .bc-top { grid-template-columns: 1fr } }
 .obs-list { list-style: none; margin: 0; padding: 0; display: grid }
@@ -1682,6 +1709,32 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 .ov-stage .ov-battle.in .ov-mid { animation: ovInC .5s var(--ease) .1s both }
 .ov-stage .in::before, .ov-stage .in .ov-card::before { animation: ovEdge .7s var(--ease) .2s both }
 .ov-stage .in li { animation: ovRow .45s var(--ease) both; animation-delay: calc(min(var(--i, 0), 16) * 30ms + .2s) }
+/* OBS page = a 1920×1080 canvas scaled to the window (--ovk), so the corners and sizes hold for any browser-source size:
+   grid in the top-right corner, driver plate bottom-left, tandem plate bottom-centre; the two plates share one size */
+.ov-stage { zoom: var(--ovk, 1) }
+.ov-stage .ov-plate { width: 760px; max-width: none } .ov-stage .ov-battle, .ov-stage.ov-all .ov-battle { width: 1040px; max-width: none }
+.ov-stage .ov-plate { left: 60px; bottom: 60px; top: auto }
+.ov-stage .ov-battle, .ov-stage.ov-all .ov-battle { left: 50%; bottom: 60px; top: auto; translate: -50% 0 }
+.ov-stage .ov-grid { right: 60px; top: 60px; width: 520px; max-width: none }
+.ov-stage .ov-battle, .ov-stage.ov-all .ov-battle { grid-template-columns: minmax(0, 1fr) 290px minmax(0, 1fr) }
+.ov-stage .ov-side { min-height: 128px; gap: 12px; padding: 16px 18px } .ov-stage .ov-side .ov-ava { width: 60px; height: 60px }
+/* long nicknames wrap to a second line instead of being cut */
+.ov-stage .ov-side .ov-info b { font-size: 24px; line-height: 1.05; white-space: normal; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical }
+.ov-stage .ov-side .ov-best b { font-size: 40px } .ov-stage .ov-pair, .ov-stage .ov-label { font-size: 13px } .ov-stage .ov-vote b { font-size: 15px } .ov-stage .ov-result { font-size: 14px }
+.ov-stage .ov-grid .nm { font-size: 17px } .ov-stage .ov-grid .best { font-size: 18px }
+/* sizes from the broadcast panel; each overlay grows from its own corner */
+.ov-stage .ov-plate { scale: var(--s-plate, 1); transform-origin: 0 100% }
+.ov-stage .ov-grid { scale: var(--s-grid, 1); transform-origin: 100% 0 }
+.ov-stage .ov-battle { scale: var(--s-battle, 1); transform-origin: 50% 100% }
+/* broadcast panel: the three overlays side by side, previews shrunk to fit their card */
+.bc-ovs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; align-items: start }
+@media (max-width: 1100px) { .bc-ovs { grid-template-columns: 1fr } }
+.bc-ovs .bc-ov { gap: .9rem } .bc-ovs .car-form { grid-template-columns: 1fr }
+.bc-ovs .ov-preview { overflow: hidden; padding: 12px }
+.bc-ovs .ov-preview:has(.ov-grid) { max-height: 260px; mask-image: linear-gradient(#000 78%, transparent) } /* the long grid shows its top rows only */
+.bc-ovs .ov-plate { width: 760px; max-width: none } .bc-ovs .ov-battle { width: 1040px; max-width: none } .bc-ovs .ov-grid { width: 520px; max-width: none }
+.bc-size { display: grid; grid-template-columns: auto 1fr 3.2rem; align-items: center; gap: .8rem }
+.bc-size input { width: 100%; accent-color: var(--accent) } .bc-size output { text-align: right; color: var(--accent); font-size: .8rem }
 /* the panel: cards keep their own height, previews sit on the site grid instead of a checkerboard */
 .bc-top { align-items: start }
 .ov-preview { background: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px) 0 0 / 24px 24px, #070708 }
@@ -2003,7 +2056,7 @@ const I18N = {
     protestText: "Суть протеста", send: "Отправить", protestSent: "Протест отправлен", yourSanctions: "Ваши санкции",
     bcTitle: "Пульт трансляции", onTrack: "Сейчас на трассе", pickPilot: "Выберите пилота", noAdminBc: "Пульт трансляции доступен только администратору.",
     obsLinks: "Вывод в OBS Studio", obsHelp: "В OBS: Источники → «+» → Браузер. В поле URL вставьте адрес сайта и допишите в конец нужную метку, размер 1920×1080. Плашки с прозрачным фоном и обновляются сами примерно раз в секунду, когда вы меняете данные на этом пульте. Пульт и OBS должны открывать сайт в одном браузерном профиле — например, пульт как «Док браузера» в самом OBS (Вид → Доки → Пользовательские доки браузера).",
-    plateTitle: "Плашка пилота", gridTitle: "Сетка квалификации", battleTitle: "Парный заезд", allOverlays: "Все плашки сразу", open: "Открыть", show: "Показывать",
+    plateTitle: "Плашка пилота", allNow: "«Все плашки» сейчас показывают", allNowQual: "плашку пилота и сетку квалификации (идёт квалификация)", allNowBattle: "плашку парных заездов (идёт топ-32 и дальше)", gridTitle: "Сетка квалификации", battleTitle: "Парный заезд", allOverlays: "Все плашки (по статусу этапа)", open: "Открыть", show: "Показывать", sizeL: "Размер",
     bgL: "Фон оверлея", transparent: "Прозрачный (источник «Браузер»)", green: "Хромакей, зелёный (захват окна)",
     scoresSync: "Баллы сохраняются в квалификацию этапа и сразу видны в таблице на сайте и в сетке оверлея.",
     rowsL: "Строк в сетке", allRows: "Все", showRuns: "Показывать попытки 1 и 2", gridTitleL: "Заголовок сетки", qualShort: "Квалификация",
@@ -2081,7 +2134,7 @@ const I18N = {
     aResults: "Итоги", fromQual: "По квалификации", podiumHint: "Подиум этапа. Если место не выбрано, после завершения этапа оно берётся из квалификации. Пилоты с 1–3 местом получают медаль в профиле.",
     regLater: "Регистрация откроется после завершения текущего этапа.", regSoon: "Регистрация откроется позже", needNumHere: "Сначала выберите стартовый номер ниже.", seasonLine: "Календарь <em>сезона</em>",
     teamsSeason: "Команды сезона", ctaTitle: "Готов выйти на трассу?",
-    pickFromList: "Нажмите на пилота в списке ниже, чтобы вывести его на трассу и выставить баллы.", gridIdleNote: "Если в сетке 20 секунд ничего не меняется, в эфире она сворачивается до первых 3 пилотов и раскрывается при следующем изменении.", noDescShort: "Без описания", aRules: "Регламент", sportRules: "Спортивный регламент", rulesVersion: "Версия регламента",
+    pickFromList: "Нажмите на пилота в списке ниже, чтобы вывести его на трассу и выставить баллы.", gridIdleNote: "Когда маршал, судья и стример нажали «Готовность» в судейском острове, сетка в эфире сворачивается до первых 3 пилотов и раскрывается, когда выставлены баллы за попытку (сначала за первую, потом за вторую).", gridHiddenNow: "Сейчас свёрнута до топ-3: состав готов", readyTitle: "Готовность состава", readyHint: "Только для работы состава, в эфир не выводится. Когда готовы все трое, кнопки сбросятся через 5 секунд.", readyL: "Готовность", rd_marshal: "Маршал", rd_judge: "Судья", rd_streamer: "Стример", noDescShort: "Без описания", aRules: "Регламент", sportRules: "Спортивный регламент", rulesVersion: "Версия регламента",
     rulesReset: "Вернуть исходный регламент", addSection: "+ Раздел", addItem: "+ Пункт", sectionN: "Раздел", itemTitle: "Заголовок пункта", newSection: "Новый раздел", newItem: "Новый пункт",
     moveUp: "Выше", moveDown: "Ниже", rulesHelp: "Текст сохраняется, когда вы выходите из поля. Разметка: «## подзаголовок», «- пункт списка», «**жирный**», «! предупреждение», строки «| ячейка | ячейка |» — таблица (первая строка — заголовки), пустая строка — новый абзац.", resetIn: "Сброс через", sec: "с", upcoming: "Следующий этап", pilotProfile: "Профиль пилота",
     noBio: "Расскажите о себе в блоке «О себе» — это увидят другие пилоты.", hpLong: "Мощность, л.с.", hpRule: "По регламенту (п. 3.2) мощность двигателя, л.с.:",
@@ -2145,7 +2198,7 @@ const I18N = {
     protestText: "What happened", send: "Send", protestSent: "Protest sent", yourSanctions: "Your sanctions",
     bcTitle: "Broadcast control", onTrack: "On track now", pickPilot: "Pick a driver", noAdminBc: "Broadcast control is for admins only.",
     obsLinks: "Output to OBS Studio", obsHelp: "In OBS: Sources → “+” → Browser. Paste the site address into URL and add the tag below at the end, size 1920×1080. Overlays have a transparent background and refresh about once a second when you change data on this panel. The panel and OBS must open the site in the same browser profile, for example the panel as a browser dock inside OBS (View → Docks → Custom Browser Docks).",
-    plateTitle: "Driver plate", gridTitle: "Qualifying grid", battleTitle: "Tandem battle", allOverlays: "All overlays", open: "Open", show: "Show",
+    plateTitle: "Driver plate", allNow: "\"All overlays\" now shows", allNowQual: "the driver plate and the qualifying grid (qualifying)", allNowBattle: "the tandem plate (top 32 and later)", gridTitle: "Qualifying grid", battleTitle: "Tandem battle", allOverlays: "All overlays (by round status)", open: "Open", show: "Show", sizeL: "Size",
     bgL: "Overlay background", transparent: "Transparent (Browser source)", green: "Green chroma key (window capture)",
     scoresSync: "Scores are saved to the round's qualifying and show up at once in the site table and the overlay grid.",
     rowsL: "Grid rows", allRows: "All", showRuns: "Show runs 1 and 2", gridTitleL: "Grid title", qualShort: "Qualifying",
@@ -2223,7 +2276,7 @@ const I18N = {
     aResults: "Results", fromQual: "From qualifying", podiumHint: "Round podium. An empty place is taken from qualifying once the round is finished. Drivers placed 1–3 get a medal in their profile.",
     regLater: "Registration opens after the current round is finished.", regSoon: "Registration opens later", needNumHere: "Pick a racing number below first.", seasonLine: "Season <em>calendar</em>",
     teamsSeason: "Season teams", ctaTitle: "Ready to hit the track?",
-    pickFromList: "Click a driver in the list below to put them on track and enter scores.", gridIdleNote: "After 20 seconds without changes the on-air grid folds down to the top 3 drivers and opens again on the next change.", noDescShort: "No description", aRules: "Rules", sportRules: "Sports rules", rulesVersion: "Rules version",
+    pickFromList: "Click a driver in the list below to put them on track and enter scores.", gridIdleNote: "Once the marshal, judge and streamer press Ready in the judges island, the on-air grid folds down to the top 3 drivers and opens again when a run is scored (first run, then second).", gridHiddenNow: "Folded to the top 3 now: the crew is ready", readyTitle: "Crew readiness", readyHint: "For the crew only, never on air. When all three are ready the buttons clear after 5 seconds.", readyL: "Ready", rd_marshal: "Marshal", rd_judge: "Judge", rd_streamer: "Streamer", noDescShort: "No description", aRules: "Rules", sportRules: "Sports rules", rulesVersion: "Rules version",
     rulesReset: "Restore original rules", addSection: "+ Section", addItem: "+ Item", sectionN: "Section", itemTitle: "Item title", newSection: "New section", newItem: "New item",
     moveUp: "Up", moveDown: "Down", rulesHelp: "Text saves when you leave the field. Markup: “## heading”, “- list item”, “**bold**”, “! warning”, lines “| cell | cell |” make a table (first row is the header), a blank line starts a new paragraph.", resetIn: "Resets in", sec: "s", upcoming: "Upcoming round", pilotProfile: "Driver profile",
     noBio: "Tell other drivers about yourself in the About me block.", hpLong: "Power, hp", hpRule: "Sports rules 3.2: engine power, hp:",
@@ -2397,7 +2450,7 @@ const isOwner = () => !!S.user && isOwnerName(S.user.name);
 const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", tech: "roleTech" }[r] || "pilot");
 // which permission an admin-panel edit needs, by the first part of its data-a / its data-act
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
-const ACT_PERM = { teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
+const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
   giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", achIcon: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
@@ -4115,6 +4168,7 @@ function adminEdit([kind, id, f, k], v) {
     if (id === "vote") { if (["", "leader", "chaser", "omt"].includes(v)) b.votes = b.votes.map((x, j) => j === +f ? v || null : x); }
     else if (["plateOn", "gridOn", "battleOn", "runs"].includes(id)) b[id] = !!v;
     else if (id === "rows") b.rows = [8, 16, 32, 0].includes(+v) ? +v : 16;
+    else if (["plateSize", "gridSize", "battleSize"].includes(id)) b[id] = Math.min(150, Math.max(50, Math.round(+v / 5) * 5 || 100)); // percent of the 1920×1080 layout
     else if (id === "tour") Object.assign(b, { tour: +v, onTrack: null, leader: null, chaser: null, votes: [null, null, null] });
     else if (id === "label" || id === "title") b[id] = String(v).slice(0, 60);
     else if (id === "bg") b.bg = v === "green" ? "green" : "transparent";
@@ -4134,11 +4188,32 @@ function judgeSet(tourId, field, v, j) {
   if (field === "label") b.label = String(v).slice(0, 40);
   if (field === "vote" && ["leader", "chaser", "omt"].includes(v)) b.votes = b.votes.map((x, k) => k === j ? (x === v ? null : v) : x); // click again to clear
   if (field === "votes") b.votes = [null, null, null];
+  // crew readiness; when all three are ready the on-air grid folds to the top 3 (until the next score) and the buttons clear after 5 s
+  if (field === "ready" && READY.includes(v)) { b.ready = { ...b.ready, [v]: !b.ready?.[v] };
+    const all = READY.every(k => b.ready[k]); b.readyAt = all ? Date.now() : null;
+    if (all) { const x = TOURS.find(z => z.id === tourId); if (x) b.gridMini = gridKey(x); } }
+  if (field === "readyReset") { b.ready = {}; b.readyAt = null; }
   // all three voted: start the reset timer; a bracket pair's winner waits for the judge to confirm before advancing
   const res = judgeResult(b.votes), pend = (res === "leader" || res === "chaser") && !!brMatch(tourId, b.leader, b.chaser);
   b.decidedAt = b.votes.every(Boolean) && !pend ? (field === "vote" ? Date.now() : b.decidedAt || Date.now()) : null;
   S.bc = b;
   save();
+}
+const READY = ["marshal", "judge", "streamer"], READY_MS = 5000;
+// the grid's scores as one short key, the same on every machine: the grid stays folded while the key it was folded at is unchanged
+const gridKey = x => { const s = JSON.stringify([x.id, bcRows(x).map(r => [r.name, r.a, r.b])]); let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return String(h); };
+setInterval(() => {
+  const at = S.bc?.readyAt, left = document.getElementById("ready-reset");
+  if (left) left.textContent = at ? `${t("resetIn")} ${Math.max(0, Math.ceil((at + READY_MS - Date.now()) / 1000))} ${t("sec")}` : "";
+  if (at && can("seasons") && Date.now() - at >= READY_MS) { if (HOSTED) { if (readyResetSent !== at) { readyResetSent = at; readyRemote("reset", null, at); } } else judgeSet(S.bc.tour ?? bcTour(S.bc)?.id, "readyReset"); }
+}, 500);
+// hosted: each press goes to the server on its own (toggled there), so presses from different machines add up instead of overwriting each other
+let readyResetSent = null;
+function readyRemote(v, tourId, at) {
+  if (!HOSTED) return;
+  const x = TOURS.find(z => z.id === tourId);
+  api("/api/ready", { method: "POST", body: JSON.stringify({ v, at, key: x ? gridKey(x) : undefined }) })
+    .then(r => { if (r?.bc) { S.bc = { ...bcState(), ready: r.bc.ready || {}, readyAt: r.bc.readyAt ?? null, gridMini: r.bc.gridMini }; render(); } apiV = null; }, () => toast(t("netErr")));
 }
 // the decision stays on air for 7 s after the last judge votes, then the votes clear for the next run
 const DECISION_MS = 7000;
@@ -4303,9 +4378,15 @@ function resetDemo() {
 }
 
 // ---- broadcast: control panel (#broadcast) and OBS overlays (#obs-*) ----
-const bcState = () => ({ tour: null, onTrack: null, plateOn: true, gridOn: true, battleOn: true, rows: 16, runs: true, title: "", bg: "transparent",
+const bcState = () => ({ tour: null, onTrack: null, plateOn: true, gridOn: true, battleOn: true, rows: 16, runs: true, title: "", bg: "transparent", plateSize: 100, gridSize: 100, battleSize: 100,
   leader: null, chaser: null, label: "", votes: [null, null, null], ...S.bc });
-const bcTour = st => TOURS.find(z => z.id === st.tour) || currentTour() || seasonTours(curSeason()).at(-1);
+// broadcast panel previews: each overlay is shown whole, shrunk to its card's width
+const fitPreviews = () => document.querySelectorAll(".bc-ovs .ov-preview").forEach(p => { const c = p.firstElementChild; if (!c) return;
+  c.style.zoom = 1; const w = c.offsetWidth; if (w) c.style.zoom = Math.min(1, (p.clientWidth - 24) / w).toFixed(3); });
+addEventListener("resize", () => fitPreviews());
+// the stage on air is picked automatically: the one the judges island works on while it runs, otherwise the current stage
+const bcTour = st => { const j = TOURS.find(z => z.id === st.tour); return j && !STOPPED.includes(j.status) ? j : currentTour() || seasonTours(curSeason()).at(-1); };
+const STOPPED = ["soon", "reg", "done"];
 // stage pilots with both runs and best, highest first; same numbers as the qualifying table
 // shortcut: demo drivers have no sign-up time, they count as registered first in roster order; the signed-in driver by S.regAt
 const regKey = (x, p, i) => p.mine ? S.regAt?.[x.id] ?? Infinity : HOSTED ? p.regAt?.[x.id] ?? Infinity : i;
@@ -4337,6 +4418,7 @@ function ovPlate(st, x, rows, fx = {}) {
 }
 function ovGrid(st, x, rows, fx = {}) {
   const list = st.rows ? rows.slice(0, st.rows) : rows;
+  // crew ready: rows below the top 3 fold away ("collapse" once, then "gone") and open again ("expand") with the next completed run score
   return `<div class="ov-card ov-grid ${st.runs ? "" : "noruns"} ${fx.in ? "in" : ""}">
     <div class="ov-gh">${ovLogo}<div><span class="ov-label">${t("qualShort")}</span><b>${esc(st.title || `${t("stage")} ${x.stage} · ${x.track}`)}</b></div><span class="ov-live"><i></i>Live</span></div>
     <ol>${list.map((p, k) => `<li style="--i:${k}" class="${k === 0 && p.best >= 0 ? "first" : ""} ${p.name === st.onTrack ? "on" : ""} ${fx.flash?.has(p.name) ? "flash" : ""} ${k >= GRID_TOP && fx.idle ? fx.idle : ""}">
@@ -4361,12 +4443,13 @@ function ovBattle(st, x, rows, fx = {}) {
 
 // overlay page for OBS: compares with the previous render so only real changes animate
 let ovShown = {}, ovPrev = null;
-// grid idles down to the top 3 after 20 s without a change in the grid, and opens again on the next change
-const GRID_IDLE_MS = 20000, GRID_TOP = 3;
-let gridSig = "", gridActiveAt = Date.now(), gridIdlePrev = false;
-setInterval(() => {
-  if (location.hash.startsWith("#obs-") && ovShown.grid && (Date.now() - gridActiveAt >= GRID_IDLE_MS) !== gridIdlePrev) render();
-}, 1000);
+// the grid folds down to the top 3 once the crew is ready (marshal, judge, streamer) and opens again with the next score
+const GRID_TOP = 3;
+let gridIdlePrev = false;
+const battlePhase = x => STATUSES.indexOf(x.status) >= STATUSES.indexOf("top32");
+// the overlays are laid out for 1920×1080 and scaled to the OBS browser source (or any window)
+const ovFit = () => document.documentElement.style.setProperty("--ovk", Math.min(innerWidth / 1920, innerHeight / 1080).toFixed(4));
+addEventListener("resize", () => { if (document.body.classList.contains("obs")) ovFit(); });
 function obsView(kind) {
   const st = bcState(), x = bcTour(st);
   if (!x) return "";
@@ -4378,18 +4461,18 @@ function obsView(kind) {
     battle: { in: !ovShown.battle || prev?.leader !== st.leader || prev?.chaser !== st.chaser || prev?.tour !== x.id,
       pop: new Set([...st.votes.map((v, j) => prev && v && prev.votes[j] !== v ? j : null).filter(j => j !== null), ...(prev && res !== "pending" && prev.res !== res ? ["result"] : [])]) },
   };
-  const sig = JSON.stringify([x.id, st.onTrack, st.rows, st.runs, st.title, rows.map(r => r.best)]);
-  if (sig !== gridSig || !ovShown.grid) { gridSig = sig; gridActiveAt = Date.now(); }
-  const idle = st.gridOn && Date.now() - gridActiveAt >= GRID_IDLE_MS;
+  const idle = st.gridOn && !!st.gridMini && st.gridMini === gridKey(x);
   fx.grid.idle = idle ? (gridIdlePrev ? "gone" : "collapse") : (gridIdlePrev ? "expand" : "");
   if (kind === "grid" || kind === "all") gridIdlePrev = idle;
   ovPrev = { tour: x.id, onTrack: st.onTrack, leader: st.leader, chaser: st.chaser, votes: [...st.votes], res, best: Object.fromEntries(rows.map(r => [r.name, r.best])) };
   const parts = [];
   const add = (key, on, fn) => { if (on) parts.push(fn(st, x, rows, fx[key])); ovShown[key] = on; };
-  if (kind === "plate" || kind === "all") add("plate", st.plateOn, ovPlate);
-  if (kind === "grid" || kind === "all") add("grid", st.gridOn, ovGrid);
-  if (kind === "battle" || kind === "all") add("battle", st.battleOn, ovBattle);
-  return `<div class="ov-stage ov-${kind}">${parts.join("")}</div>`;
+  // "all overlays" follows the stage: qualifying shows the driver plate and the grid, from the top 32 on only the tandem plate
+  const duel = battlePhase(x), all = kind === "all";
+  if (kind === "plate" || all) add("plate", st.plateOn && !(all && duel), ovPlate);
+  if (kind === "grid" || all) add("grid", st.gridOn && !(all && duel), ovGrid);
+  if (kind === "battle" || all) add("battle", st.battleOn && !(all && !duel), ovBattle);
+  return `<div class="ov-stage ov-${kind}" style="--s-plate:${(st.plateSize ?? 100) / 100};--s-grid:${(st.gridSize ?? 100) / 100};--s-battle:${(st.battleSize ?? 100) / 100}">${parts.join("")}</div>`;
 }
 
 // broadcast panel: output only — what goes on air and how it looks; scores and decisions come from the judges' island
@@ -4400,23 +4483,27 @@ function broadcast() {
   const rows = bcRows(x), stages = seasonTours(curSeason());
   const sw = (key, label) => `<label class="switch"><input type="checkbox" data-a="bc:${key}" ${st[key] ? "checked" : ""}><i aria-hidden="true"></i><span>${label}</span></label>`;
   const link = (h, l) => `<li><span class="stack" style="gap:.15rem;min-width:0"><b>${t(l)}</b><code>#${h}</code></span><a class="btn line sm" href="#${h}" target="_blank" rel="noopener">${t("open")} ↗</a></li>`;
-  const ov = (title, key, body, extra = "") => `<section class="psec panel bc-ov ${st[key] ? "" : "off"}"><div class="psec-head"><h3>${t(title)}</h3>${sw(key, t("show"))}</div>${extra}<div class="ov-preview">${body}</div></section>`;
+  // each overlay: on/off, its size on the OBS page (50–150 %), settings, then a preview scaled to the card
+  const size = key => { const k = key.replace("On", "Size"); return `<label class="bc-size"><span class="label">${t("sizeL")}</span><input type="range" min="50" max="150" step="5" data-a="bc:${k}" value="${st[k]}" aria-label="${t("sizeL")}"><output class="mono">${st[k]}%</output></label>`; };
+  const ov = (title, key, body, extra = "") => `<section class="psec panel bc-ov ${st[key] ? "" : "off"}"><div class="psec-head"><h3>${t(title)}</h3>${sw(key, t("show"))}</div>${size(key)}${extra}<div class="ov-preview">${body}</div></section>`;
   return `<a class="back" href="#admin">← ${t("adminPanel")}</a>
   <section class="r-hero"><div class="stack" style="gap:.8rem"><span class="label idx"><i class="live-dot" aria-hidden="true"></i>${t("stage")} ${x.stage} · ${esc(x.track)}</span><h1 class="r-title">${t("bcTitle")}</h1>
     <p class="note">${t("bcSourceHint")} <button class="linkbtn acc" data-act="toIsland" data-id="${x.id}">${t("toIsland")} →</button></p></div>${tourPill(x)}</section>
   <div class="bc-top">
-    ${psec(t("bcSource"), `<div class="car-form">
-      <label class="fieldlabel">${t("stage")}<select class="field" data-a="bc:tour">${stages.map(z => `<option value="${z.id}" ${z.id === x.id ? "selected" : ""}>${t("stage")} ${z.stage} · ${esc(z.track)}</option>`).join("")}</select></label>
-      <label class="fieldlabel">${t("bgL")}${sel("bc:bg", ["transparent", "green"], st.bg, t("bgL"), "field")}</label></div>`)}
     ${psec(t("obsLinks"), `<p class="note" style="margin:0">${t("obsHelp")}</p>
-      <ul class="obs-list">${link("obs-plate", "plateTitle")}${link("obs-grid", "gridTitle")}${link("obs-battle", "battleTitle")}${link("obs-all", "allOverlays")}</ul>`)}
+      <label class="fieldlabel">${t("bgL")}${sel("bc:bg", ["transparent", "green"], st.bg, t("bgL"), "field")}</label>
+      <ul class="obs-list">${link("obs-plate", "plateTitle")}${link("obs-grid", "gridTitle")}${link("obs-battle", "battleTitle")}${link("obs-all", "allOverlays")}</ul>
+      <p class="note" style="margin:0">${t("allNow")}: <b class="acc">${t(battlePhase(x) ? "allNowBattle" : "allNowQual")}</b></p>`)}
   </div>
+  <div class="bc-ovs">
   ${ov("plateTitle", "plateOn", ovPlate(st, x, rows))}
-  ${ov("gridTitle", "gridOn", ovGrid(st, x, rows), `<div class="car-form">
+  ${ov("gridTitle", "gridOn", ovGrid(st, x, rows, { idle: st.gridMini && st.gridMini === gridKey(x) ? "gone" : "" }), `<div class="car-form">
       <label class="fieldlabel">${t("rowsL")}<select class="field" data-a="bc:rows">${[8, 16, 32, 0].map(n => `<option value="${n}" ${st.rows === n ? "selected" : ""}>${n || t("allRows")}</option>`).join("")}</select></label>
       <label class="fieldlabel">${t("gridTitleL")}<input class="field" data-a="bc:title" value="${esc(st.title)}" maxlength="60" placeholder="${esc(`${t("stage")} ${x.stage} · ${x.track}`)}"></label></div>
-    <div class="row" style="justify-content:space-between;gap:1rem"><p class="note" style="margin:0">${t("gridIdleNote")}</p>${sw("runs", t("showRuns"))}</div>`)}
-  ${ov("battleTitle", "battleOn", ovBattle(st, x, rows))}`;
+    <div class="row" style="justify-content:space-between;gap:1rem"><p class="note" style="margin:0">${t("gridIdleNote")}</p>${sw("runs", t("showRuns"))}</div>
+    ${st.gridMini && st.gridMini === gridKey(x) ? `<span class="pill plain s-reg" style="justify-self:start">${t("gridHiddenNow")}</span>` : ""}`)}
+  ${ov("battleTitle", "battleOn", ovBattle(st, x, rows))}
+  </div>`;
 }
 
 // judges' island inside a stage: qualifying scores, tandem decisions and protests; everything feeds the OBS overlays
@@ -4432,7 +4519,7 @@ const stepper = x => { const at = STATUSES.indexOf(x.status);
     <div class="row" style="justify-content:space-between"><button class="btn line sm" data-act="setStatus" data-id="${x.id}" data-v="${STATUSES[at - 1] ?? ""}" ${at <= 0 ? "disabled" : ""}>← ${t("prevStatus")}</button>
       <button class="btn sm" data-act="setStatus" data-id="${x.id}" data-v="${STATUSES[at + 1] ?? ""}" ${at >= STATUSES.length - 1 ? "disabled" : ""}>${STATUSES[at + 1] ? t(STATUSES[at + 1]) : t("done")} →</button></div>`; };
 function judgeIsland(x) {
-  const raw = bcState(), live = raw.tour === x.id || (!raw.tour && bcTour(raw)?.id === x.id);
+  const raw = bcState(), live = bcTour(raw)?.id === x.id;
   const st = live ? raw : { ...raw, onTrack: null, leader: null, chaser: null, label: "", votes: [null, null, null] };
   const rows = bcRows(x), p = rows.find(r => r.name === st.onTrack), res = judgeResult(st.votes);
   const opts = (cur, skip) => `<option value="">${t("pickPilot")}</option>${stageRows(x).map(([q]) => q).filter(q => q.name !== skip)
@@ -4440,7 +4527,7 @@ function judgeIsland(x) {
   const seg = j => `<div class="seg" role="group" aria-label="${t(JUDGES[j])}">${["leader", "chaser", "omt"].map(v =>
     `<button class="${v}" data-act="vote" data-j="${j}" data-v="${v}" data-id="${x.id}" aria-pressed="${st.votes[j] === v}">${t(v === "omt" ? "omtShort" : v)}</button>`).join("")}</div>`;
   const prots = PROTESTS.filter(q => q.tour === x.id).sort((a, b) => (a.status !== "new") - (b.status !== "new") || b.id - a.id);
-  return `<p class="note">${live ? `<span class="livebadge">${t("onAir")}</span> ` : ""}${t("islandHint")}</p>
+  return `<p class="note island-hint">${live ? `<span class="livebadge">${t("onAir")}</span> ` : ""}${t("islandHint")}</p>
   <div class="island">
     <section class="box panel"><div class="head"><h3>${t("qualJudge")}</h3><a class="btn text sm" href="#broadcast">${t("broadcastBtn")}</a></div>
       <span class="note">${t("pickFromList")}</span>
@@ -4473,6 +4560,9 @@ function judgeIsland(x) {
         <button class="btn sm" data-act="brConfirm" data-id="${x.id}">${t("brConfirm")} ${esc(st[res])} →</button></div>` : ""}
     </section>
   </div>
+  <section class="box panel ready-box ${READY.every(k => st.ready?.[k]) ? "all" : ""}"><div class="head"><h3>${t("readyTitle")}</h3><span class="note mono" id="ready-reset"></span></div>
+    <p class="note">${t("readyHint")}</p>
+    <div class="ready-btns">${READY.map(k => `<button class="ready-btn ${st.ready?.[k] ? "on" : ""}" data-act="ready" data-id="${x.id}" data-v="${k}" aria-pressed="${!!st.ready?.[k]}"><span class="label">${t("readyL")}</span><b>${t("rd_" + k)}</b></button>`).join("")}</div></section>
   <section class="stack"><h3>${t("protests")}${prots.some(q => q.status === "new") ? ` <span class="badge">${prots.filter(q => q.status === "new").length}</span>` : ""}</h3>
     ${prots.length ? prots.map(protestCard).join("") : `<div class="box panel empty"><p class="note">${t("noProtests")}</p></div>`}</section>`;
 }
@@ -4507,12 +4597,15 @@ function pushLive() {
   liveTimer = setTimeout(async () => {
     if (liveBusy) return pushLive(); // one write at a time per document
     const body = liveBody();
-    if (body === liveSent) return;
+    if (body === liveSent) { livePending = false; return; }
     liveBusy = true; liveSent = body;
     try { await liveDoc.set(JSON.parse(body)); } catch (e) { if (e?.code === "invalid_argument" || e?.code === "revoked") liveDoc = null; }
-    liveBusy = false;
+    liveBusy = false; livePending = false;
   }, 250);
+  livePending = true;
 }
+// a snapshot that lands while this tab still has an edit on its way is older than the edit: applying it undid quick presses
+let livePending = false;
 (async () => {
   let db = null;
   try { db = window.claude ? await window.claude.use("db") : null; } catch {}
@@ -4521,7 +4614,7 @@ function pushLive() {
   ref.onSnapshot(snap => {
     liveDoc = ref;
     if (!snap.exists) return pushLive(); // first run: seed the shared doc from this browser
-    if (snap.metadata.hasPendingWrites) return;
+    if (snap.metadata.hasPendingWrites || livePending) return;
     const d = snap.data(), body = JSON.stringify({ bc: d.bc ?? null, scores: d.scores ?? {}, statuses: d.statuses ?? tourStatuses(), brackets: d.brackets ?? {} });
     liveSent = body;
     if (body === liveBody()) return;
@@ -4651,7 +4744,7 @@ function render(animate = false) {
   const obs = route.startsWith("obs-");
   document.body.classList.toggle("obs", obs);
   document.body.classList.toggle("green", obs && bcState().bg === "green");
-  if (obs) { const app = document.getElementById("app"); app.classList.remove("enter"); app.innerHTML = obsView(route.slice(4)); return; }
+  if (obs) { ovFit(); const app = document.getElementById("app"); app.classList.remove("enter"); app.innerHTML = obsView(route.slice(4)); return; }
   ovShown = {};
   document.getElementById("bar").innerHTML = header(route);
   document.getElementById("foot").innerHTML = footer();
@@ -4668,6 +4761,7 @@ function render(animate = false) {
   if (animate) { void app.offsetWidth; app.classList.add("enter"); setupReveal(); }
   app.querySelectorAll(".picklist [aria-selected=true]").forEach(o => { const l = o.parentNode; l.scrollTop = o.offsetTop - (l.clientHeight - o.offsetHeight) / 2; });
   if (admAnim) { app.querySelectorAll(".adm-main tbody tr").forEach((tr, i) => tr.style.setProperty("--r", Math.min(i, 14))); admAnim = false; }
+  fitPreviews();
 }
 
 document.addEventListener("click", e => {
@@ -4704,6 +4798,9 @@ document.addEventListener("click", e => {
       if (!(v >= 1 && v <= 5) || !trackNames().includes(n)) return;
       TRACK_DIFF[n] = v; dbSave(); toast(t("saved")); },
     vote: () => judgeSet(id, "vote", el.dataset.v, +el.dataset.j),
+    // the pressed button pops; when the third one lands, all three flash together
+    ready: () => { judgeSet(id, "ready", el.dataset.v); readyRemote(el.dataset.v, id); document.querySelector(`.ready-btn[data-v="${el.dataset.v}"]`)?.classList.add("tap");
+      if (bcState().readyAt) document.querySelector(".ready-box")?.classList.add("burst"); },
     onTrack: () => judgeSet(id, "onTrack", el.dataset.name),
     rLang: () => { rLang = el.dataset.v === "en" ? "en" : "ru"; rSel = [0, 0]; render(); },
     carOpen: () => { carOpen = carOpen === el.dataset.v ? null : el.dataset.v; render(); },
@@ -4875,6 +4972,7 @@ document.addEventListener("input", e => {
     document.getElementById("invnone").hidden = n > 0; return; }
   // update in place so the field keeps focus
   if (e.target.id === "rule-ta") { const pv = document.getElementById("rule-prev"); if (pv) pv.innerHTML = textToHtml(e.target.value); return; }
+  if (e.target.closest?.(".bc-size")) { e.target.nextElementSibling.textContent = e.target.value + "%"; return; } // saved on release (change)
   if (e.target.id === "accq") { accessQuery = e.target.value; document.getElementById("acc-body").innerHTML = accessRows(); }
   if (e.target.id === "search") { query = e.target.value; const el = document.getElementById("rlist"); if (el) el.innerHTML = rRows(); }
   if (e.target.dataset.about) {

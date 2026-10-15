@@ -146,6 +146,18 @@ setTimeout(() => call("/api/me", { method: "PUT", token: owner, body: JSON.strin
 held = await waiting;
 ok("users" in held && Date.now() - t0 < 6000, "long poll answers right after a change");
 
+// crew readiness: one press at a time on the server, never undone by a whole live-state write
+const ready = (v, token, extra = {}) => call("/api/ready", { method: "POST", token, body: JSON.stringify({ v, ...extra }) });
+ok((await ready("judge", pilot)).status === 403, "a pilot cannot press readiness");
+await ready("marshal", owner); await ready("judge", owner);
+await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: { onTrack: "Test Pilot", ready: {}, gridMini: "x" }, scores: {} }) });
+let rd = await (await ready("streamer", owner, { key: "k1" })).json();
+ok(rd.bc.ready.marshal && rd.bc.ready.judge && rd.bc.ready.streamer && rd.bc.readyAt > 0 && rd.bc.gridMini === "k1", "presses add up; a whole-state write doesn't undo them");
+ok((await (await call("/api/state")).json()).live.bc.onTrack === "Test Pilot", "the rest of the live state still saves");
+rd = await (await ready("reset", owner, { at: 1 })).json();
+ok(rd.bc.readyAt > 0, "a stale reset is ignored");
+rd = await (await ready("reset", owner, { at: rd.bc.readyAt })).json();
+ok(!rd.bc.readyAt && !Object.keys(rd.bc.ready).length && rd.bc.gridMini === "k1", "reset clears the buttons, the grid stays folded");
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");
 ok(!(await fetch(API + "/api/state", { headers: { origin: "https://evil.example" } })).headers.get("access-control-allow-origin"), "no CORS for other sites");
