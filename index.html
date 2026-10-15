@@ -854,6 +854,7 @@ footer.site { border-top: 1px solid var(--line); background: var(--bg) }
 .seg2 { display: inline-flex; padding: 4px; gap: 4px; border: 1px solid var(--line-2); border-radius: 4px; background: var(--panel) }
 .seg2 button { border: 0; border-radius: 3px; padding: .65rem 1.3rem; background: none; color: var(--muted); cursor: pointer; font: 500 .66rem/1 var(--f-mono); letter-spacing: .18em; text-transform: uppercase; transition: background .25s, color .25s }
 .seg2 button:hover { color: var(--text) }
+.st-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start } @media (max-width: 860px) { .st-split { grid-template-columns: 1fr } }
 .seg2 button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink) }
 .lb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem }
 .lb-card { display: grid; gap: 1.4rem; padding: 1.6rem; transition: transform .3s var(--ease), border-color .3s; animation: rise .5s var(--ease) both }
@@ -1830,6 +1831,19 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield }
 .br-box > summary { cursor: pointer; list-style: none } .br-box > summary::-webkit-details-marker { display: none }
 .br-box[open] > summary { margin-bottom: 1rem }
 .br-box[open] .ach-chev { transform: rotate(180deg) } .br-box > summary:hover .ach-chev { border-color: var(--accent) }
+/* folding blocks open and close smoothly (height where the browser can animate it, a fade-in everywhere) */
+.br-box, .ach-box, .rdoc, .faq details { interpolate-size: allow-keywords }
+.br-box::details-content, .ach-box::details-content, .rdoc::details-content, .faq details::details-content { height: 0; overflow: clip; transition: height .45s var(--ease), content-visibility .45s allow-discrete }
+.br-box[open]::details-content, .ach-box[open]::details-content, .rdoc[open]::details-content, .faq details[open]::details-content { height: auto }
+.br-box[open] > :not(summary), .ach-box[open] > :not(summary), .rdoc[open] > :not(summary) { animation: foldIn .45s var(--ease) both }
+.br-box[open] tbody tr { animation: foldIn .4s var(--ease) both; animation-delay: calc(min(var(--r, 0), 14) * 18ms) }
+@keyframes foldIn { from { opacity: 0; transform: translateY(-6px) } }
+/* admin: a two-step action waiting for its second press nudges its button */
+.asking { animation: askNudge .45s var(--ease); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent) }
+@keyframes askNudge { 20%, 60% { transform: translateX(-3px) } 40%, 80% { transform: translateX(3px) } }
+.adm-main .box, .adm-main .tablebox, .adm-main input, .adm-main select, .adm-main textarea { transition: border-color .25s, box-shadow .25s, background .25s }
+.adm-main tbody tr { transition: background .2s }
+@media (prefers-reduced-motion: reduce) { .br-box::details-content, .ach-box::details-content, .rdoc::details-content, .faq details::details-content { transition: none } .asking { animation: none } }
 /* five equal columns that always fit the width; every match sits in an equal slot, so a pair's two slots meet exactly
    at the centre of the next round's match and the connector lines join */
 .bracket { --g: 1.4rem; --ln: var(--line-2, #3a3a40); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--g) }
@@ -1971,7 +1985,8 @@ const I18N = {
     champ: "Онлайн-чемпионат · CarX Drift Racing Online 2", nextStage: "Ближайший этап", cdUnits: ["дн", "ч", "мин", "сек"],
     signedUp: ["пилот уже записался", "пилота уже записались", "пилотов уже записались"],
     soon: "Скоро", reg: "Регистрация", qualifying: "Квалификация", top32: "Топ 32", top16: "Топ 16", top8: "Топ 8", top4: "Топ 4", final: "Финал", done: "Завершён", stage: "Этап", details: "Подробнее",
-    archive: "Архив", season: "Сезон", currentStage: "Текущий этап", stageTeams: "Командный зачёт этапа", stageTeamsNote: "Сумма двух лучших квалификационных оценок пилотов команды.",
+    archive: "Архив", season: "Сезон", currentStage: "Текущий этап", stStand: "Зачёт этапа", stStandNote: "Очки этапа, как в рейтинге: пилоты и заявленные команды.", stPersonal: "Личный зачёт", stTeam: "Командный зачёт",
+    stageTeams: "Командный зачёт этапа", stageTeamsNote: "Сумма двух лучших квалификационных оценок пилотов команды.",
     pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)",
     pilotsHint: "Снимите галочку, чтобы убрать пилота из этапа: он пропадёт из сетки квалификации.", inStage: "Участвует",
     teamsHint: "Снимите галочку, если команда не подала командную регистрацию на этап — она не попадёт в командный зачёт этапа.", teamScore: "Командный зачёт", onStage: "Пилотов на этапе",
@@ -2112,7 +2127,8 @@ const I18N = {
     champ: "Online championship · CarX Drift Racing Online 2", nextStage: "Next round", cdUnits: ["days", "hrs", "min", "sec"],
     signedUp: ["driver already entered", "drivers already entered", "drivers already entered"],
     soon: "Soon", reg: "Registration", qualifying: "Qualifying", top32: "Top 32", top16: "Top 16", top8: "Top 8", top4: "Top 4", final: "Final", done: "Finished", stage: "Round", details: "Details",
-    archive: "Archive", season: "Season", currentStage: "Current round", stageTeams: "Round team standings", stageTeamsNote: "Sum of the team's two best qualifying scores.",
+    archive: "Archive", season: "Season", currentStage: "Current round", stStand: "Round standings", stStandNote: "Round points as in the rating: drivers and entered teams.", stPersonal: "Drivers", stTeam: "Teams",
+    stageTeams: "Round team standings", stageTeamsNote: "Sum of the team's two best qualifying scores.",
     pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)",
     pilotsHint: "Untick a driver to remove them from the round: they disappear from the qualifying grid.", inStage: "Entered",
     teamsHint: "Untick a team that did not file a team entry for the round, so it stays out of the round's team standings.", teamScore: "Team standings", onStage: "Drivers in round",
@@ -2821,11 +2837,17 @@ function tournament(id) {
       <td class="mono">${cell(p.a)}</td><td class="mono">${cell(p.b)}</td><td class="mono best">${p.best < 0 ? "—" : p.best.toFixed(1)}</td></tr>`).join("")}</tbody>
   </table></div></details>`}
   ${runs ? (() => {
-    const tr = stageEntries(x).filter(r => r.ok).map(({ tm, e }) => { const ns = new Set(e.pilots.map(p => p.name)), m = rows.filter(p => ns.has(p.name) && p.best >= 0);
-      return { tm, n: m.length, pts: m.map(p => p.best).sort((a, b) => b - a).slice(0, 2).reduce((s, v) => s + v, 0) }; }).filter(r => r.n).sort((a, b) => b.pts - a.pts);
-    return `<details class="box panel br-box" data-topen="teams-${x.id}" ${tOpenIs(`teams-${x.id}`) ? "open" : ""}><summary class="psec-head"><span class="stack" style="gap:.3rem"><h3>${t("stageTeams")}</h3><span class="note">${t("stageTeamsNote")}</span></span><span class="row" style="gap:1rem"><span class="note">${tr.length}</span><i class="ach-chev" aria-hidden="true"></i></span></summary>
-      <div class="tablebox"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
-      <tbody>${tr.map((r, i) => `<tr><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${r.pts.toFixed(1)}</td></tr>`).join("")}</tbody></table></div></details>`;
+    // stage standings in two halves: drivers and entered teams, with the same stage points as the rating
+    const pl = rows.map(p => ({ p, pts: stagePts(x, p.name) })).sort((q, r) => r.pts - q.pts || r.p.best - q.p.best);
+    const tm = stageEntries(x).filter(r => r.ok).map(({ tm, e }) => ({ tm, n: e.pilots.length, pts: teamStagePts(x, tm) })).sort((q, r) => r.pts - q.pts);
+    const none = `<tr><td colspan="4" class="note">${t("nothing")}</td></tr>`;
+    return `<details class="box panel br-box" data-topen="st-${x.id}" ${tOpenIs(`st-${x.id}`) ? "open" : ""}><summary class="psec-head"><span class="stack" style="gap:.3rem"><h3>${t("stStand")}</h3><span class="note">${t("stStandNote")}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
+      <div class="st-split">
+        <div class="stack" style="gap:.6rem"><span class="label acc">${t("stPersonal")}</span><div class="tablebox"><table><thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
+          <tbody>${pl.map(({ p, pts }, i) => `<tr class="${p.mine ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${pAva(p, "t-ava")}${esc(p.name)}</td><td class="mono best" style="text-align:right">${pts}</td></tr>`).join("") || none}</tbody></table></div></div>
+        <div class="stack" style="gap:.6rem"><span class="label acc">${t("stTeam")}</span><div class="tablebox"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
+          <tbody>${tm.map((r, i) => `<tr class="${r.tm.id === S.team ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${r.pts}</td></tr>`).join("") || none}</tbody></table></div></div>
+      </div></details>`;
   })() : ""}
   ${S.user && (protestOpen(x) || myProtests(x).length) ? `<section class="box panel"><h3>${t("fileProtest")}</h3><p class="note">${t("protestHint")}</p>
     ${!protestOpen(x) ? `<p class="note">${t("protestClosed")}</p>` : !rows.some(p => p.mine) ? `<p class="note">${t("protestOnlyRider")}</p>` : `<form class="stack" id="protestform" data-tour="${x.id}">
@@ -3738,7 +3760,7 @@ function profile() {
 
 // shortcut: admin role is a client-side demo toggle; real admin rights must be checked on a server
 // admAnim: set when the admin moves to another section, so only navigation animates, not every saved field
-let admAnim = false;
+let admAnim = false, admView = "";
 let aEditTeam = 0, aTab = "seasons", aSeason = 0, aTour = 0, aSub = "main", adminMsg = "", pending = null;
 const stageMax = x => x.max ?? SETTINGS.maxStage; // per stage, falling back to the settings default
 const sel = (attr, list, cur, label, cls = "ai wide") => `<select class="${cls}" data-a="${attr}" aria-label="${label}">${list.map(s => `<option value="${s}" ${s === cur ? "selected" : ""}>${t(s)}</option>`).join("")}</select>`;
@@ -3932,6 +3954,8 @@ function admin() {
   if (!tabs.includes(aTab)) aTab = tabs[0] || "";
   const item = (k, l, badge) => tabs.includes(k) ? `<button data-tab="${k}" aria-pressed="${aTab === k}">${t(l)}${badge ? `<span class="badge">${badge}</span>` : ""}</button>` : "";
   const view = { seasons: adminSeasons, pilots: adminPilots, teams: adminTeams, rules: adminRules, access: adminAccess, settings: adminSettings }[aTab] || (() => `<p class="note">${t("noPanelRole")}</p>`);
+  // any move to another admin view (section, season, stage, sub-tab, team, settings tab, achievement) plays the entry animation; saving a field doesn't
+  const vk = [aTab, aSeason, aTour, aSub, aEditTeam, setTab, achTab, achSel].join("|"); if (vk !== admView) { admView = vk; admAnim = true; }
   return `<div class="adm">
     <aside class="adm-side"><span class="label acc">${t("adminPanel")}</span><span class="note">${roleLabel(roleOf(S.user.name))}</span>
       ${item("seasons", "aSeasons")}${item("pilots", "aSanctions")}${item("teams", "aTeams")}${item("rules", "aRules")}${item("access", "aAccess")}${item("settings", "aSettings")}
@@ -4638,7 +4662,7 @@ function render(animate = false) {
   app.innerHTML = m ? tournament(+m[1]) : tmm ? teamPage(+tmm[1]) : pp !== null ? pilotPage(pp) : ({ tournaments, tracks, rating, teams, rules, profile, admin, broadcast }[route] || home)();
   if (tw) { const fresh = app.querySelector(".tw-frame"); if (fresh && fresh.src === tw.src) { fresh.parentNode.moveBefore(tw, fresh); fresh.remove(); } else tw.remove(); }
   app.classList.remove("enter");
-  if (!animate && route === lastRoute) app.getAnimations({ subtree: true }).forEach(a => { if (a.animationName && a.effect.getTiming().iterations !== Infinity) a.finish(); }); // entry animations (rise, admIn...) only play on navigation
+  if (!animate && route === lastRoute && !admAnim) app.getAnimations({ subtree: true }).forEach(a => { if (a.animationName && a.effect.getTiming().iterations !== Infinity) a.finish(); }); // entry animations (rise, admIn...) only play on navigation or a new admin view
   lastRoute = route;
   fitHeroNum();
   if (animate) { void app.offsetWidth; app.classList.add("enter"); setupReveal(); }
@@ -4665,6 +4689,7 @@ document.addEventListener("click", e => {
   if (el.dataset.goto) { const target = document.getElementById(el.dataset.goto), box = target?.closest("details");
     if (box && !box.open) { box.open = true; rClosed.delete(+box.dataset.rdoc); } // a link into a folded regulation unfolds it
     return target?.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  const asked = pending;
   const id = +el.dataset.id;
   e.preventDefault();
   ({
@@ -4769,6 +4794,8 @@ document.addEventListener("click", e => {
       if (!isFounder(tm) || !ref || !membersOf(tm).some(p => p.name === to)) return;
       confirmTwice("fpass", () => { passTo = ""; ref.founder = isSrv(ref) ? USERS.find(u => u.name === to)?.steamId : to; if (ref.rep === to) delete ref.rep; if (TEAM_FOUNDERS[tm.id]) TEAM_FOUNDERS[tm.id] = to; toast(t("founderPassed")); saveTeam(); }); },
   })[el.dataset.act]?.();
+  // the first press of a two-step action (delete, reset…) turned into "are you sure": nudge that button
+  if (pending && pending !== asked) document.querySelector(Object.entries(el.dataset).map(([k, v]) => `[data-${k.replace(/[A-Z]/g, c => "-" + c.toLowerCase())}="${CSS.escape(v)}"]`).join(""))?.classList.add("asking");
 });
 document.addEventListener("submit", e => {
   e.preventDefault();
