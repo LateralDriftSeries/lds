@@ -169,7 +169,21 @@ ok(hooks.length === 1 && hooks[0].embeds[0].title.includes("Регистраци
 ok(hooks[0].allowed_mentions?.parse?.length === 0, "the post can't ping anyone");
 await setStatus("qualifying"); await setStatus("reg"); await setStatus("qualifying");
 await new Promise(z => setTimeout(z, 300));
-ok(hooks.length === 2 && hooks[1].embeds[0].title.includes("Квалификация началась"), "qualifying start is posted once, flipping back doesn't repeat");
+ok(hooks.length === 2 && hooks[1].embeds[0].title.includes("Регистрация закрыта"), "qualifying start is posted once, flipping back doesn't repeat");
+// Discord settings from the admin panel: own text and picture; the webhook address is checked and never read back
+const PX = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+const dput = (body, token = owner) => call("/api/discord", { method: "PUT", token, body: JSON.stringify(body) });
+ok((await dput({ reg: { text: "x" } }, pilot)).status === 403 && (await call("/api/discord", { token: pilot })).status === 403, "a pilot can't read or change Discord settings");
+ok((await dput({ hook: "https://evil.example/api/webhooks/1/abc" })).status === 400, "only a discord.com webhook address is taken");
+const dc = await (await dput({ hook: "https://discord.com/api/webhooks/123/abc-DEF_9", reg: { text: "Своё объявление", img: PX }, qualifying: { text: "" } })).json();
+ok(dc.hook === true && !JSON.stringify(dc).includes("abc-DEF_9") && dc.reg.text === "Своё объявление", "the webhook is saved but never sent back");
+ok((await dput({ hook: "" })).ok, "the webhook can be cleared");
+const imgRes = await call("/api/discord/img/reg");
+ok(imgRes.ok && imgRes.headers.get("content-type") === "image/png" && (await imgRes.arrayBuffer()).byteLength === 70, "the picture is served for Discord");
+await call("/api/db", { method: "PUT", token: owner, body: JSON.stringify({ db: { tours: [{ id: 901, season: 9, stage: 2, track: "Hook Track", status: "soon" }, { id: 902, season: 9, stage: 3, track: "Own Text", status: "soon" }], seasons: [{ id: 9, name: "S9" }] } }) });
+await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: { 901: "reg", 902: "reg" } }) });
+await new Promise(z => setTimeout(z, 300));
+ok(hooks.length === 3 && hooks[2].embeds[0].description.startsWith("Своё объявление") && /\/api\/discord\/img\/reg\?v=\d+$/.test(hooks[2].embeds[0].image?.url || ""), "the post carries the admin's text and picture");
 hookSrv.close();
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");

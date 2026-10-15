@@ -38,6 +38,12 @@ async function route(req, env, url) {
   if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireRole(req, env, ["owner", "admin", "tech"]));
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (m === "POST" && p === "/api/ready") return postReady(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
+  if (p === "/api/discord") {
+    await requireRole(req, env, ["owner", "admin"]);
+    if (m === "GET") return getDiscord(env);
+    if (m === "PUT") return putDiscord(req, env);
+  }
+  if (m === "GET" && p.startsWith("/api/discord/img/")) return discordImg(env, p.slice(17));
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
   if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
   if (m === "POST" && p === "/api/team/create") return createTeam(req, env, await auth(req, env));
@@ -327,40 +333,69 @@ async function putLive(req, env) {
   const body = await readJson(req, MAX_DB), stored = await kvGet(env, "live");
   await kvSet(env, "live", keepCrew(stored, body));
   await bump(env);
-  await announce(env, stored?.statuses || {}, body?.statuses || {});
+  await announce(env, stored?.statuses || {}, body?.statuses || {}, new URL(req.url).origin);
   return json({ ok: true });
 }
 
-// Discord: a stage that opens registration or starts qualifying is posted once to the league channel.
-// The webhook address is the DISCORD_WEBHOOK secret (npx wrangler secret put DISCORD_WEBHOOK); without it nothing is sent.
+// Discord: a stage that opens registration or closes it (qualifying starts) is posted once to the league channel.
+// The webhook address is set in the admin settings (kv "discord", never sent back) or as the DISCORD_WEBHOOK secret; without either nothing is sent.
+// The admin may also replace each post's text and attach a picture; pictures are served from /api/discord/img/<status> for Discord to fetch.
 // Stage statuses travel in the live state, so only its writes are watched; "announced" keeps each stage+status to one post.
 const ANNOUNCE = {
   reg: { color: 0x2ecc71, title: "Регистрация открыта", text: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", link: "Записаться" },
-  qualifying: { color: 0xff6b1a, title: "Квалификация началась", text: "Пилоты выходят на квалификационные заезды. Результаты обновляются на сайте вживую.", link: "Смотреть результаты" },
+  qualifying: { color: 0xe5484d, title: "Регистрация закрыта", text: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.", link: "Открыть этап" },
 };
-async function announce(env, before, after) {
-  if (!env.DISCORD_WEBHOOK) return;
+async function announce(env, before, after, origin) {
   const fresh = Object.entries(after).filter(([k, s]) => ANNOUNCE[s] && before[k] !== s);
   if (!fresh.length) return;
-  const [db, done] = await Promise.all([kvGet(env, "db"), kvGet(env, "announced")]), seen = done || {};
+  const [db, done, cfg] = await Promise.all([kvGet(env, "db"), kvGet(env, "announced"), kvGet(env, "discord")]), seen = done || {}, hook = cfg?.hook || env.DISCORD_WEBHOOK;
+  if (!hook) return;
   const posts = fresh.filter(([k, s]) => !seen[`${k}:${s}`]);
   if (!posts.length) return;
   for (const [k, s] of posts) seen[`${k}:${s}`] = Date.now();
   await kvSet(env, "announced", seen);
-  await Promise.allSettled(posts.map(([k, s]) => postDiscord(env, db, k, s)));
+  await Promise.allSettled(posts.map(([k, s]) => postDiscord(env, db, k, s, hook, cfg?.[s], origin)));
 }
-async function postDiscord(env, db, id, status) {
+async function postDiscord(env, db, id, status, hook, own, origin) {
   const x = (db?.tours || []).find(z => String(z.id) === id);
   if (!x) return;
   const a = ANNOUNCE[status], season = (db.seasons || []).find(z => z.id === x.season)?.name || "";
   const site = String(env.SITE_URL || "https://lateraldriftseries.github.io/lds/").replace(/\/?$/, "/") + "#t-" + x.id;
   const twitch = String(db.settings?.socials?.Twitch || "").match(/twitch\.tv\/([A-Za-z0-9_]{3,25})\/?$/)?.[1];
-  const fields = [x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true }, x.start && { name: "Старт", value: String(x.start).slice(0, 100), inline: true },
+  const fields = [/d/.test(x.start || "") ? { name: "Старт", value: String(x.start).slice(0, 100) + " МСК", inline: true } : x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true },
     status === "qualifying" && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
-  const embed = { title: `${a.title} · Этап ${x.stage} — ${String(x.track || "").slice(0, 60)}`, url: site, color: a.color, description: `${a.text}\n\n[${a.link} →](${site})`,
-    fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
+  const embed = { title: `${a.title} · Этап ${x.stage} — ${String(x.track || "").slice(0, 60)}`, url: site, color: a.color, description: `${own?.text || a.text}\n\n[${a.link} →](${site})`,
+    ...(own?.img ? { image: { url: `${origin}/api/discord/img/${status}?v=${own.at || 0}` } } : {}), fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
   // allowed_mentions: none, so a track or season name can never ping @everyone
-  await fetch(env.DISCORD_WEBHOOK, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: "LDS", embeds: [embed], allowed_mentions: { parse: [] } }) });
+  await fetch(hook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: "LDS", embeds: [embed], allowed_mentions: { parse: [] } }) });
+}
+
+const HOOK_RE = /^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/api\/webhooks\/\d+\/[\w-]+$/;
+const DC_IMG = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/;
+async function getDiscord(env) {
+  const c = await kvGet(env, "discord") || {};
+  // the address itself never leaves the server: the panel only learns whether one is set
+  return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, reg: c.reg || {}, qualifying: c.qualifying || {} });
+}
+async function putDiscord(req, env) {
+  const body = await readJson(req, 3_500_000), c = await kvGet(env, "discord") || {};
+  if (typeof body.hook === "string") {
+    const h = body.hook.trim();
+    if (h && !HOOK_RE.test(h)) throw new HttpError(400, "not a discord webhook");
+    if (h) c.hook = h; else delete c.hook;
+  }
+  for (const k of Object.keys(ANNOUNCE)) {
+    const v = body[k]; if (!v || typeof v !== "object") continue;
+    const img = typeof v.img === "string" && v.img.length <= 1_500_000 && DC_IMG.test(v.img) ? v.img : "";
+    c[k] = { text: String(v.text || "").slice(0, 1500), img, at: img === c[k]?.img ? c[k]?.at || 0 : Date.now() };
+  }
+  await kvSet(env, "discord", c);
+  return getDiscord(env);
+}
+async function discordImg(env, status) {
+  const m = DC_IMG.exec((await kvGet(env, "discord"))?.[status]?.img || "");
+  if (!m) throw new HttpError(404, "no image");
+  return new Response(Uint8Array.from(atob(m[2]), ch => ch.charCodeAt(0)), { headers: { "content-type": "image/" + m[1], "cache-control": "public, max-age=300" } });
 }
 
 // crew readiness (marshal, judge, streamer) is changed only through /api/ready, one field at a time,
