@@ -574,7 +574,9 @@ body.obs main { padding: 0; max-width: none }
 @keyframes readyAll { 0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, .7) } 40% { transform: translateY(-4px); box-shadow: 0 0 0 10px rgba(46, 204, 113, 0), 0 0 40px -6px #2ecc71 } 100% { transform: none } }
 @media (prefers-reduced-motion: reduce) { .ready-btn.tap, .ready-box.burst .ready-btn { animation: none } }
 .island-hint { margin: 0 0 1.4rem } .ready-box { margin: 1.6rem 0 } .ready-box + section { margin-top: .4rem }
-.bc-ovs .ov-grid li.gone { display: none } /* the panel preview shows the folded grid too */
+.bc-ovs .ov-grid li.gone { display: none }
+.fold-note { display: flex; align-items: center; gap: .55rem; margin: 0; font: 500 .85rem/1.4 var(--f-body); color: #2ecc71 }
+.fold-note i { flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; animation: blink 1.6s ease-in-out infinite } /* the panel preview shows the folded grid too */
 @media (max-width: 600px) { .ready-btns { grid-template-columns: 1fr } }
 .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line) }
 .seg button { border: 0; border-radius: 7px; padding: .55rem .3rem; background: none; color: var(--soft); font-weight: 600; font-size: .82rem; cursor: pointer; transition: background .2s, color .2s }
@@ -1877,10 +1879,8 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield }
 .ach-li { display: flex; align-items: center; gap: .55rem } .ach-li > span:first-child { font-size: 1.05rem } .ach-li .muted { margin-left: auto; font-size: .75rem }
 .ach-pane { display: grid; gap: 1.1rem }
 .ach-prev { display: grid; gap: .4rem; max-width: 22rem }
-.ach-icons { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center }
-.ach-icons button { width: 2.2rem; height: 2.2rem; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); font-size: 1.05rem; cursor: pointer }
-.ach-icons button[aria-pressed="true"], .ach-icons button:hover { border-color: var(--accent) }
-.ach-icons .ach-ic-in { width: 4rem; text-align: center; font-size: 1.05rem; padding: .3rem }
+.ach-own .row { gap: .8rem; flex-wrap: nowrap; align-items: center } .ach-own .ach-ic-in { flex: 0 0 4.2rem; width: 4.2rem; text-align: center; font-size: 1.3rem; padding: .35rem }
+.ach-own .note { margin: 0; font-size: .8rem }
 .ach-langs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem }
 .ach-give { gap: .5rem; flex-wrap: nowrap } .ach-give .field { flex: 1; min-width: 0 }
 @media (max-width: 900px) { .ach-ed2, .ach-langs { grid-template-columns: 1fr } }
@@ -2016,7 +2016,15 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .stage-tbl .st-cap { white-space: nowrap } .stage-tbl .st-cap > * { vertical-align: middle } .stage-tbl .st-cap .muted { margin: 0 .35rem }
 .stage-tbl .st-cap input { width: 4.4rem }
 .stage-tbl .st-go { width: 2rem; text-align: right; color: var(--accent); font-size: 1.1rem; transition: transform .2s }
-.stage-tbl tr:hover .st-go { transform: translateX(3px) }
+.stage-tbl .st-go { transition: none } .stage-tbl .st-go span { display: inline-block; transition: transform .2s } .stage-tbl tr:hover .st-go span { transform: translateX(3px) }
+/* stage status as a coloured pill: grey before, green registration, orange while it runs, dim when done */
+.st-sel { appearance: none; -webkit-appearance: none; cursor: pointer; padding: .45rem 2rem .45rem .9rem; border-radius: 99px; border: 1px solid var(--line-2); background: var(--panel-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right .8rem center;
+  color: var(--soft); font: 600 .72rem var(--f-body); letter-spacing: .08em; text-transform: uppercase; transition: border-color .2s, background-color .2s }
+.st-sel:hover, .st-sel:focus-visible { border-color: var(--accent); outline: none }
+.st-sel:is([data-s="reg"], [data-s="live"]) { color: #2ecc71; border-color: color-mix(in srgb, #2ecc71 45%, transparent); background-color: color-mix(in srgb, #2ecc71 10%, var(--panel-2)) }
+.st-sel:is([data-s="qualifying"], [data-s="top32"], [data-s="top16"], [data-s="top8"], [data-s="top4"], [data-s="final"]) { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, transparent); background-color: color-mix(in srgb, var(--accent) 10%, var(--panel-2)) }
+.st-sel[data-s="done"] { color: var(--muted) }
+.st-sel option { background: var(--panel); color: var(--text); text-transform: none }
 @media (max-width: 640px) { .stage-tbl td .note { white-space: normal } .stage-tbl td select.ai { min-width: 0; width: 100% } }
 /* admin spacing: calmer rhythm between blocks, roomier panels, aligned headers */
 .adm { gap: 2.4rem }
@@ -2131,7 +2139,7 @@ const I18N = {
     noAch: "Достижений пока нет.", noAchAdmin: "Достижений нет. Создайте первое — потом его можно выдать пилотам.", achAdminHint2: "Создавайте свои достижения и выдавайте их пилотам вручную.", achHolders: "Получили", achGiven: "Достижение выдано", mdBar: "Форматирование", mdH: "Заголовок", mdList: "Список", mdBold: "Жирный", mdWarn: "Предупреждение", mdTable: "Таблица", mdCol: "Столбец",
     rulePreview: "Как увидят пилоты", pickSection: "Выберите раздел слева или добавьте новый.", regName: "Название регламента", roleJudge: "Судья", roleStreamer: "Стример", roleTech: "Технический помощник", roleNone: "Без роли",
     accessHint2: "Главный администратор — полный доступ к сайту. Администратор — вся админ-панель. Судья — только судейский остров. Стример — пульт трансляции и просмотр сезонов. Технический помощник — регламент. Роли выдаёт только главный администратор.",
-    rolesOwnerOnly: "Менять роли может только главный администратор.", noPanelRole: "У вашей роли нет доступа к этому разделу.", maxPilotsCol: "Мест", warnShort: "Предупреждения",
+    rolesOwnerOnly: "Менять роли может только главный администратор.", noPanelRole: "У вашей роли нет доступа к этому разделу.", maxPilotsCol: "Мест", seatsL: "Мест на этапе", teamEntriesAdm: "Заявки команд на этап", warnShort: "Предупреждения",
     autoDq: "3 предупреждения — выдан DQ с этапа", autoBan: "2 DQ — выдан бан", sancAuto: "авто", sancRule: "3 предупреждения = DQ с этапа, 2 DQ = бан: регистрация на этапы закрыта.",
     setGeneral: "Общие", setSocials: "Соцсети", setTracks: "Трассы", maxStageDefL: "Мест на этап по умолчанию", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
     roleOwner: "Главный администратор", ownerOnly: "Номера и исключение пилотов — только у главного администратора.", kick: "Выгнать", kickSure: "Точно выгнать?", kicked: "Пилот исключён",
@@ -2151,11 +2159,11 @@ const I18N = {
     teamWord: "Команда", teamPlace: "Место команды", rosterL: "Состав", rosterTitle: "Пилоты <em>команды</em>", noMembers: "В команде пока нет пилотов.", pointsShort: "очк.", fullTable: "Полная таблица",
     aTracks: "Трассы", aTracksHint: "Сложность от 1 до 5 видна на странице «Трассы». Нажмите на деление, чтобы изменить.", diff1: "Лёгкая", diff2: "Простая", diff3: "Средняя", diff4: "Сложная", diff5: "Экстремальная",
     champShort: "Онлайн-чемпионат по дрифту",
-    stageFull: "Мест на этап больше нет", netErr: "Нет связи с сервером, изменение не сохранено", sessionEnded: "Сессия закончилась, войдите через Steam ещё раз", authFailed: "Не удалось войти через Steam", addAch: "+ Достижение", achIcon: "Иконка", achTitle: "Название", achDesc: "Условие", achAuto: "выдаётся само", achManual: "не выдаётся", achNewRu: "Новое достижение", achAdminHint: "Достижения в профиле пилота. Иконка — эмодзи. Если английский текст пустой, показывается русский.", needCar: "Чтобы зарегистрироваться, заполните в профиле машину, двигатель, КПП и мощность.", needCarHere: "Заполните машину, двигатель, КПП и мощность, чтобы зарегистрироваться.", hpMinL: "Мощность от, л.с.", hpMaxL: "Мощность до, л.с.", hpBad: "Мощность: от 50 до 3000 л.с., «от» меньше «до»", maxStageL: "Максимум участников на этап", top20: "Топ 20", achOn: "Получено", achOff: "Пока не получено", achievements: "Достижения", noMedals: "Займите место на подиуме этапа (1–3), чтобы получить медаль.", placeWord: "место",
+    stageFull: "Мест на этап больше нет", netErr: "Нет связи с сервером, изменение не сохранено", sessionEnded: "Сессия закончилась, войдите через Steam ещё раз", authFailed: "Не удалось войти через Steam", addAch: "+ Достижение", achIcon: "Иконка", achOwnIc: "Свой эмодзи", achOwnHint: "Скопируйте любой эмодзи (Ctrl + C) и вставьте сюда (Ctrl + V), он применится сразу. Список эмодзи: Win + . (точка) на Windows, Ctrl + Cmd + пробел на Mac.", achTitle: "Название", achDesc: "Условие", achAuto: "выдаётся само", achManual: "не выдаётся", achNewRu: "Новое достижение", achAdminHint: "Достижения в профиле пилота. Иконка — эмодзи. Если английский текст пустой, показывается русский.", needCar: "Чтобы зарегистрироваться, заполните в профиле машину, двигатель, КПП и мощность.", needCarHere: "Заполните машину, двигатель, КПП и мощность, чтобы зарегистрироваться.", hpMinL: "Мощность от, л.с.", hpMaxL: "Мощность до, л.с.", hpBad: "Мощность: от 50 до 3000 л.с., «от» меньше «до»", maxStageL: "Максимум участников на этап", top20: "Топ 20", achOn: "Получено", achOff: "Пока не получено", achievements: "Достижения", noMedals: "Займите место на подиуме этапа (1–3), чтобы получить медаль.", placeWord: "место",
     aResults: "Итоги", fromQual: "По квалификации", podiumHint: "Подиум этапа. Если место не выбрано, после завершения этапа оно берётся из квалификации. Пилоты с 1–3 местом получают медаль в профиле.",
     regLater: "Регистрация откроется после завершения текущего этапа.", regSoon: "Регистрация откроется позже", needNumHere: "Сначала выберите стартовый номер ниже.", seasonLine: "Календарь <em>сезона</em>",
     teamsSeason: "Команды сезона", ctaTitle: "Готов выйти на трассу?",
-    pickFromList: "Нажмите на пилота в списке ниже, чтобы вывести его на трассу и выставить баллы.", gridIdleNote: "Когда маршал, судья и стример нажали «Готовность» в судейском острове, сетка в эфире сворачивается до первых 3 пилотов и раскрывается, когда выставлены баллы за попытку (сначала за первую, потом за вторую).", gridHiddenNow: "Сейчас свёрнута до топ-3: состав готов", readyTitle: "Готовность состава", readyHint: "Только для работы состава, в эфир не выводится. Когда готовы все трое, кнопки сбросятся через 5 секунд.", readyL: "Готовность", rd_marshal: "Маршал", rd_judge: "Судья", rd_streamer: "Стример", noDescShort: "Без описания", aRules: "Регламент", sportRules: "Спортивный регламент", rulesVersion: "Версия регламента",
+    pickFromList: "Нажмите на пилота в списке ниже, чтобы вывести его на трассу и выставить баллы.", gridIdleNote: "Когда маршал, судья и стример нажали «Готовность» в судейском острове, сетка в эфире сворачивается до первых 3 пилотов и раскрывается, когда выставлены баллы за попытку (сначала за первую, потом за вторую).", gridHiddenNow: "Сейчас в эфире свёрнута до топ-3: состав готов", readyTitle: "Готовность состава", readyHint: "Только для работы состава, в эфир не выводится. Когда готовы все трое, кнопки сбросятся через 5 секунд.", readyL: "Готовность", rd_marshal: "Маршал", rd_judge: "Судья", rd_streamer: "Стример", noDescShort: "Без описания", aRules: "Регламент", sportRules: "Спортивный регламент", rulesVersion: "Версия регламента",
     rulesReset: "Вернуть исходный регламент", addSection: "+ Раздел", addItem: "+ Пункт", sectionN: "Раздел", itemTitle: "Заголовок пункта", newSection: "Новый раздел", newItem: "Новый пункт",
     moveUp: "Выше", moveDown: "Ниже", rulesHelp: "Текст сохраняется, когда вы выходите из поля. Разметка: «## подзаголовок», «- пункт списка», «**жирный**», «! предупреждение», строки «| ячейка | ячейка |» — таблица (первая строка — заголовки), пустая строка — новый абзац.", resetIn: "Сброс через", sec: "с", upcoming: "Следующий этап", pilotProfile: "Профиль пилота",
     noBio: "Расскажите о себе в блоке «О себе» — это увидят другие пилоты.", hpLong: "Мощность, л.с.", hpRule: "По регламенту (п. 3.2) мощность двигателя, л.с.:",
@@ -2273,7 +2281,7 @@ const I18N = {
     noAch: "No achievements yet.", noAchAdmin: "No achievements. Create the first one, then hand it to drivers.", achAdminHint2: "Create your own achievements and hand them to drivers.", achHolders: "Awarded to", achGiven: "Achievement given", mdBar: "Formatting", mdH: "Heading", mdList: "List", mdBold: "Bold", mdWarn: "Warning", mdTable: "Table", mdCol: "Column",
     rulePreview: "What drivers will see", pickSection: "Pick a section on the left or add a new one.", regName: "Regulation name", roleJudge: "Judge", roleStreamer: "Streamer", roleTech: "Technical assistant", roleNone: "No role",
     accessHint2: "Head admin — full access to the site. Admin — the whole admin panel. Judge — the judges’ island only. Streamer — the broadcast panel and read-only seasons. Technical assistant — the rules. Only the head admin hands out roles.",
-    rolesOwnerOnly: "Only the head admin can change roles.", noPanelRole: "Your role has no access to this section.", maxPilotsCol: "Spots", warnShort: "Warnings",
+    rolesOwnerOnly: "Only the head admin can change roles.", noPanelRole: "Your role has no access to this section.", maxPilotsCol: "Spots", seatsL: "Spots in this round", teamEntriesAdm: "Team entries for the round", warnShort: "Warnings",
     autoDq: "3 warnings — DQ from the round given", autoBan: "2 DQs — ban given", sancAuto: "auto", sancRule: "3 warnings = DQ from the round, 2 DQs = ban: round registration is closed.",
     setGeneral: "General", setSocials: "Socials", setTracks: "Tracks", maxStageDefL: "Default spots per round", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
     roleOwner: "Head admin", ownerOnly: "Numbers and removing drivers are for the head admin only.", kick: "Remove", kickSure: "Really remove?", kicked: "Driver removed",
@@ -2293,7 +2301,7 @@ const I18N = {
     teamWord: "Team", teamPlace: "Team place", rosterL: "Roster", rosterTitle: "Team <em>drivers</em>", noMembers: "No drivers in this team yet.", pointsShort: "pts", fullTable: "Full table",
     aTracks: "Tracks", aTracksHint: "Difficulty 1–5 is shown on the Tracks page. Click a step to change it.", diff1: "Easy", diff2: "Simple", diff3: "Medium", diff4: "Hard", diff5: "Extreme",
     champShort: "Online drift championship",
-    stageFull: "The round is full", netErr: "No connection to the server, change not saved", sessionEnded: "Session ended, sign in with Steam again", authFailed: "Steam sign-in failed", addAch: "+ Achievement", achIcon: "Icon", achTitle: "Title", achDesc: "Condition", achAuto: "unlocks automatically", achManual: "not awarded", achNewRu: "Новое достижение", achAdminHint: "Achievements in the driver profile. The icon is an emoji. Empty English text falls back to Russian.", needCar: "Fill in car, engine, gearbox and power in your profile to register.", needCarHere: "Fill in car, engine, gearbox and power to register.", hpMinL: "Power from, hp", hpMaxL: "Power up to, hp", hpBad: "Power: 50–3000 hp, \"from\" below \"up to\"", maxStageL: "Max drivers per round", top20: "Top 20", achOn: "Unlocked", achOff: "Not unlocked yet", achievements: "Achievements", noMedals: "Finish on a round podium (1–3) to earn a medal.", placeWord: "place",
+    stageFull: "The round is full", netErr: "No connection to the server, change not saved", sessionEnded: "Session ended, sign in with Steam again", authFailed: "Steam sign-in failed", addAch: "+ Achievement", achIcon: "Icon", achOwnIc: "Your own emoji", achOwnHint: "Copy any emoji (Ctrl + C) and paste it here (Ctrl + V), it applies at once. Emoji picker: Win + . (period) on Windows, Ctrl + Cmd + Space on Mac.", achTitle: "Title", achDesc: "Condition", achAuto: "unlocks automatically", achManual: "not awarded", achNewRu: "Новое достижение", achAdminHint: "Achievements in the driver profile. The icon is an emoji. Empty English text falls back to Russian.", needCar: "Fill in car, engine, gearbox and power in your profile to register.", needCarHere: "Fill in car, engine, gearbox and power to register.", hpMinL: "Power from, hp", hpMaxL: "Power up to, hp", hpBad: "Power: 50–3000 hp, \"from\" below \"up to\"", maxStageL: "Max drivers per round", top20: "Top 20", achOn: "Unlocked", achOff: "Not unlocked yet", achievements: "Achievements", noMedals: "Finish on a round podium (1–3) to earn a medal.", placeWord: "place",
     aResults: "Results", fromQual: "From qualifying", podiumHint: "Round podium. An empty place is taken from qualifying once the round is finished. Drivers placed 1–3 get a medal in their profile.",
     regLater: "Registration opens after the current round is finished.", regSoon: "Registration opens later", needNumHere: "Pick a racing number below first.", seasonLine: "Season <em>calendar</em>",
     teamsSeason: "Season teams", ctaTitle: "Ready to hit the track?",
@@ -2473,7 +2481,7 @@ const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJ
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", achIcon: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -2901,7 +2909,7 @@ function tournament(id) {
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
   ${STATUSES.indexOf(x.status) >= STATUSES.indexOf("qualifying") && x.status !== "done" ? twitchBox() : ""}
   <details class="box panel br-box" data-topen="br-${x.id}" ${tOpenIs(`br-${x.id}`, liveRound(x) >= 0) ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) ? "" : `<span class="note br-note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
-  ${stageEntries(x).length ? `<section class="stack"><div><h3>${t("stageTeamEntries")} · ${stageEntries(x).filter(r => r.ok).length}/${SETTINGS.maxTeamsStage}</h3><p class="note">${t("stageTeamEntriesNote")}</p></div>
+  ${stageEntries(x).length ? `<section class="stack"><div><h3>${t("stageTeamEntries")} · ${stageEntries(x).filter(r => r.ok).length}/${stageTeamsMax(x)}</h3><p class="note">${t("stageTeamEntriesNote")}</p></div>
     <div class="treg-list">${stageEntries(x).map((r, i) => `<div class="treg-item ${r.ok ? "" : "over"}"><span class="mono muted">${i + 1}</span>${logo(r.tm)}<span class="stack" style="gap:.15rem;min-width:0"><b>${esc(r.tm.name)}</b>
       <span class="note">${r.e.pilots.map(p => esc(p.nick)).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div></section>` : ""}
   ${`<details class="box panel br-box" data-topen="qual-${x.id}" ${tOpenIs(`qual-${x.id}`) ? "open" : ""}><summary class="psec-head"><h3>${t("qual")}</h3><span class="row" style="gap:1rem"><span class="note">${rows.length}</span><i class="ach-chev" aria-hidden="true"></i></span></summary>
@@ -3604,7 +3612,7 @@ const isFounder = tm => !!tm && !!S.user && founderOf(tm)?.name === S.user.name;
 const isRep = tm => !!tm && !!S.user && !tm.staff && repName(tm) === S.user.name;
 const teamEntry = (x, tm) => { const o = TEAM_ENTRIES[x.id]?.[tm.id]; return o ? (o.removed ? null : o) : founderOf(tm)?.regs?.[x.id] || null; };
 const stageEntries = x => allTeams().map(tm => ({ tm, e: teamEntry(x, tm) })).filter(r => r.e?.pilots?.length).sort((a, b) => a.e.at - b.e.at)
-  .map((r, i) => ({ ...r, ok: i < SETTINGS.maxTeamsStage }));
+  .map((r, i) => ({ ...r, ok: i < stageTeamsMax(x) }));
 // a pilot can be entered for one team per stage
 const inOtherEntry = (x, tm, names) => stageEntries(x).filter(r => r.tm.id !== tm.id).flatMap(r => r.e.pilots.map(p => p.name)).filter(n => names.includes(n));
 const teamRegOpen = x => !!x && x === currentTour() && x.status === "reg" && SETTINGS.regOpen;
@@ -3633,7 +3641,7 @@ function teamRegBox(tm) {
   const e = teamEntry(x, tm), open = teamRegOpen(x), list = stageEntries(x), mine = list.find(r => r.tm.id === tm.id), taken = list.filter(r => r.ok).length;
   const reqs = reqsOf(tm), rq = reqs.filter(r => (r.type === "name" && noticeLive(tm, r, true)) || r.tour === x.id);
   let body;
-  if (open && (e || taken < SETTINGS.maxTeamsStage)) body = `${e ? `<p class="note ok-note">✓ ${t(mine?.ok ? "teamRegDone" : "entryOver")}</p>` : ""}${entryForm("teamregform", x, tm, e)}
+  if (open && (e || taken < stageTeamsMax(x))) body = `${e ? `<p class="note ok-note">✓ ${t(mine?.ok ? "teamRegDone" : "entryOver")}</p>` : ""}${entryForm("teamregform", x, tm, e)}
     ${e ? `<div><button class="btn text sm danger" data-act="teamUnreg" data-id="${x.id}">${t("teamUnreg")}</button></div>` : ""}`;
   else if (open) body = `<p class="note err">${t("teamRegFull")}</p>`;
   else if (e) body = `<div class="treg-fixed"><span class="label">${t("entryFixed")}</span><b>${esc(tm.name)}</b><span class="note">${t("founderNick")}: ${esc(e.founderNick)}</span>
@@ -3644,7 +3652,7 @@ function teamRegBox(tm) {
         <label class="fieldlabel">${t("reqIn")}<input class="field" name="in" maxlength="32"></label></div>
       <div class="row"><button class="btn line sm">${t("reqSend")}</button><span class="note err" role="status" id="rosterreq-msg"></span></div></form>`;
   else body = `<p class="note">${t(x.status === "reg" ? "teamRegClosed" : x.status === "soon" ? "teamSendSoon" : "teamRegNotIn")}</p>${entryForm("teamregform", x, tm, null, true)}`;
-  return `<div class="treg"><div class="treg-head"><span class="label acc">${t("teamSend")} · ${t("stage")} ${x.stage} · ${esc(x.track)}</span><span class="note">${taken} / ${SETTINGS.maxTeamsStage}</span></div>
+  return `<div class="treg"><div class="treg-head"><span class="label acc">${t("teamSend")} · ${t("stage")} ${x.stage} · ${esc(x.track)}</span><span class="note">${taken} / ${stageTeamsMax(x)}</span></div>
     ${body}
     ${rq.length ? `<div class="stack" style="gap:.4rem"><span class="label">${t("reqList")}</span><ul class="my-prot">${rq.map(r => `<li ${noticeUntil(tm, r, true)}><span class="label">${t(r.type === "name" ? "reqName" : "reqRoster")}</span><span>${reqText(r)}</span>${reqPill(tm, r)}<span class="cd note"></span></li>`).join("")}</ul></div>` : ""}
     <form class="row treg-name" id="namereq"><input class="field" name="name" maxlength="32" placeholder="${t("newTeamName")}" aria-label="${t("newTeamName")}"><button class="btn line sm">${t("nameReq")}</button><span class="note err" role="status" id="namereq-msg"></span></form>
@@ -3837,6 +3845,7 @@ function profile() {
 let admAnim = false, admView = "";
 let aEditTeam = 0, aTab = "seasons", aSeason = 0, aTour = 0, aSub = "main", adminMsg = "", pending = null;
 const stageMax = x => x.max ?? SETTINGS.maxStage; // per stage, falling back to the settings default
+const stageTeamsMax = x => x.maxTeams ?? SETTINGS.maxTeamsStage; // teams per stage, set on the stage's "Основное"
 const sel = (attr, list, cur, label, cls = "ai wide") => `<select class="${cls}" data-a="${attr}" aria-label="${label}">${list.map(s => `<option value="${s}" ${s === cur ? "selected" : ""}>${t(s)}</option>`).join("")}</select>`;
 const seasonPill = s => `<span class="pill ${s === "live" ? "s-reg" : "s-done"} ${s === "plan" ? "plain" : ""}">${t(s)}</span>`;
 const backBtn = (attr, label) => `<button class="back linkbtn" ${attr}>← ${label}</button>`;
@@ -3846,7 +3855,7 @@ function adminSeasons() {
   const ed = can("edit");
   if (!s) return `<div class="head"><h2>${t("seasons")}</h2>${ed ? `<button class="btn" data-act="newSeason">${t("newSeason")}</button>` : ""}</div>
     <div class="tablebox panel"><table><thead><tr><th>${t("no")}</th><th>${t("seasonNameCol")}</th><th>${t("stagesCol")}</th><th>${t("status")}</th><th></th></tr></thead><tbody>${
-      SEASONS.map(z => `<tr class="clickrow" data-season="${z.id}" tabindex="0"><td class="mono">${z.id}</td><td>${esc(z.name)}</td><td class="mono">${seasonTours(z.id).length}</td><td>${ed ? sel(`season:${z.id}:status`, ["plan", "live", "done"], z.status, t("status"), "ai") : seasonPill(z.status)}</td>
+      SEASONS.map(z => `<tr class="clickrow" data-season="${z.id}" tabindex="0"><td class="mono">${z.id}</td><td>${esc(z.name)}</td><td class="mono">${seasonTours(z.id).length}</td><td>${ed ? `<select class="st-sel" data-s="${z.status}" data-a="season:${z.id}:status" aria-label="${t("status")}">${["plan", "live", "done"].map(v => `<option value="${v}" ${v === z.status ? "selected" : ""}>${t(v)}</option>`).join("")}</select>` : seasonPill(z.status)}</td>
         <td class="acc" style="text-align:right">${t("configure")} →</td></tr>`).join("")}</tbody></table></div>`;
   const x = TOURS.find(z => z.id === aTour && z.season === s.id);
   if (x) return adminTour(x);
@@ -3858,17 +3867,18 @@ function adminSeasons() {
     <div class="tablebox panel"><table class="stage-tbl"><thead><tr><th>${t("stage")}</th><th>${t("track")}</th><th>${t("status")}</th><th>${t("drivers")} / ${t("maxPilotsCol")}</th><th></th></tr></thead><tbody>${
       stages.map(z => `<tr class="clickrow" data-qt="${z.id}" tabindex="0"><td class="n">${z.stage}</td>
         <td><b class="st-track">${esc(z.track)}</b><span class="note mono">${esc(z.dates)}</span></td>
-        <td>${ed ? sel(`tour:${z.id}:status`, STATUSES, z.status, t("status"), "ai") : tourPill(z)}</td>
+        <td>${ed ? `<select class="st-sel" data-s="${z.status}" data-a="tour:${z.id}:status" aria-label="${t("status")}">${STATUSES.map(v => `<option value="${v}" ${v === z.status ? "selected" : ""}>${t(v)}</option>`).join("")}</select>` : tourPill(z)}</td>
         <td class="st-cap"><span class="mono">${stageRows(z).length}</span><span class="muted">/</span>${ed ? `<input class="ai" type="number" min="2" max="256" data-a="tour:${z.id}:max" value="${stageMax(z)}" aria-label="${t("maxPilotsCol")}">` : `<span class="mono muted">${stageMax(z)}</span>`}</td>
-        <td class="st-go" aria-label="${t("configure")}">→</td></tr>`).join("")}</tbody></table></div>
+        <td class="st-go" aria-label="${t("configure")}"><span>→</span></td></tr>`).join("")}</tbody></table></div>
     <div>${!ed ? "" : s.status === "live" ? `<p class="note">${t("liveLocked")}</p>` : `<button class="btn text danger" data-act="delSeason" data-id="${s.id}">${pending === `s${s.id}` ? t("delSure") : t("delSeason")}</button>`}</div>`;
 }
 
 function adminTour(x) {
+  if (aSub === "teams") aSub = "main"; // the old "Команды" tab now lives in "Основное"
   const sub = (k, l) => `<button data-sub="${k}" aria-pressed="${aSub === k}">${t(l)}</button>`;
   const head = `${backBtn('data-qt="0"', esc(seasonName(x.season)))}
     <div class="head"><h2>${t("stage")} ${x.stage} · ${esc(x.track)}</h2>${tourPill(x)}</div>
-    <div class="tabs">${sub("main", "aMain")}${sub("judge", "aJudge")}${sub("qual", "aQual")}${sub("bracket", "bracketTitle")}${sub("pilots", "aPilots")}${sub("teams", "aTeams")}</div>`;
+    <div class="tabs">${sub("main", "aMain")}${sub("judge", "aJudge")}${sub("qual", "aQual")}${sub("bracket", "bracketTitle")}${sub("pilots", "aPilots")}</div>`;
   let body = "";
   if (aSub === "bracket") body = `<div class="${can("judge") ? "rw" : ""}"><div class="head"><p class="note" style="margin:0">${t("brEditHint")}</p>
       <button class="btn text danger sm" data-act="brReseed" data-id="${x.id}">${pending === `br${x.id}` ? t("delSure") : t("brReseed")}</button></div>
@@ -3878,8 +3888,9 @@ function adminTour(x) {
       <label class="fieldlabel">${t("track")}<input class="field" data-a="tour:${x.id}:track" value="${esc(x.track)}" maxlength="40"></label>
       <label class="fieldlabel">${t("dates")}<input class="field" data-a="tour:${x.id}:dates" value="${esc(x.dates)}" maxlength="40"></label>
       <label class="fieldlabel">${t("startAt")}<input class="field" data-a="tour:${x.id}:start" value="${esc(x.start)}" maxlength="40"></label>
-</div></div>
-    <div><button class="btn text danger" data-act="delStage" data-id="${x.id}">${pending === `st${x.id}` ? t("delSure") : t("delStage")}</button></div>`;
+      <div class="cols" style="gap:1rem"><label class="fieldlabel">${t("seatsL")}<input class="field" type="number" min="2" max="256" data-a="tour:${x.id}:max" value="${stageMax(x)}"></label>
+      <label class="fieldlabel">${t("maxTeamsStageL")}<input class="field" type="number" min="1" max="64" data-a="tour:${x.id}:maxTeams" value="${stageTeamsMax(x)}"></label></div>
+</div></div>`;
   if (aSub === "qual") {
     const inp = (p, i, k) => { const v = scoreOf(x, p, i, k); return `<input class="ai" type="number" min="0" max="100" step="0.1" data-a="score:${x.id}:${k}:${i}" value="${v ?? ""}" aria-label="${esc(p.name)} ${k + 1}">`; };
     body = `<p class="note">${t("qualHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("try1")}</th><th>${t("try2")}</th></tr></thead><tbody>${
@@ -3892,10 +3903,10 @@ function adminTour(x) {
     roster().map((p, i) => `<tr><td><input type="checkbox" data-a="out:${x.id}:${i}" ${inRows.has(p.name) ? "checked" : ""} aria-label="${t("inStage")}: ${esc(p.name)}"></td>
       <td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}${p.test ? ` <span class="label">${t("testTag")}</span>` : ""}${isBanned(p.name) ? ` <span class="pill plain err" style="font-size:.65rem">${t("ban")}</span>` : ""}</td><td class="muted">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</td>
       <td><select class="ai" data-a="grp:${x.id}:${i}" ${inRows.has(p.name) ? "" : "disabled"} aria-label="${t("group")} ${esc(p.name)}"><option value="">—</option>${GROUPS.map(g => `<option ${groupOf(x, p.name) === g ? "selected" : ""}>${g}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table></div>`; }
-  if (aSub === "teams") { const list = stageEntries(x), free = allTeams().filter(tm => !list.some(r => r.tm.id === tm.id)), editing = list.find(r => r.tm.id === aEditTeam);
+  if (aSub === "main") { const list = stageEntries(x), free = allTeams().filter(tm => !list.some(r => r.tm.id === tm.id)), editing = list.find(r => r.tm.id === aEditTeam);
     const reqs = allTeams().flatMap(tm => reqsOf(tm).filter(r => r.type === "roster" && r.tour === x.id).map(r => ({ tm, r })));
     const when = at => new Date(at).toLocaleString(S.lang === "en" ? "en-GB" : "ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
-    body = `<p class="note">${t("teamRegAdminHint")} <b>${list.filter(r => r.ok).length} / ${SETTINGS.maxTeamsStage}</b></p>
+    body += `<section class="stack" style="gap:.8rem"><h3>${t("teamEntriesAdm")}</h3><p class="note" style="margin:0">${t("teamRegAdminHint")} <b>${list.filter(r => r.ok).length} / ${stageTeamsMax(x)}</b></p>
     <div class="tablebox panel"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("founderNick")}</th><th>${t("entryPilots")}</th><th>${t("filedAt")}</th><th></th></tr></thead><tbody>${
       list.map((r, i) => `<tr class="${r.ok ? "" : "out-br"}"><td class="mono muted">${i + 1}</td><td><div class="row" style="gap:.5rem;flex-wrap:nowrap">${logo(r.tm)}<b>${esc(r.tm.name)}</b></div>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</td>
         <td>${esc(r.e.founderNick)}</td><td style="white-space:normal">${r.e.pilots.map(p => esc(p.nick)).join(", ")}</td><td class="mono muted">${when(r.e.at)}</td>
@@ -3907,7 +3918,8 @@ function adminTour(x) {
       <button class="btn line sm" data-act="teamAdd" data-id="${x.id}">${t("teamAdd")}</button></div>` : ""}
     <section class="stack" style="gap:.6rem"><h3>${t("rosterReqs")}</h3>${reqs.length ? `<ul class="my-prot">${reqs.map(({ tm, r }) => `<li><b>${esc(tm.name)}</b><span>${reqText(r)}</span>${reqPill(tm, r)}
       ${reqStat(tm, r) === "new" ? `<span class="row" style="gap:.3rem;margin-left:auto"><button class="btn sm" data-act="reqApprove" data-id="${tm.id}" data-v="${r.id}">${t("reqApprove")}</button><button class="btn text sm danger" data-act="reqReject" data-id="${tm.id}" data-v="${r.id}">${t("reqReject")}</button></span>` : ""}</li>`).join("")}</ul>`
-      : `<p class="note">${t("noReqs")}</p>`}</section>`; }
+      : `<p class="note">${t("noReqs")}</p>`}</section></section>
+    <div><button class="btn text danger" data-act="delStage" data-id="${x.id}">${pending === `st${x.id}` ? t("delSure") : t("delStage")}</button></div>`; }
   return head + body;
 }
 
@@ -3955,7 +3967,6 @@ const adminTeams = () => `<h2>${t("aTeams")}</h2>
     <td><button class="btn text danger" data-act="delTeam" data-id="${tm.id}">${pending === tm.id ? t("delSure") : t("del")}</button></td></tr>`).join("")}</tbody></table></div>`;
 // achievements editor: two lists (pilots' profile badges / team badges); the picked one is edited on the right with a live preview
 let achTab = "pilot", achSel = null;
-const ACH_ICONS = ["🏆", "🥇", "🥈", "🥉", "⭐", "👑", "🔥", "💯", "🎯", "⚡", "🏁", "🚀", "🛡️", "🎖️", "💎", "🌀", "🤝", "🧊", "🎬", "🪵"];
 function adminAch() {
   const list = ACHIEVEMENTS.map((a, i) => [a, i]).filter(([a]) => achKind(a) === achTab);
   const cur = list.find(([a]) => a[1] === achSel) || list[0], [a, i] = cur || [];
@@ -3966,9 +3977,8 @@ function adminAch() {
   const lang = S.lang === "en" ? 3 : 2;
   const editor = !a ? `<div class="box panel empty"><p class="note">${t(isTeam ? "noAchTeam" : "noAchAdmin")}</p></div>` : `<div class="box panel ach-pane">
       <div class="ach-prev"><span class="label">${t("rulePreview")}</span><div class="ach on"><span class="ach-ic" aria-hidden="true">${esc(a[0])}</span><span><b>${esc(a[lang][0] || a[2][0])}</b><span class="ach-d">${esc(a[lang][1] || a[2][1])}</span></span></div></div>
-      <div class="stack" style="gap:.4rem"><span class="label">${t("achIcon")}</span>
-        <div class="ach-icons">${ACH_ICONS.map(ic => `<button data-act="achIcon" data-id="${i}" data-v="${ic}" aria-pressed="${a[0] === ic}">${ic}</button>`).join("")}
-          <input class="field ach-ic-in" data-a="ach:${i}:ic" value="${esc(a[0])}" maxlength="8" aria-label="${t("achIcon")}"></div></div>
+      <label class="fieldlabel ach-own">${t("achIcon")}<span class="row"><input class="field ach-ic-in" data-a="ach:${i}:ic" value="${esc(a[0])}" placeholder="🙂" maxlength="16" autocomplete="off" aria-label="${t("achIcon")}">
+          <span class="note">${t("achOwnHint")}</span></span></label>
       <div class="ach-langs">
         <div class="stack" style="gap:.6rem"><span class="label acc">RU</span><label class="fieldlabel">${t("achTitle")}<input class="field" data-a="ach:${i}:ruT" value="${esc(a[2][0])}" maxlength="40"></label>
           <label class="fieldlabel">${t("achDesc")}<textarea class="field" rows="2" data-a="ach:${i}:ruD" maxlength="120">${esc(a[2][1])}</textarea></label></div>
@@ -4009,7 +4019,7 @@ function adminSettings() {
   const num = (key, label, min, max) => `<label class="fieldlabel">${t(label)}<input class="field" type="number" min="${min}" max="${max}" data-a="setting:${key}" value="${SETTINGS[key]}"></label>`;
   const body = {
     general: () => `<div class="box panel"><label class="row" style="gap:.7rem"><input type="checkbox" data-a="setting:regOpen" ${SETTINGS.regOpen ? "checked" : ""}>${t("regOpenL")}</label>
-      <div class="set-grid">${num("maxTeam", "maxTeamL", 1, 15)}${num("maxStage", "maxStageDefL", 2, 256)}${num("maxTeamsStage", "maxTeamsStageL", 1, 64)}${num("teamStageMax", "teamStageMaxL", 1, 15)}${num("hpMin", "hpMinL", 50, 3000)}${num("hpMax", "hpMaxL", 50, 3000)}</div></div>
+      <div class="set-grid">${num("maxTeam", "maxTeamL", 1, 15)}${num("teamStageMax", "teamStageMaxL", 1, 15)}${num("hpMin", "hpMinL", 50, 3000)}${num("hpMax", "hpMaxL", 50, 3000)}</div></div>
       <div class="box panel"><p class="note">${t("adminNote")}</p><div><button class="btn text danger" data-act="resetDemo">${pending === "reset" ? t("resetSure") : t("resetDemo")}</button></div></div>`,
     socials: () => `<div class="box panel"><div class="set-grid">${SOCIALS.map(([n]) =>
       `<label class="fieldlabel">${n}<input class="field" data-a="social:${n}" value="${esc(SETTINGS.socials[n] || "")}" maxlength="120" placeholder="https:// / mailto:"></label>`).join("")}</div></div>`,
@@ -4044,6 +4054,7 @@ function adminEdit([kind, id, f, k], v) {
     const x = TOURS.find(z => z.id === +id);
     if (f === "status") { if (BR_ROUNDS.includes(v) && !brOf(x)) brSet(x); if (STATUSES.includes(v)) x.status = v; } // the bracket freezes from the qualifying as entered, before the status moves on
     else if (f === "max") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) x.max = n; else return render(); }
+    else if (f === "maxTeams") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) x.maxTeams = n; else return render(); }
     else x[f] = v.trim().slice(0, 40) || x[f];
     return dbSave();
   }
@@ -4134,7 +4145,9 @@ function adminEdit([kind, id, f, k], v) {
   if (kind === "ach") {
     const a = ACHIEVEMENTS[+id], val = v.trim();
     if (!a) return;
-    if (f === "ic") a[0] = val.slice(0, 8) || a[0];
+    // one emoji, kept whole: a joined emoji (❤️‍🔥, skin tones, flags) is several code units, so cutting by length broke it
+    if (f === "ic") { const parts = globalThis.Intl?.Segmenter ? [...new Intl.Segmenter().segment(val)].map(g => g.segment) : [...val];
+      a[0] = parts.find(g => /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(g)) || a[0]; if (a[0] !== val) render(); } // letters are ignored: the first emoji wins
     else if (f === "ruT") a[2][0] = val.slice(0, 40) || a[2][0];
     else if (f === "ruD") a[2][1] = val.slice(0, 120);
     else if (f === "enT") a[3][0] = val.slice(0, 40);
@@ -4522,7 +4535,7 @@ function broadcast() {
       <label class="fieldlabel">${t("rowsL")}<select class="field" data-a="bc:rows">${[8, 16, 32, 0].map(n => `<option value="${n}" ${st.rows === n ? "selected" : ""}>${n || t("allRows")}</option>`).join("")}</select></label>
       <label class="fieldlabel">${t("gridTitleL")}<input class="field" data-a="bc:title" value="${esc(st.title)}" maxlength="60" placeholder="${esc(`${t("stage")} ${x.stage} · ${x.track}`)}"></label></div>
     <div class="row" style="justify-content:space-between;gap:1rem"><p class="note" style="margin:0">${t("gridIdleNote")}</p>${sw("runs", t("showRuns"))}</div>
-    ${st.gridMini && st.gridMini === gridKey(x) ? `<span class="pill plain s-reg" style="justify-self:start">${t("gridHiddenNow")}</span>` : ""}`)}
+    ${st.gridMini && st.gridMini === gridKey(x) ? `<p class="fold-note"><i aria-hidden="true"></i>${t("gridHiddenNow")}</p>` : ""}`)}
   ${ov("battleTitle", "battleOn", ovBattle(st, x, rows))}
   </div>`;
 }
@@ -4868,7 +4881,6 @@ document.addEventListener("click", e => {
     newAch: () => { const id2 = "c" + Date.now().toString(36); ACHIEVEMENTS.push(["🏁", id2, [t("achNewRu"), ""], ["", ""], achTab]); achSel = id2; dbSave(); },
     achTab: () => { achTab = el.dataset.v === "team" ? "team" : "pilot"; achSel = null; render(); },
     achPick: () => { achSel = el.dataset.v; render(); },
-    achIcon: () => { const a = ACHIEVEMENTS[id]; if (!a) return; a[0] = el.dataset.v; dbSave(); },
     delAch: () => { confirmTwice(`ach${id}`, () => { delete AWARDS[ACHIEVEMENTS[id]?.[1]]; ACHIEVEMENTS.splice(id, 1); dbSave(); }); },
     // move within its own list: swap with the nearest achievement of the same kind
     achMove: () => { const a = ACHIEVEMENTS[id], d = +el.dataset.v; if (!a) return; let j = id + d;
@@ -4952,7 +4964,7 @@ document.addEventListener("submit", e => {
     if (byAdmin) { if (!isAdmin()) return; (TEAM_ENTRIES[x.id] ??= {})[tm.id] = { at: teamEntry(x, tm)?.at ?? Date.now(), founderNick, pilots }; aEditTeam = 0; toast(t("saved")); return dbSave(); }
     if (!isFounder(tm) || !teamRegOpen(x)) return;
     const regs = founderOf(tm)?.regs || {}, cur = regs[x.id];
-    if (!cur && stageEntries(x).filter(r => r.ok).length >= SETTINGS.maxTeamsStage) return msg(t("teamRegFull"));
+    if (!cur && stageEntries(x).filter(r => r.ok).length >= stageTeamsMax(x)) return msg(t("teamRegFull"));
     toast(t("entrySaved"));
     return setRegs(tm, { ...regs, [x.id]: { at: cur?.at ?? Date.now(), founderNick, pilots } }); // edits keep the original filing time: earlier entries keep priority
   }
@@ -4996,6 +5008,8 @@ document.addEventListener("input", e => {
     document.getElementById("invnone").hidden = n > 0; return; }
   // update in place so the field keeps focus
   if (e.target.id === "rule-ta") { const pv = document.getElementById("rule-prev"); if (pv) pv.innerHTML = textToHtml(e.target.value); return; }
+  // achievement icon: a pasted (Ctrl+V) or picked emoji applies at once, no need to leave the field
+  if (e.target.classList?.contains("ach-ic-in") && /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(e.target.value)) { e.target.dispatchEvent(new Event("change", { bubbles: true })); return; }
   if (e.target.closest?.(".bc-size")) { e.target.nextElementSibling.textContent = e.target.value + "%"; return; } // saved on release (change)
   if (e.target.id === "accq") { accessQuery = e.target.value; document.getElementById("acc-body").innerHTML = accessRows(); }
   if (e.target.id === "search") { query = e.target.value; const el = document.getElementById("rlist"); if (el) el.innerHTML = rRows(); }
