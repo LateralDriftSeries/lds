@@ -1728,7 +1728,28 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 .ov-stage .ov-battle { scale: var(--s-battle, 1); transform-origin: 50% 100% }
 /* broadcast panel: the three overlays side by side, previews shrunk to fit their card */
 .bc-ovs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; align-items: start }
-@media (max-width: 1100px) { .bc-ovs { grid-template-columns: 1fr } }
+@media (max-width: 1100px) { .bc-ovs { grid-template-columns: minmax(0, 1fr) } }
+/* ---- audit fixes ---- */
+/* stage page: folding blocks sit close together like one group, not 72 px apart */
+#app > .br-box + .br-box, #app > .br-box + section.stack, #app > section.stack + .br-box, #app > .tw-box + .br-box { margin-top: calc(1.4rem - 4.5rem) }
+@media (max-width: 760px) { #app > .br-box + .br-box, #app > .br-box + section.stack, #app > section.stack + .br-box, #app > .tw-box + .br-box { margin-top: calc(1.2rem - 3.25rem) } }
+/* leaderboard: team and car wrap to a second line instead of being cut */
+.lb-sub { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical }
+/* judges island on a phone: each judge on its own line, the three vote buttons share the width */
+@media (max-width: 600px) { .judge-row { grid-template-columns: minmax(0, 1fr) !important; gap: .4rem } .judge-row .seg { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100% } .judge-row .seg button { min-width: 0; padding-inline: .3rem; overflow: hidden; text-overflow: ellipsis } }
+/* admin menu on a phone: the role line spans the row so the menu items stay in even pairs */
+@media (max-width: 860px) { .adm-side > .note { grid-column: 1 / -1; margin-top: -.4rem } }
+/* phone: folding block titles keep one line with the arrow; the long "preliminary" hint is dropped there */
+@media (max-width: 600px) { .br-box > summary .br-note { display: none } .br-box > summary.psec-head { flex-wrap: nowrap; align-items: center } .br-box > summary.psec-head > :first-child { min-width: 0 } .br-box > summary .row { flex-wrap: nowrap; flex: 0 0 auto } }
+/* phone menu: room after the last item so it can scroll clear of the edge fade */
+@media (max-width: 760px) { nav { padding-right: 2.5rem } }
+/* a folded block is as tall above its title as below (the empty content no longer adds a grid gap); open spacing comes from the summary margin */
+.br-box { row-gap: 0 }
+/* their titles use the same type as every other block title (profile, cards, tracks) */
+.br-box > summary h3 { font: 600 1rem/1.25 var(--f-head) !important; letter-spacing: -.01em }
+/* lists and tables rise in one after another on navigation, like the card grids */
+.enter :is(.pl-grid, .ach-grid, .treg-list, .tablebox tbody, .bc-ovs, .ready-btns) > * { animation: rise .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(min(var(--i, 0), 14) * 35ms + .15s) }
+@media (prefers-reduced-motion: reduce) { .enter :is(.pl-grid, .ach-grid, .treg-list, .tablebox tbody, .bc-ovs, .ready-btns) > * { animation: none } }
 .bc-ovs .bc-ov { gap: .9rem } .bc-ovs .car-form { grid-template-columns: 1fr }
 .bc-ovs .ov-preview { overflow: hidden; padding: 12px }
 .bc-ovs .ov-preview:has(.ov-grid) { max-height: 260px; mask-image: linear-gradient(#000 78%, transparent) } /* the long grid shows its top rows only */
@@ -2849,7 +2870,7 @@ function tournaments() {
   const past = [...new Set(TOURS.map(x => x.season))].filter(s => s < curSeason()).sort((a, b) => b - a);
   return `<section class="r-hero"><div class="stack" style="gap:.8rem"><h1 class="r-title">${t("tournaments")}</h1><p class="note">${t("toursNote")}</p></div></section>
   <div class="grid4 stagger">${seasonTours(curSeason()).map((x, i) => tcard(x, i, x === cur)).join("")}</div>
-  ${past.map(s => `<section class="stack" style="gap:1rem;margin-top:1.5rem">
+  ${past.map(s => `<section class="stack" style="gap:1rem">
     <div class="tierline" style="color:var(--done)"><b style="font-style:normal;font-size:.95rem">${t("archive")} · ${esc(seasonName(s))}</b></div>
     <div class="grid4 stagger">${seasonTours(s).map((x, i) => tcard(x, i, false)).join("")}</div></section>`).join("")}`;
 }
@@ -2879,7 +2900,7 @@ function tournament(id) {
   <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(x.dates)}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
   ${STATUSES.indexOf(x.status) >= STATUSES.indexOf("qualifying") && x.status !== "done" ? twitchBox() : ""}
-  <details class="box panel br-box" data-topen="br-${x.id}" ${tOpenIs(`br-${x.id}`, liveRound(x) >= 0) ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) ? "" : `<span class="note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
+  <details class="box panel br-box" data-topen="br-${x.id}" ${tOpenIs(`br-${x.id}`, liveRound(x) >= 0) ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) ? "" : `<span class="note br-note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
   ${stageEntries(x).length ? `<section class="stack"><div><h3>${t("stageTeamEntries")} · ${stageEntries(x).filter(r => r.ok).length}/${SETTINGS.maxTeamsStage}</h3><p class="note">${t("stageTeamEntriesNote")}</p></div>
     <div class="treg-list">${stageEntries(x).map((r, i) => `<div class="treg-item ${r.ok ? "" : "over"}"><span class="mono muted">${i + 1}</span>${logo(r.tm)}<span class="stack" style="gap:.15rem;min-width:0"><b>${esc(r.tm.name)}</b>
       <span class="note">${r.e.pilots.map(p => esc(p.nick)).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div></section>` : ""}
@@ -4758,10 +4779,13 @@ function render(animate = false) {
   if (!animate && route === lastRoute && !admAnim) app.getAnimations({ subtree: true }).forEach(a => { if (a.animationName && a.effect.getTiming().iterations !== Infinity) a.finish(); }); // entry animations (rise, admIn...) only play on navigation or a new admin view
   lastRoute = route;
   fitHeroNum();
-  if (animate) { void app.offsetWidth; app.classList.add("enter"); setupReveal(); }
+  if (animate) { app.querySelectorAll(".pl-grid, .ach-grid, .treg-list, .tablebox tbody, .bc-ovs, .ready-btns").forEach(l => [...l.children].forEach((c, i) => c.style.setProperty("--i", i)));
+    void app.offsetWidth; app.classList.add("enter"); setupReveal(); }
   app.querySelectorAll(".picklist [aria-selected=true]").forEach(o => { const l = o.parentNode; l.scrollTop = o.offsetTop - (l.clientHeight - o.offsetHeight) / 2; });
   if (admAnim) { app.querySelectorAll(".adm-main tbody tr").forEach((tr, i) => tr.style.setProperty("--r", Math.min(i, 14))); admAnim = false; }
   fitPreviews();
+  if (animate) { const nav = document.querySelector("nav"), cur = nav?.querySelector("a[aria-current]"); // phone menu: scroll it (only it) so the current page is in view
+    if (cur && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - nav.offsetLeft - (nav.clientWidth - cur.offsetWidth) / 2; }
 }
 
 document.addEventListener("click", e => {
