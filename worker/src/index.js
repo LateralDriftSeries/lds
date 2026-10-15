@@ -203,13 +203,15 @@ async function putMe(req, env, sid) {
   const body = await readJson(req, MAX_PROFILE);
   const u = await getUser(env, sid);
   if (!u) throw new HttpError(401, "sign in required");
-  const prevTeam = u.team ?? null;
+  const prevTeam = u.team ?? null, prevNum = u.num ?? null;
   for (const k of PROFILE_KEYS) if (k in body) u[k] = body[k];
+  if (prevNum != null) u.num = prevNum; // a claimed number stays for the season; only the head admin changes it (ownerUser)
   // joining a team: an open team with room, or a closed one that invited this pilot; otherwise the pilot stays where they were
   if ((u.team ?? null) !== prevTeam && u.team != null && !(await canJoin(env, u, Number(u.team)))) u.team = prevTeam;
   // shortcut: field shapes are trusted (number range, team id); validate per field once real abuse shows up
   if (u.num != null && !(Number.isInteger(u.num) && u.num >= 1 && u.num <= 999)) u.num = null;
   if (typeof u.about === "object" && u.about) u.about = { ru: String(u.about.ru || "").slice(0, 60) };
+  if (prevTeam != null && (u.team ?? null) !== prevTeam) await dropRep(env, prevTeam, u.name);
   await setUser(env, sid, u);
   await bump(env);
   return json({ ok: true, team: u.team ?? null }); // the team actually kept, so the page can show a refused join
@@ -224,6 +226,11 @@ async function canJoin(env, u, id) {
   return members.length < max;
 }
 
+// a pilot who leaves (or is removed) loses the representative mark; coming back starts as a plain member
+async function dropRep(env, teamId, name) {
+  const tm = await getTeam(env, Number(teamId));
+  if (tm && tm.rep && tm.rep === name) { delete tm.rep; await setTeam(env, tm); }
+}
 // ---------- teams: stored on their own, so the founder role can pass to another member with everything the team has ----------
 const teamIdOf = sid => 1e6 + Number(String(sid).slice(-6));
 async function getTeam(env, id) { const r = await env.DB.prepare("SELECT data FROM teams WHERE id = ?").bind(id).first(); return r ? JSON.parse(r.data) : null; }
@@ -349,6 +356,7 @@ async function ownerUser(req, env, ownerSid) {
   if (!u) throw new HttpError(404, "no such pilot");
   if (body.kick === true) {
     await env.DB.prepare("DELETE FROM users WHERE sid = ?").bind(sid).run();
+    if (u.team != null) await dropRep(env, u.team, u.name);
     const db = await kvGet(env, "db");
     if (db && (db.adminIds?.includes?.(sid) || db.roleIds?.[sid])) { // a removed pilot loses any role
       if (Array.isArray(db.adminIds)) db.adminIds = db.adminIds.filter(x => x !== sid);

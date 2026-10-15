@@ -1034,7 +1034,9 @@ nav a:hover::after, nav a[aria-current]::after { transform: translateX(-50%) sca
 .cal-n { font: 200 3.2rem/1 var(--f-display); letter-spacing: -.05em; color: var(--soft) } .cal-card.cur .cal-n { color: var(--text) }
 .cal-body { position: relative; z-index: 1; display: grid; gap: .35rem }
 .cal-body b { font: 500 1.05rem/1.2 var(--f-display); letter-spacing: -.02em }
-.cal-body .pill { justify-self: start; margin-top: .35rem }
+.cal-body .pill { justify-self: start }
+/* every card keeps a row for the status chip, so the titles line up whether a chip is shown or not */
+.cal-st { min-height: 2.4rem; display: flex; align-items: flex-end }
 @media (max-width: 1000px) { .cal { grid-template-columns: repeat(6, minmax(170px, 1fr)); overflow-x: auto; padding-bottom: .6rem; scroll-snap-type: x mandatory } .cal-card { scroll-snap-align: start; min-height: 210px } }
 
 /* home: how to take part */
@@ -1777,7 +1779,13 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield }
 .rdoc > summary h3 { margin: 0 }
 .rdoc[open] > summary { padding-bottom: 1rem; border-bottom: 1px solid var(--line) }
 .rdoc[open] .ach-chev { transform: rotate(180deg) } .rdoc > summary:hover .ach-chev { border-color: var(--accent) }
-.tm-join { display: flex; justify-content: flex-end; margin-top: -.2rem }
+.tm-join { display: flex; position: relative; z-index: 2 } .tm-join .btn { flex: 1; justify-content: center }
+.toc { max-height: calc(100vh - 110px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin } .toc-g > button { display: block; width: 100% }
+@media (max-width: 860px) { .toc { max-height: none } }
+.numgrid.fold, .numcustom.fold { opacity: 0; transform: translateY(-8px); transition: opacity .4s, transform .4s var(--ease) }
+#numtake.ask { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.tw-box { width: 100%; display: grid; gap: .8rem } .tw-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap }
+.tw-slot { aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); background: #000 } .tw-slot iframe { width: 100%; height: 100%; border: 0; display: block }
 .tm-status.staff { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, var(--line)) }
 .tm-status.staff::before { background: var(--accent) }
 .pl-right .staff-role { position: static; font-size: .62rem; white-space: nowrap }
@@ -2086,7 +2094,9 @@ const I18N = {
     teamDesc: "Описание команды", descPh: "Пара слов о команде: состав, стиль, на чём ездите...", noDesc: "Создатель команды пока не добавил описание.",
     ownerHint: "Вы создатель команды — описание видят все.", pickTeam: "Выберите команду, чтобы посмотреть состав.",
     rosterNote: n => `В составе ${n} из 4. В командный зачёт идут 2 лучших результата этапа.`,
-    numReg: "Стартовый номер", numHint: "Выберите номер в сетке или введите свой (до 999) и нажмите «Занять».", numLocked: "Вы уже записались на этап — номер закреплён до конца сезона. Сменить его может только администратор.",
+    numReg: "Стартовый номер", numHint: "Выберите номер в сетке или введите свой (до 999) и нажмите «Занять».", numLocked: "Номер закреплён за вами до конца сезона. Сменить его может только главный администратор.",
+    numSure: "Подтвердить №{n}", numSureHint: "Номер закрепится за вами на весь сезон, сменить его сами вы не сможете. Нажмите ещё раз, чтобы подтвердить.",
+    liveStream: "Трансляция", openTwitch: "Открыть на Twitch",
     own: "Свой номер", take: "Занять", confirmNum: "Подтвердить номер", cancelPick: "Отмена", confirmQ: "Закрепить за вами номер", numTaken: "Номер занят", numBad: "Введите число от 1 до 999",
     loginFirst: "Войдите через Steam, чтобы открыть профиль.",
     rulesTitle: "Регламент", pilotRules: "Регламент пилотов", rulesEyebrow: "Lateral Drift Series · Версия 1.1", rulesLang: "", teamRules: "Регламент команд",
@@ -2225,7 +2235,9 @@ const I18N = {
     teamDesc: "Team description", descPh: "A few words about the team: roster, style, cars...", noDesc: "The team's creator has not added a description yet.",
     ownerHint: "You created this team, so everyone sees this description.", pickTeam: "Pick a team to see its roster.",
     rosterNote: n => `${n} of 4 in the roster. The 2 best results of a round count for the team.`,
-    numReg: "Racing number", numHint: "Pick a number in the grid or type your own (up to 999) and press Claim.", numLocked: "You have entered a round, so your number is locked until the end of the season. Only an admin can change it.",
+    numReg: "Racing number", numHint: "Pick a number in the grid or type your own (up to 999) and press Claim.", numLocked: "The number is yours until the end of the season. Only the head admin can change it.",
+    numSure: "Confirm #{n}", numSureHint: "The number stays yours for the whole season and you won't be able to change it. Press again to confirm.",
+    liveStream: "Live stream", openTwitch: "Open on Twitch",
     own: "Custom number", take: "Claim", confirmNum: "Confirm number", cancelPick: "Cancel", confirmQ: "Claim racing number", numTaken: "Number is taken", numBad: "Enter a number from 1 to 999",
     loginFirst: "Sign in with Steam to open your profile.",
     rulesTitle: "Rules", pilotRules: "Drivers’ rules", rulesEyebrow: "Lateral Drift Series · Version 1.1", rulesLang: "The official rules are published in Russian.", teamRules: "Team rules",
@@ -2424,7 +2436,8 @@ const allTeams = () => (HOSTED ? [...TEAMS, ...SRV_TEAMS.map(z => ({ ...z, srv: 
 // the organisers' team: everyone with a role (head admin … technical assistant), gathered from the roles, pinned first,
 // outside every points table, stage entry and join list (it is not in allTeams)
 const STAFF_ID = 9e6;
-const staffTeam = () => ({ id: STAFF_ID, name: t("staffName"), tag: "LDS", desc: t("staffDesc"), staff: true });
+const STAFF_IMG = "data:image/webp;base64,UklGRiQtAABXRUJQVlA4WAoAAAAgAAAA/wMA/wMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDggNisAANCqAZ0BKgAEAAQ+MRiIRCIhiIwkEAGCWlu+DlIJCbqm/gTl74l2+oZjf/76nHkW5jAzSTJ/eNW26Y3Qre9j+eYB+jO4m/aD9Ofeu9DX+V9QD+3f2vrSPQa8s72af3V/Z32w9X49Bf2TtH/qn5Nf2z97vkPq7es2gX/Ffrp+Q/t37rfmF8wf6Hwd+SP8t6gX4b/Hv7t+U3994mrXP8z6AXsf8//x/99/u//I/uvxdzMsgD9bv9J+b/Mp0AP59/Zf9590X0z/z3/Q/xv+Q/cb2y/m/+L/43+S/zfyGfyf+o/7b+5fvT/mf///9PvS9ln7cex/+rX/aBeFdUPTXYVfeaoemu2vj2FX3mqHprsKvvNUPTXYVfeaoemuwq+81Q9OGkbUr7zVD012FX5KVfeaoemuwq+81Q9NdhV95qh6p8PprsKvvNUPTho9NdhV95qh6a7Cr7zVD012FX3nZf6A1Q9NdhV97zqQGqHprsKvvNUPTXYVfeaoemuxi4yA1Q9NdhWCY5HdUPTXYVfeaoemuwq+81Q9NdhfSrjCO6oemu6hRTCr7zVD012FX3mqHprsKvvNUPVTL8wq+81Q9OGj012FX3mqHprsKvvNUPTXYVfeaomeex1rsKvvOy+81ElS/bmG3UeytaVfeaoemuwq+81T3NtdhV95qnjmqHprsKvvNUPTXYVfeaoemuwq+87MjPB6HprsYUUwq+81Q9NdhV97zqQGqHprsKvvNU8c1Q9NdhWxmFX3mqHprsKvvNUPpZzOtdhV95qh9Lg4fTXYVgmOR3VD012FX3mqHprsYUUwq+81Q9Nd1oKkBqh6cNHprsKvvNUPTXYVfeap45qh6a7Cr7ztcfSimFX3mqHprsKvvNUPTXYVfea455qh6a7Cr8lKvvNUPTXYVfeaoemuwq+81Q9NdhfSmFX3mqHpw0emuwq+81Q3OxjCgzS12FX3mqHpU5uuap23MNuo9la8YgvUeypqumJqaZr93UC5yecTyDPQvXL9uYbdR7KmBe90XUeypftzgLd6cw26xaj2VL9uYbdR7LKVxfnOR3MH9uYnmqdtzDbqPZ6HygWVMC79xF+XR7LJqOoGZlzEY3Dowq1MNusXpGnpht1HsqbUTOij/AC4YoZZMLBdVzSyYvXNCE/+4jB9EYKl+3qnOAt0f25ht1JTZW5R8a8g7ygBTxbsB7O/FmHMtrW12nt9BbKmBeBe1EyHZUv25ieap23q9hgALcw26kkj2qDYc3XTUkIkwd9z26xaxay6emG3UeyptRWOOAK79wxQyyYWC6rg9AJt1LTlhY8rS+5WiWiU1/J7nUeypgcSZU4VttjTY82kKbApxCytd+5NSbzm8m0W3zVPSumOwaj60RkrDfo/8VkqIF2P0/fffR9KPZUv25wJ4ybdR7EsZDmwwC7DrokaM5/IPkj2gF9wbrRa7ry/r+v6/r2vrcKNsX9xskKMiouFtJ9EbTrJzBzk7ezzkg/SFsfxOz8lRM7avBaM4IgSaGDdlS/bmKg07kAvAuwfXLiyQK6yokE2OVfearnyHST7tYuSHc7h7yVWUT92SX/D68fDBCcpa7octGG3MNuo+YahWqBdTHRVcDkCZZNRSRtG8PprsNIMqru9L4R4as01IpKQ1DQCJQR6PeM1acRJ/SS5ht1HyMCAzuKp+PKy9Iz4z8cPxtNsnieEcKM6lUKGHKw3XA7zuLfw4fPXX/VR4oCJyZk01hgZxtq4iajFJX6Oh0sfUsk1Jh82m3UmUkFk1AbHKvhT7+Em3TbZ6a4Wz7cBSsKOvvvsr1xyBSHiIeoN3TqjqL0nRuPFUkVnlONSpFWDqztKDJ1nPjfbGMFas3iegOztGou0dNcyzaILbYFI2jdU1zL1YiLgwW84COI1OPsWpkpTJ8ccQKwfSTLPxc/VGwkH9YojCu45F+BfHrG5CfEKTsobEW+1Sze7HRObfRiNyHaF7PUIbhz8lpYtMg+rTG8ro9hV/Gj9/2xHMPxzZevKje0gOu94rzVERgFaW4KNY9P3Izxjb+zi83iYBeFTZUsItY02hh2VN0JyrTloqQlqp/mCDjJCMk0sLWCo5EwZpmFKaVX30N3tYzy7n8fjFROVcAD327acxB6m7WHL9I4udDgBb1TlnRVp0NDb+yn0/G4cpPddLgvkuryTECYhT0zrp6gWhH2vCl9e0BtwY4w5v0CwtLRThRjfPPfVAACc5Iy2asINhUf7343NlGYbyBaT9lT7et0KrDCOImPwN01NkSskWEj5lQS6rmeAP5ZRoi9BCdG53JRN4rA3DV9jBJYz5D/k8oXQyohDUP5EltfWs9RL2HYdb7H/bfoyCk6OtC07WLltGiB3e/BMFxsEotffosK94gptmG025CKFm3vi5XzCyTlRd+wspBUanAMREJdXv24xjhwfRlrWta1rWta1rPsY74QOCfLNK4Oitaz1eNYhZTqZjk1hN+MqRe4zDGAkqMF+DdlOZdh90TzRV49v/vqDyTzP3eEKlik9jKunvdV4pQYHOHhScWrv5LligY/VzV/8qvdiSyVVK94WqvFOTXC/dl+bdjYq+8aY0H1cmtKJBC6kA+xyXNxcYwynfIoB6Vm+QekDnqhkNh+5/dmFugc2DKeWtzBmx9DUn7CZ0HanVcBaYxXzNH83vNUPTTX7BPmTgvcRNTpvj+llqi7dILSjH/aLG81RQl5dc+wTs6FnrxUNfnPmY4IEjBKW6av87KAsm0rtFPDvN8qdTeuZ1VulkwV9fF9nikupWrWta1rWta1rWta1rWs0mpEDot+9tAINO07RrQAdh1qal8tIymL1N/8/omEv2EAeqvJ6Ne1behbXBP4/tGlFmVwFv99QRjzkwL/zRA8BivRyXWOXJI2hAW4e+0gYa3COfZCywiV2mUCS2WD9/+MuS1cXcEN+S2lApvqTUcURIa5GRyTZs0bvzYhvSHzGd5IlKSc5D6FhEkA0BrvwlrrW7M52srzAutAXOWYI9XeX5t//2aJhJO+qLlh7Fs4008lUI2tIhNe17KWPX7Z7o7Lz7u+A7op/kFQ09IvKNn7zW5lhUUWBSuRd5xxNV5qAZuqT9UDI3SykFjzIFAbX0/xk8AIEEjVr02skNBfdDSNqNZUFsJi3U8Pk4P51hHpDPqgmu6+xMNuo+Vi23LzeD6ZgYCSkFTfSG79PZa6jgH902MIW2/3H9gbmrNwc+sNmypftzfjk10wlopuH93J/wWQTHidSXAX+xZxyUpmWPgHmP149jeZqsd48QFnZHixLqPZaAF5b0lfrtH4Wpeq+BEqOU54fJ3FgBCjWeFAdgxaOTMMu/kAZ/ZVz7Kh0wypCLmiVkX3ckHbO1lm91tzcS8pmyS+t5Foo0AZgKCfVRQm4wpMfIXohs9/TGMDhdy14oL6cd7YsnfhClw58AUwsOCVUDLUFButBtCIZzEKFKTb+yrn7D7gT26xekapcRaC8gPTL+zy361Xo3VtF6RcWnez23EEDQJt2ekdXt6nvfg7K0edXb/KGEK6c6zZgNGpw88+clb/aDqnV2pKrWa9JcSqlBJBfyz2Vyfrx/8A7uqBdnFHVZioEUpev/jOrAImX7IQa7ZxxH6cg8gnm+Nu3TPiyTvZ7Vxht/07NAfx79ucarM09Dt47555Y9VC7EfQyuUcORVwZNJJSyTtIE46U7m5gcQQfkV7mQ0pDKB/ALZrwm622kbcaUahgtUsEfMTIzv5wgl6aIwRu1pYd0nvAa7hdr+3MOHkAGaTFaY/cRe7o1Dq/vtZWCxC+jddoocZPF7KtG70u9F/0dvIGpoZ2+Z+3sqcCQYcSlbBt1PtIPdQg81+xKNNnGyWI6FNVCObZMukgCys3LBBiyCeaUIyIUDDb/pzKGt2oF1mgiiKiWUlqKGEDqISTa6/BK4ijpLRSYbInsOhdBUJ/0n3cf25ior0kqPOD/AGGzxU28iGBt0xDfI1yMnPGo15WLyrGWfsUukIdweWBAGenW5idZUbD2isHeaZTstdlLuHJ5Mr2yJSp5CyGLZnWKQdJUGdjLGwL6LihP1hKs4+bdpgn7dSUcdUSHmIl2c9qBVwvFZG9tMuIwq2ikrC6JbGIrwRjpffW2aodJNWddbDAAf25wcUkUbHdkIZiQiTTNZhrmnO4AdTZlYsyin6ReL6P4qsYGwwtlm/rcwYgaRBUzQHHq7fakOSj2VolHupMNg6A3oargWt7FUrOqA4vIN7/lsfSSNMmROzDaMAS8tVNzzAZ6e8DdPZUwOJwpB7DSC1M1bTVDJySa6vfVJEVeU2P8D6xAIXKmtYLDuz4g8V2aWBGm6j2ey1QQhxJc4ld2Z1jONtCaAbKDec4IQxPuXiOlPK63uDq96qfr39i1HQzua3LdR81S1i9+yHKoKmWRW9ZLd1afTZRm1PE9QxNXxGFlFoBEvNG7RBk/SA71TF4YghLmHDUlg/L8o6Ip9WbNCT0HRye3J4NP8aJVDWCN231lcL+u/0bYIltuUeyto7o3tnvbPqA5aYVnVAVDZg+z3pRMfkiGjWJqwvFCDdaNV490EeS63iH7bmGgAD+/1jaGIf9cXLly5cuXPPaQ4EOSRrBmxh0OYKCdgg4Cq1QAACxRDWCiG8sPi88s5AISFlAAAAACgDVgALl74Ph2Bf59wAAAAJeysshKVu/qAqRioAAAAD3wFYpA1wQsLcbkAAAAAdW+HwPndaBKGkAAAAAb9ESa0Bwz+8AAAAALFC8k3ViQH4IAAAAAAIork6psUwxzEkJ8qiwzeIM4sWIAAG/FKaB2QX4wvvtIcWDAiBxX8NYgAlM+vuGciC/1sAAAAMgGeKFTAEhC+stCJl0AAAvGjKhMARRJGJRbIAAAJeysywB+B+PTGPIgAACY6KrACQATt5DAgAAA5MknAWEFV08ICPsm9OssAAguAVKChvsH93Mzp5mg2AGksGpQXE4BW6B1PoauCwjjyQAfap3FLMCk0DqIkCY6LwwaiIY89dANQvRrsELkGoqI8RhoRvYh0KFChQNcsmasouZfDwRHgmMNMGwJS0L5NLhn9Z/0lYWwg4FHfZsVv2DrZ6Igzi9idFTL4eBsQEERX66RDfMYss3bt20x35rDjnZaasy5TNB4RjjrMOvr6S58sqUcbqOKtJBcYeFualjtMVU1EH/gxsBmqvOw0WiDsCi0z5gROmdqRYbaK2RknCvM5LGTxvzpkEsO0sWdPpfOqTnm9c+XqJVN33XFGGCsKu8wczuLQ9BuIayYGYB2fkW9ZmR+awKfh9Z7a4mk8+YIwQVgoMpQcraUeLct/su53W4E4aKuacHtKMx7OOKWwjFVSzH9+lLgtm20nR7R6jRKVN4X/bhXDUGaTwQcbF8qN5nEJxDYk3HQk/cCuc33kfacmQng5fz/7N+RnK1iyrSbOfkLaEVxsPi0rzC7LpOAzcJUhIQe6jYcvfRGqGRIQABfdBPcAPizIRP278yYQbsBigxWQBzrx2f+hKlvcvW7qNGhZowZoV5WAH6N3EgFAJ1jOrFa87nLTPH52J9f2GibICpzVJV/Yhwurnyzzmf/+S4TrYNy9sdFgVO+x1MA/6jBLR7VFoCgCyYFMiasWHYy86zMENyS2Yf8Vjwz6VGsR5mJrmT5D6IDVfBDr/ebwOYSCte8IWn3qgKvH1ycH71R8yfH2ngpvz2CGzWd9Dk+aDPpj/obR28F7OxJUMYcxw/6GdMwv4Q1yzdLTqHkv1B7lOQb4HH7q/El5C5Fc6OuLBY3j2yO7rSPOa+xl4ozRjgdHuWfNBn0x9swPpAz4lcVJU3U4Gn/qED5hicwV6ql8e8OnKVrlRJMbhWhtbZwAljFK9cjVv4ZOVQF0D/XCSEbUTvKjPnhz0tSKrclEGN41oBrEyTJUVWMnNemtQFV9vka7W1kJY0eKuOXfCLKfkSaZjNYbldYXc+wrpza9jc56Qp9NyApz6Vc1WbRXqY+iPngQI+Zgtiq+CaLmx0Er9ZIp0wABbzYRagNW4tLT0E6qVyuv+2nkJO9Ozqxys7/6aW88nCISbz3b8k9fcK6tebzGnAhZCiqLo7NbLkNkvtPsfVaXlvoE0+O9W2nobyNjXfi5IhEMIDFXNV56+DdfDGiQTXG4CEcnG7dN74YPFa+wcSm5l15SOG3LZb5RelIljHy7q4qs4skDjXQQlGXDmlfoAAExgK43AkNKGGYO7Qx4j/x+Toq1J2iBA1OLpKznN18NFsfC6A2RMj1JOZUkW4bYQCXS13XvpWuGHAI6D7xvoakMlSXMddcTqEgAEFjcDbRQNDH981+IAid3NybPxBwNPUB4RDU+y5KCiQq31SkcBJ1Kh+wFpcG/9CLgo29C8coM6ScLzNSty0+6zl27GcR0TS9UN5OirRGDrNx66dfShBuQS5idR7/lpsedD+ThdeemaftIZWH6JTciRY602zDsQtxmr75ahcg9dA1kOD8WzD8GBEUouUxvsDZs08P1wRlqZkRmZIMSHAL98sBsdvHsQxeVgbVr7ALj/cd574oIo/ub8tQ1+qJ8Jz3D8FPAr09TJGbV2podcnoeuLRm4rs+GCJoxmnIIHgW3cXmnnaaZw0/PfwHYG07Xg5AlKVdEfuTz/m4vCkfz3nqphzwxDTGkSaFBZuPVHEY33qvRdGcqVcprqb1i1eS1yfONI07311KTdgn1SnNnhabVzr/jAX0tdjoFyEmWd7G/yedzhcPgoxgjfjwVAp+8nrN98t9qKfiR9sQ8OPZXkQY3RuZ/d5diaO9t5DoThkvXjvwlQ9jOpKUgscsPrO+Tc/VG2Vv+wIhgELAnxD3xCQ/lFjREAgizjOkhN9+5wu6p3lwsYdjr83FWgW4hqj875AtPVfP301pvEDlVaRJH1tIkaLbVC8y/ARqdJxPHN7upgyG8gxoKK+VtEc7+aZCZ1dny4+23cmeXnnnlBhQmCcQOAgpX80jlfpf9+ER6HvaFjAyMRmpyZAJVmr1RUNry1ZN+SxZuRfqZxLnwdz5EyjMjSMeGDRap3FVK1g+647OSFxHIDj/bDMfo0glEf5mEAcVh45b3922bRKgk3wyFprby//HP0Weq0ntkwrJor8dzTEyvD4CH2C1jeIQCNjv/Ef79lTYZvdFASkHlxjJ1ovGD+fg/l/OGeqsMOpKPhvUJ3QOerao/5OQmi9ubzoQtenXPtkT1ftTxrDbaZcZih+2a8rbnraG1JPFYfRzQuqSwo5WgX9X/DuIxVgurH1t2tWk8zvI+lfN8whHRtb8SPGWmWArmBIN0GzumFfN8t+xSvUJLaAwPWwmhRu8PSel6t/kA9V5zZcvxgLKX9NhX+PQD/kDGXkH8qpRLcX8q4j2hIPmrS6gwtGg1B407J5aLsPOJsodLoFtJvZFpBv0BsPDNs8GDQuhb/Stw+98ct96vI88AAAB5jEzM5bRTFmQz9jo4bx3mXoPU8EgqDQSLgI0ZTmAXTMtRkFL1TkN0H/8mWmYvBQ0LZw1Ak8Ib9Eo48XjeNL0M122wb/5hJDhANyMb/fTTwnnol713jDIpOwWRwj9AwDb3gEoAsUVLzhgb2gJH//gAXwBJJDMffMwxDGb1y1gYFwQFvF25H3LSTmXm0SnZgNXrR8U7rQG+4CV0wi/gWHK+1URCPA7t3ZNW8AmCtiYPEDAf9IyL2acC7ByvhScNZM8siSXzv/FqLxRjCrU2GzTCd7Qj23Ucqvtqvt9MNsR+a8FEWK8AfSAtGvJ+d13ZwspWUwUASSTMhiC99I7ull3ufHegLY6cPWomdlX5eJ0xO5wxgOjPIM+ztrJOnfCL1GMC3M1QaVxGOpGmVLxkhAYdSe3Z6Axd4t78LtJ03oxbb5iXhQ2mRP1EnAGnp2hK1J9VOQafdWfd/4IlnCWtz7//8ObmU4vVlfwr2ABOyvce5Ts7b6QiR/n1MFQMFr93Bg+yBA4rb+bfbE3T9W9vBqNJJQwAdnzpRYOExIgGEmLEZfmvDMZuaNl59UeT8kPJ0xdwI4OI31hLkmwKv/Csb97vM/b6C6vWsr6aqRZH45bG9krwGDAtFJVmORrnIJMlrwc6JeBP012HQrv0rGXfIVIh6Q987tG23U8BtfJR5l28fGCwyxWwKXB4XW1Re5iIHEPmhMQT/PuQU+pI8VaGj17xuYKfNaOLxLGC0cu1u8Zq4H5SSjC4/MsbsHmmK/eM8hAzrIUqiNw+NPwii9E1dAgzGSeli9dcTbu5f1qRdGpHVDAkfdObwnlp5QAzYCFkf2U68VpDXtUopp93XeCA0n4Vwlz1zUlad940CFbgUe2sQL9WFIe0QLHU/vQ+VKrmZ92DdNosNdOWRvqPtQYS0a/z0NZZ9YpPHObUklOCwidEfWwzNpht0reaZkMZHfRzgKHazuJD/oSE12+eArvEVShWjSn7yhwGQLqAnd7uL2jdJot6BOlcQtdkYGaUnCoTiw7cPD/RrrqtPXY7JPzT8IK1v8TALGsAsPCnbwTMMVtADzMBpoA7DPxIa8luph0ggvvz/+YVRX1cGIrwE45GW+KE3TtJ2D+Uf67+Jlns8xwK0Y3mSHCODQu6n2lRuJLN4p81B6LWt7fr2O+pPDMUmX+M3T6eQB0j1HMPSbGey5Gr4PXeZUuVnmolASdG2SOB8Cl2qFIjvtIQ/EGaTBUWbVxGMczp0GsoBehHn+2ro2LyKW6zT+DpMk0snwymdvK+u/fvBD4wqyTD5z1ALJUD/5zuS4V96MwzWYRz8TD2iajXyqiMnuZS9IcLZfecOr96Iw/ZYf8I0cRHOf0wmsDNOUeSOu27wvoYJzfwVm+8eVOZ9y5kQ0LFNrQUT8ET2AC01rmYTDm4v353ccV8Kj4WIesyDMujxrxoCT6Sn2PUwiNPGqZ/xiSGtzNUwp2RbWsIp2+CHq/6yiyMzHmB8TELWSl8NVJih9vfscd6CJWpnUamAR/EyYPzSip2rNEnk9L7pdKk+LVuXbSY2ewe36ptNkO/ym9aqMGfXpLZuse4wHfddUpgmxLVkZwN7/WLFjwYFGihylNRwQ8Y/iQHq5rOE8qRd/P2pJBlrOLxoa8DKpiRNHCYS1ZG+SXIG7BF/3JoHYjkd21SPoQLRJOSP5B70tbh4LGk5IW0UR+FCHzUF0LS7i5ZvDLILt4CTrCkN5UJOyI2MmjSS4oafBu3ahuB4WzCHKXRM/4HqBJgK11E34BQHZvtc6iwkQ+/MllndxfFNVbseh4Knf54um8zYzWdK5daXtSWKDE0wYjVJ4UskK4WMr/nPZ54khEIjj24ToGUz+Tk8xLaEKvHVuKkAAz13EFXEG0PPCCJcDQDVp9fBihfscyIybpLCffBaE0HxIpvzf0bhv5FVYLeK60GF7Vt6ULcdnqn6C4dKJV4DIi4+jp7F4IpnO0KrYcNdyNnbrkvNz1ByvNgXEJuZ5arszCsE6+zOkDyqcpKfkI04OC3avOBRLtJkYi4IM7bmTXQW7OOG7v+uYhp6INW7aR5uMOOclE4mKl7aDkHN8OBgdOPGCz8frT958ypVrXOBx93yYy/9NDwnQvD9f1a05527moBPIZXsL/HL8U1XHy3jQ6rmY4oT65EbQidnWrojpLLc3fePTaeE56geFnaxaqWLrEAavEPMRpOwghDJSdY5SbBPVyezCmNnbNG25ytBegeulSG2sfI7jwbPmzUe+k0cKgE9xA2xKWnUP2hY5UuhILNF8AQVerjXIa5C7d7UQrYgqyn1SsIJKrK/3vT+XXTPw/9Kbt6TCmcvD+Cv7r4dmIaoi7QlvtZg1M1DgOkSmAAlbhnJE9JbtCMuvnq4iFCQ+LsFIMFPSs8Gba8fQ8/AcQn84UHw3JL8UIspPD/pZLAyNW9ezVbcdc6Xg/6arf8ilkXbKq1bWs3fsIoXnmAnTqcPumUs5JOV2YGqPYDLjVE44in9Q0HUpXjA+7Z+XT+521xqfszuP81NfRuXEgMDJoSRkFNNEOwhzT3I2rb04rrsR0awhm6JbBsjLQQNbD04v2kZ/twz7wO5jQ773CqytfU7h4LreEBYZQM8A0Vpf+smaApsQUQKIFdf97/PtF/GgH7F99b9Y6tlzRrVPzf3wsiEKjgRu+sBE4mqhpMXOkAHKjbjvVNXiEEy2qJhwcqBYZxGQnd0c7/peIx3Xyzl36Pu1W29NvDN7NJf7OLR7cRIdvQbCeCiKI6z6eY+CrLQsOcp1lyosrOY6ulgSBwCJXTgi3GHdrVRpwPcUlT/sHB/c7SVE7gHSj/OXdJ8vNrkIvhAx0bl5xAOWhEU0Og8o6wsQ0Vknc0iYcOKk8CT7rIsMfqVLDz1a/o2/Zm3p3/1Te1TcoL4ZZ04omL8FUbwk189zSYuDJbTOX8uMefMc3oySFNkx6r1RzHr6eTc7+v4oH9qJv6ASTNH2SYLjjV4xwMDv33jNO+BzzKG+Zg3a7dUVCix0pfNeDdI1AByzMjPmlbJm822HK+1o3qg10AvGPjUY6M7sgOpVk4nR+SIT7sgSd47ZNklXgkeG/VRVHg7qHZKLOMjnnRke4ZgDxFMv8SNNFxLUEEQ3jn+bIxAAXz9OUOI8ygc0xw2Anfz1ph7Gv3Vf+IHrpfkvh/0SQKLWfr8o3RTTVkkm7/vNRYRwN4lsEN/yrlAPpMQNx0DlaXaYC/gzLYIEXHToABK89ApgFoYdVMcfba/+Fep/UgP4V5rf3o2JwDqjk1mJtmwo35tyJZz7QVyquNdxYhoqmPw5En/fpxs6F9pXkcAlHPE3UbEnU0xKaj/nLOKK8bfmuncwRGlVFkoQywk/5nfoqM+BecNCpeAoeS1Tvo3hlwsQhxBttYSacFIA/LuYougXau8/11HcQTMdmKkk1mvhS/D8shQ3j6zZZogqLdlY9V51aF04XPwFaZrg40EICS1oUy62EJ2n+zFQpUFBQFngbYNuM5RqvBdGyiqgkfYCEkyUC+Ep0NNPtQG82jaKID3AsH8yHuGq6hP6TeioMNSZ3DsH1QoRqPjxwlXA+qd3lblLGMVtfC0KgGwIIobAjxzrwS4ol1VmrwzqX2bY20DpvskVp87028BRCND793t4K6yn1nxHvJdMyhg9Myh722KM4JeCfqft9+tUvjOuvW+d6VwuWuepVeAIjni8uJ+c74sznnh28vxZLZlVHSJbMdethHlXAw24MJkxVQo52uEEDssh0SDINKYUcb4rw4ihmtPrEXs+dPLMY7PcL0ac56qIchzyWSlrzRm27WPiLB7GQqsau3fPnIQJg61p0uqf1PzFD4uP9OVjlOF7wQHkCfXh57WdbBvhZFoKrcojykWLZtzY7qWI9nBAlj56ZqKj9hKDjnDY6KmlBeQY+U0Dj2replOC+BlyElsvrTpipBd8qrro/uDUpCHse+QBhoHxCtFPJK5xuyjlAfzsISsZvkuEIINiyC9PN0JNrTmdlfsNjJlcUC393t1rv8Say62l1suuWpbhgo6SphC8kSPsug8ud+Iz/A4AyxXtUmHDfj7ojzK9EAkW42RavGa9lSHXflxy3gP52GnrGw6p4XUWyBK9EEOM8xvKcT/0YUCGhEDyfoLdSIcOteZNa8K9H8K6lhWZdn5vgOVOff9RjWZxoZ3HETX78N7FhQGMEKSUuTBYcLFtNAcKkFs2GzXTGOaOR2f6q2uS0EkzxMj6kf/pBCxlwEpWxF/TcdVi2w3OLELfwKx3wEl3D67Jroubp52+FDWJTLW5ADS9nhFsNrf7wo6rJMisoshzusVKpT+WMl8B8P5O2O5r4ujk6JUF3JjCu43A8aPsiFdr/i5ZNQxzoJrezeDnyb8y999IvtRqvIpTFPvtZg3n7l9WzjExYG4TdI9CWDu+5oePOi2GCvvoMKmoIVX6SAc6afJi3QnU5NzkBwvAXjqSvuEA2U7Os1vQmMNgssqmsELq2KeTbnNggveDFYVlxqXk45LqYNJ2yEjhLwJToTA5sc7qxQUy5THy6H74Sn3dvwO2p3fPzw5X+uwvX/div1hHov66GMOxwEkXE4VdKpjN70dH6U24Gy0FxX2CuuFIqVh6QoArLGoEOjHt9On6lCd40N+OUNQIfS0FsPok/F7oTh21tHYwypiOo9xeCFY8OdOTzGACmR2A7JAKoOWq5Nikdg5fikxhNr8O4J9+Xaiz/TJCXpFh3fLAIDKeP5AgyzwsJYglf4kdsc2J4SlAwGKsh9eENJpSPdOZ3YIYOb8sCEwR0e3exBT/ncm8ezvIOV8Tg0mI3fig+PmXT0DiXQeTIPtwSa0MXoC9tUznfHHuola3//PyjIKojkQ0VVaaG/kGs06jX//l0nReydIttEW71z7YK0zF3yOpmCXoqcZ80cIj7cPjlP5zZ2/dqs6H9cniI/ywt67/paxWXtDXN7Tr6zmOZ7ZXKoywVfkgCdt2I1/1OfgnKQa1A/Jkp6yvSUJCLs8WCANc9Nr8gdWVu8rnIL1k1oMI219pIC8Haf3OWUgzjXaInhW+2auo5SAR4liv+tVtf8iS/zLr1M61fdGwhNJvH7mK5ZreXU8iqfRnJODq+ROWs4QMsuwsgUbo+aLEAp2Wv3lh06IHbOfRy34NmqdC2BPPCL/i4mhTVVsRMrPdPoZCbKLF0Fmjv8yhhFtsqoP+T1CJI6MQZBYiRQhbbxyvfmYsxwzq1Gu8KC8v/xjyyQ3/8yEJ9HkK71vrY/6UHvFHIjrHoKzNte2BbGG4NejfSTkCOGoomugdhLS3tFKRC9cgR251Hm6HMJp6RIgobCGJtWwTrkYxwFDMTwRzH0z3dGfxcNAO8iw2Tk3Zw7dhEAjcT16MXY442biZMuPyDiU1R8KHczscXw3IyHfGtrfS5Q1irHyhKFIc5SK7tZjLWBajX43f3td/WZwgZddsqWUv7xbGKRoLtux4yiSicOCxHnlfBWC//+3ypASuGtm75ASB0RUL11Kf6l+VRM/20w+VqPd+N9v4M5SFy0Pd3tPgd+HK3EzVW4DwA3HwyowI7TxGqwLKMozQTpGgD+98zhPlXdt26Tm3c4CiK0eEUZ9c/9c94xXqjzqulrP7biIkJHUPrPgK7nRpDADT5UxbB7kWqPgY0F6jKimBPpOXfJCZdlgb8ZTEQ8aYyPuvV+6wTFhm3G46wEScIBuAvn0Mkpqt9iBnaTVXuy7aaZAdAqqZMO13MvKo8Dfdjn0/Nyv2nSas5PS2vgpGhL3HnG7S/KSJi6eLdIlGyiTFaGGIGLT1WRgQAY+gaTCYSw90tEXjpldYRH0sEBC08BAzlvdETBbQf24r3gspiVp0SXpoiqjGLCgIRuuPepMa4HaqOXy5ClEEFnm3ox+pQg0fmBeGM6RZK/e8Vd6w9P0yBBqDuvwy0SpOD/8tYyysWo+c9VlTMH6GcSYBeUPdkO6IsIVFLXFzS8GVlvVdMsVsmRkzbJj6zhiJdPD4CJNfFMyvGhN+TSjR+iRfGiBuI9rUv/51OMuSqjmqAOXJNGbUkeX/6wFS4lKFIH6s0An2QCPDTnPojmdJWT9c9ktkedS8nfEqyhxhEGk9sQwxcgV5yWQftZsEfyhk1LPfomC2zA0wutUQSiGsp5U6cC0ESLxHAddDh0iDZU0MttcfhFOfufLFMlvlaPpy1XBLc9i0mmNkgd/SF5ir2BQ1/0gpaXXQ4ieAn5/ZhpaXwWkNXpm/Y2jYjXr/Tq2yg2jl6kdMpn4qXmLkYqUXuf2Aymop7bUxPd6cqpoC0SoOAf4ODS8l8c4CtiJynBoeGBYKEW0t+EkQKKbwjPUCHMDDC5Ii6niI3Qf4MaSgQLVUOCex9GhT6OVjB5UNkS+M3FQvct/LiZjAlE8dkpM6RgAfhsbYGvGaQE/7cduIqwr1lLZERV1kaTEh4ytG82EKi1XBrz6zD4cxlHGuQMpa46IMxZs6LooHJ4LT8bm8Pe9kBevj1/n8tSYnmlPtiwY5VjsE1N2W+zD+KjJ5N2mfoQJaW6ehg6HDLRZm4LWYY10qDKyx0Xw8yOakyaVVGe5uafJWx08RjBG3mNJ2ARaO/ebY6fXm0R4UaThiUWMM1paQLQkPbBe7TOKH9EhLgE/B5VrT+KXnSqzJf6qGJ8+0upw7Un6ldObbWzVaDKmnqiC5rFVS4XLoWKuSEtGkxNSo/YC+zBRJSkaiE0VCxpi9Tc3RiEpHLzqvGAz1GSNOMjPKBjXb3S++LslK0F1B5d058fpPnrxvAZ0zEMCCAAUxt4Zl4Q/02gwOLur/oKB2YG+juO/IivRdr389V2SGLA7PfHvzmpN8qso2UAZWMG71QYpg25ycfSQICWanwvea5bbbl1ZWyeJMU51QrOcSMm2pgU5xzN7TV6Em7JKPK1RKXfpMbmziDFHSiQVUyiE6IM3IX1S+fsNafwqUmm9HgEoKTSIYCTC4rCPf9ePZhHV/yHjHZ6gNAM8ee7vnC8Jj9OmpWmX/jzLBm136E0CPhM1bvs6wDzONZCjzKDyMK162Y8UXXwEY7GlM7NenRDjlVsMIgen/50niT72gdt3Fom/nrB1bamE/+C88kTxqw/tNCDGctQ9S+aBkOZnzeAXoT0kUTto4vFvGyeCsqCufXMJxq7jyxIZ9VN0hExhTV7V1BiHf1CWEvzVmja5jeh9Scdjc3Uzogn59k1peEKZ7C5l8COMhjFmEdOkSPgUApf0w4gM5hGKGYt0ks7KEDfJw39ymmpY+f4q98TYdjBnNpOYrcjAfNyUKQ4sGL+kGKmmOYQFLEHc8pzUMopfB2TAZwPc9+bW3m6NwBRILst1lIMjZ/FRQ4sAAAA=";
+const staffTeam = () => ({ id: STAFF_ID, name: t("staffName"), tag: "LDS", desc: t("staffDesc"), staff: true, img: STAFF_IMG });
 const teamById = id => id === STAFF_ID ? staffTeam() : allTeams().find(x => x.id === id);
 const logo = tm => /^data:image\/(webp|jpeg|png);base64,/.test(tm.img || "")
   ? `<span class="tlogo has-img" style="background-image:url(${tm.img})" role="img" aria-label="${esc(tm.tag)}"></span>`
@@ -2558,7 +2571,7 @@ function home() {
   <section class="reveal stack sec">
     <div class="sec-head"><span class="label idx">02 — ${t("seasonCal")}</span><h2>${t("seasonLine")}</h2><a class="more" href="#tournaments">${t("allStages")}</a></div>
     <div class="cal">${stages.map(x => { const st = x.status === "done" ? "done" : x === cur ? "cur" : "later";
-      return `<a class="cal-card ${st}" href="#t-${x.id}"><span class="cal-n">${pad(x.stage)}</span><span class="cal-body"><b>${esc(x.track)}</b><span class="note">${esc(x.dates)}</span>${st === "cur" ? tourPill(x) : st === "done" ? `<span class="label">${t("done")}</span>` : ""}</span></a>`; }).join("")}</div>
+      return `<a class="cal-card ${st}" href="#t-${x.id}"><span class="cal-n">${pad(x.stage)}</span><span class="cal-body"><b>${esc(x.track)}</b><span class="note">${esc(x.dates)}</span><span class="cal-st">${st === "cur" ? tourPill(x) : st === "done" ? `<span class="label">${t("done")}</span>` : ""}</span></span></a>`; }).join("")}</div>
   </section>
 
   <section class="reveal stack sec">
@@ -2756,6 +2769,12 @@ function brSet(x, key, winner) {
   S.brackets = { ...S.brackets, [x.id]: { slots: slotsOf(x), w: { ...brOf(x)?.w } } };
   if (winner) S.brackets[x.id].w[key] = winner; else delete S.brackets[x.id].w[key];
 }
+// the league's Twitch channel from Settings → Соцсети; Twitch requires the page's host as "parent"
+const twitchChan = () => (String(SETTINGS.socials?.Twitch || "").match(/twitch\.tv\/([A-Za-z0-9_]{3,25})\/?$/) || [])[1];
+const twitchBox = () => { const ch = twitchChan(); if (!ch) return "";
+  const src = `https://player.twitch.tv/?channel=${ch}&parent=${location.hostname}&muted=true&autoplay=false`;
+  return `<section class="tw-box"><div class="tw-head"><span class="label acc">${t("liveStream")} · ${esc(ch)}</span><a class="btn text sm" href="https://www.twitch.tv/${ch}" target="_blank" rel="noopener">${t("openTwitch")} ↗</a></div>
+    <div class="tw-slot"><iframe class="tw-frame" src="${esc(src)}" title="Twitch: ${esc(ch)}" allowfullscreen loading="lazy"></iframe></div></section>`; };
 function tournaments() {
   const cur = currentTour();
   const past = [...new Set(TOURS.map(x => x.season))].filter(s => s < curSeason()).sort((a, b) => b - a);
@@ -2790,22 +2809,23 @@ function tournament(id) {
   return `<a class="back" href="#tournaments">${t("back")}</a>
   <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(x.dates)}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
-  <details class="box panel br-box" ${liveRound(x) >= 0 ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) ? "" : `<span class="note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
+  ${STATUSES.indexOf(x.status) >= STATUSES.indexOf("qualifying") && x.status !== "done" ? twitchBox() : ""}
+  <details class="box panel br-box" data-topen="br-${x.id}" ${tOpenIs(`br-${x.id}`, liveRound(x) >= 0) ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) ? "" : `<span class="note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
   ${stageEntries(x).length ? `<section class="stack"><div><h3>${t("stageTeamEntries")} · ${stageEntries(x).filter(r => r.ok).length}/${SETTINGS.maxTeamsStage}</h3><p class="note">${t("stageTeamEntriesNote")}</p></div>
     <div class="treg-list">${stageEntries(x).map((r, i) => `<div class="treg-item ${r.ok ? "" : "over"}"><span class="mono muted">${i + 1}</span>${logo(r.tm)}<span class="stack" style="gap:.15rem;min-width:0"><b>${esc(r.tm.name)}</b>
       <span class="note">${r.e.pilots.map(p => esc(p.nick)).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div></section>` : ""}
-  ${`<section class="stack"><h3>${t("qual")}</h3>
-  <div class="tablebox panel"><table>
+  ${`<details class="box panel br-box" data-topen="qual-${x.id}" ${tOpenIs(`qual-${x.id}`) ? "open" : ""}><summary class="psec-head"><h3>${t("qual")}</h3><span class="row" style="gap:1rem"><span class="note">${rows.length}</span><i class="ach-chev" aria-hidden="true"></i></span></summary>
+  <div class="tablebox"><table>
     <thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("group")}</th><th>${t("try1")}</th><th>${t("try2")}</th><th>${t("best")}</th></tr></thead>
     <tbody>${rows.map((p, i) => `<tr class="${p.mine ? "mine" : ""} ${inBr.has(p.name) ? "in-br" : p.a != null && p.b != null ? "out-br" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${pAva(p, "t-ava")}${esc(p.name)}</td><td>${grpTag(x, p.name) || '<span class="muted">—</span>'}</td>
       <td class="mono">${cell(p.a)}</td><td class="mono">${cell(p.b)}</td><td class="mono best">${p.best < 0 ? "—" : p.best.toFixed(1)}</td></tr>`).join("")}</tbody>
-  </table></div></section>`}
+  </table></div></details>`}
   ${runs ? (() => {
     const tr = stageEntries(x).filter(r => r.ok).map(({ tm, e }) => { const ns = new Set(e.pilots.map(p => p.name)), m = rows.filter(p => ns.has(p.name) && p.best >= 0);
       return { tm, n: m.length, pts: m.map(p => p.best).sort((a, b) => b - a).slice(0, 2).reduce((s, v) => s + v, 0) }; }).filter(r => r.n).sort((a, b) => b.pts - a.pts);
-    return `<section class="stack"><div><h3>${t("stageTeams")}</h3><p class="note">${t("stageTeamsNote")}</p></div>
-      <div class="tablebox panel"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
-      <tbody>${tr.map((r, i) => `<tr><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${r.pts.toFixed(1)}</td></tr>`).join("")}</tbody></table></div></section>`;
+    return `<details class="box panel br-box" data-topen="teams-${x.id}" ${tOpenIs(`teams-${x.id}`) ? "open" : ""}><summary class="psec-head"><span class="stack" style="gap:.3rem"><h3>${t("stageTeams")}</h3><span class="note">${t("stageTeamsNote")}</span></span><span class="row" style="gap:1rem"><span class="note">${tr.length}</span><i class="ach-chev" aria-hidden="true"></i></span></summary>
+      <div class="tablebox"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
+      <tbody>${tr.map((r, i) => `<tr><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${r.pts.toFixed(1)}</td></tr>`).join("")}</tbody></table></div></details>`;
   })() : ""}
   ${S.user && (protestOpen(x) || myProtests(x).length) ? `<section class="box panel"><h3>${t("fileProtest")}</h3><p class="note">${t("protestHint")}</p>
     ${!protestOpen(x) ? `<p class="note">${t("protestClosed")}</p>` : !rows.some(p => p.mine) ? `<p class="note">${t("protestOnlyRider")}</p>` : `<form class="stack" id="protestform" data-tour="${x.id}">
@@ -2815,6 +2835,8 @@ function tournament(id) {
     ${myProtests(x).length ? `<div class="stack" style="gap:.5rem"><span class="label">${t("myProtests")}</span><ul class="my-prot">${myProtests(x).map(q => `<li><b>→ ${esc(q.against)}</b>
       <span class="pill plain ${q.status === "accepted" ? "s-reg" : q.status === "rejected" ? "err" : ""}">${t(q.status)}</span>${q.verdict ? `<span class="note">${t("verdict")}: ${esc(tr(q.verdict))}</span>` : ""}</li>`).join("")}</ul></div>` : ""}</section>` : ""}`;
 }
+// stage page blocks fold; a visitor's open/close choice survives live updates (otherwise the bracket opens while it runs, the rest start folded)
+const tOpen = {}, tOpenIs = (k, def = false) => k in tOpen ? tOpen[k] : def;
 // protests: only while the current stage is running (qualifying … final), only by its drivers
 const protestOpen = x => x === currentTour() && !["soon", "reg", "done"].includes(x.status);
 const myProtests = x => S.user ? PROTESTS.filter(q => q.tour === x.id && q.from === S.user.name) : [];
@@ -3385,16 +3407,22 @@ function showPick(v) {
   restart(box, "pop");
   document.querySelectorAll("#numgrid button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.num === v));
   document.getElementById("own").value = v;
-  document.getElementById("numtake").classList.remove("line");
-  document.getElementById("nummsg").textContent = "";
+  const b = document.getElementById("numtake"); b.classList.remove("line", "ask"); b.textContent = t("take"); numAsk = null;
+  const m = document.getElementById("nummsg"); m.className = "note err"; m.textContent = "";
 }
+let numAsk = null; // "Занять" asks once ("Подтвердить №N"), the second press claims the number
 function confirmNum() {
   if (pick == null || taken().has(pick)) return;
   S.num = pick; pick = null; persist();
   const box = document.getElementById("numshow");
   box.classList.remove("pending", "pop");
   restart(box, "surge");
-  setTimeout(render, 950);
+  document.querySelectorAll("#numgrid, #numform").forEach(el => el.classList.add("fold"));
+  // the panel (and "О себе" beside it) shrinks to the locked view instead of jumping
+  setTimeout(() => { const h = box.closest(".pp-pair")?.offsetHeight; render();
+    const pair = document.getElementById("numshow")?.closest(".pp-pair");
+    if (h && pair && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+      pair.animate([{ height: h + "px", overflow: "hidden" }, { height: pair.offsetHeight + "px", overflow: "hidden" }], { duration: 600, easing: "cubic-bezier(.2,.8,.2,1)" }); }, 950);
 }
 const myTeamRef = () => HOSTED ? SRV_TEAMS.find(z => z.id === S.team) || TEAMS.find(x => x.id === S.team) : S.team === OWN_TEAM ? S.created : TEAMS.find(x => x.id === S.team);
 const isSrv = ref => HOSTED && !!ref && SRV_TEAMS.includes(ref);
@@ -3677,7 +3705,8 @@ const teamAchGot = tm => new Set(teamAchList(tm).map(a => a[1]));
 
 function profile() {
   if (!S.user) return `<div class="box panel empty"><p class="muted">${t("loginFirst")}</p><div><button class="btn steam" data-act="login">${STEAM_ICON}${t("login")}</button></div></div>`;
-  const p = roster().find(z => z.mine), tk = taken(), locked = TOURS.some(x => S.regs.includes(x.id)) && S.num, about = S.about || {};
+  // a claimed number stays with the pilot for the whole season; only the head admin changes it
+  const p = roster().find(z => z.mine), tk = taken(), locked = !!S.num, about = S.about || {};
   const counter = key => `<span class="counter" id="cnt-${key}">${Math.min((about[key] || "").length, ABOUT_MAX)} / ${ABOUT_MAX}</span>`;
   return `<div class="pp-bar"><span class="label">${t("myProfile")}</span>
     <div class="row" style="gap:1rem"><a class="btn text sm" href="${pHref(p.name)}">${t("publicView")} ↗</a>
@@ -4604,7 +4633,10 @@ function render(animate = false) {
   document.getElementById("foot").innerHTML = footer();
   const m = route.match(/^t-(\d+)$/), tmm = route.match(/^tm-(\d+)$/), app = document.getElementById("app");
   const pp = route.startsWith("p-") ? (() => { try { return decodeURIComponent(route.slice(2)); } catch { return ""; } })() : null;
+  // a playing stream survives live updates: the old player is moved (not reloaded) into the new page where the browser can (moveBefore)
+  const tw = document.body.moveBefore && app.querySelector(".tw-frame"); if (tw) document.body.moveBefore(tw, null);
   app.innerHTML = m ? tournament(+m[1]) : tmm ? teamPage(+tmm[1]) : pp !== null ? pilotPage(pp) : ({ tournaments, tracks, rating, teams, rules, profile, admin, broadcast }[route] || home)();
+  if (tw) { const fresh = app.querySelector(".tw-frame"); if (fresh && fresh.src === tw.src) { fresh.parentNode.moveBefore(tw, fresh); fresh.remove(); } else tw.remove(); }
   app.classList.remove("enter");
   if (!animate && route === lastRoute) app.getAnimations({ subtree: true }).forEach(a => { if (a.animationName && a.effect.getTiming().iterations !== Infinity) a.finish(); }); // entry animations (rise, admIn...) only play on navigation
   lastRoute = route;
@@ -4730,6 +4762,8 @@ document.addEventListener("click", e => {
       // hosted: a founder's "disband" removes the team on the server
       if (HOSTED && tm?.srv && isFounder(tm)) { SRV_TEAMS = SRV_TEAMS.filter(z => z.id !== tm.id); api("/api/team/disband", { method: "POST", body: JSON.stringify({ id: tm.id }) }).then(() => { apiV = null; }, () => toast(t("netErr"))); }
       if (!HOSTED && S.team === OWN_TEAM && isFounder(tm)) S.created = null;
+      // leaving drops the representative mark: coming back starts as a plain member (the server does the same)
+      const ref = myTeamRef(); if (ref?.rep === S.user?.name) { delete ref.rep; if (!isSrv(ref)) dbSave(); }
       S.team = null; save(); },
     founderPass: () => { const tm = teamById(S.team), to = passTo, ref = myTeamRef();
       if (!isFounder(tm) || !ref || !membersOf(tm).some(p => p.name === to)) return;
@@ -4741,8 +4775,10 @@ document.addEventListener("submit", e => {
   if (e.target.id === "numform") {
     const v = Number(document.getElementById("own").value);
     const err = !Number.isInteger(v) || v < 1 || v > 999 ? t("numBad") : taken().has(v) ? t("numTaken") : "";
-    if (err) document.getElementById("nummsg").textContent = err;
-    else { pick = v; confirmNum(); }
+    const m = document.getElementById("nummsg"), b = document.getElementById("numtake");
+    if (err) { m.className = "note err"; m.textContent = err; }
+    else if (numAsk !== v) { numAsk = v; b.textContent = t("numSure").replace("{n}", v); b.classList.remove("line"); b.classList.add("ask"); m.className = "note"; m.textContent = t("numSureHint"); }
+    else { numAsk = null; pick = v; confirmNum(); }
   }
   if (e.target.id === "protestform" && S.user) {
     const text = document.getElementById("ptext").value.trim().slice(0, 500), against = document.getElementById("pagainst").value, x = TOURS.find(z => z.id === +e.target.dataset.tour);
@@ -4828,7 +4864,8 @@ document.addEventListener("input", e => {
 });
 document.addEventListener("toggle", e => { if (e.target.id === "ach-box") { S.achOpen = e.target.open; persist(); }
   if (e.target.dataset?.tocg != null) e.target.open ? tocOpenG.add(+e.target.dataset.tocg) : tocOpenG.delete(+e.target.dataset.tocg);
-  if (e.target.dataset?.rdoc != null) e.target.open ? rClosed.delete(+e.target.dataset.rdoc) : rClosed.add(+e.target.dataset.rdoc); }, true);
+  if (e.target.dataset?.rdoc != null) e.target.open ? rClosed.delete(+e.target.dataset.rdoc) : rClosed.add(+e.target.dataset.rdoc);
+  if (e.target.dataset?.topen) tOpen[e.target.dataset.topen] = e.target.open; }, true);
 document.addEventListener("change", e => {
   if (e.target.id === "teamlogo") return setTeamLogo(e.target.files?.[0]);
   if (e.target.id === "teamfounder") { passTo = e.target.value; pending = null; return; } // remembered: the confirm click redraws the block

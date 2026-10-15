@@ -37,6 +37,8 @@ ok(r.ok, "pilot saves profile");
 let st = await (await call("/api/state")).json();
 const p = st.users.find(u => u.steamId === PILOT);
 ok(p.num === 55 && p.regs[0] === 203 && p.name === "Test Pilot" && p.about.ru.length === 60, "profile saved, name untouched, about capped");
+await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ num: 77 }) });
+ok((await (await call("/api/state")).json()).users.find(u => u.steamId === PILOT).num === 55, "a claimed number is locked for the pilot");
 
 // league data: admins only
 ok((await call("/api/db", { method: "PUT", token: pilot, body: JSON.stringify({ db: { teams: [] } }) })).status === 403, "pilot cannot write league data");
@@ -92,6 +94,9 @@ await team("/api/team", { id: TID, rep: "Test Third" }, pilot, "PUT");
 ok((await team("/api/team", { id: TID, desc: "by rep", closed: true, invites: ["x"] }, third, "PUT")).ok, "representative may save");
 tmNow = await teamNow();
 ok(tmNow.desc === "by rep" && !tmNow.closed && !tmNow.invites.length, "representative changed the description only");
+await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: null }) });
+await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: TID }) });
+ok(await teamOf(THIRD) === TID && !(await teamNow()).rep, "leaving drops the representative mark; rejoining starts plain");
 ok((await team("/api/team", { id: TID, founder: THIRD }, pilot, "PUT")).ok && (await teamNow()).founder === THIRD, "founder role handed over");
 ok((await team("/api/team", { id: TID, desc: "x" }, pilot, "PUT")).status === 403, "the former founder cannot edit any more");
 // stage entries live with the team: only while the stage takes registrations, with the server's filing time
