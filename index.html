@@ -2042,14 +2042,42 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .adm-main .tabs { margin-top: -.3rem }
 .adm-main .tablebox td, .adm-main .tablebox th { padding-block: .7rem }
 .adm-main .pl-num input { width: 4.6rem }
-.dc-hook { display: grid; gap: .8rem } .dc-hook .head { margin: 0 } .dc-hook h3, .dc-post h3 { margin: 0 }
-.dc-hook .row { flex-wrap: nowrap } .dc-hook .field { flex: 1; min-width: 0 }
-.dc-bound { justify-content: space-between; gap: .8rem; padding: .7rem .9rem; border: 1px solid color-mix(in srgb, #2ecc71 40%, var(--line)); border-radius: 8px; background: color-mix(in srgb, #2ecc71 6%, var(--panel-2)) }
-.dc-mask { color: var(--muted); font-size: .85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0 }
-.dc-st { font-size: .85rem; color: var(--muted) } .dc-st.on { color: #2ecc71 } .dc-st.on::before { content: "● " }
-.dc-posts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1rem; margin-top: 1rem }
-.dc-post { display: grid; gap: .7rem; align-content: start; border-left: 4px solid #2ecc71 } .dc-post[data-s="qualifying"] { border-left-color: #e5484d } .dc-post[data-s="top32"] { border-left-color: #ff6b1a }
-.dc-post .note { margin: 0 } .dc-img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line) }
+.dc-hook { display: grid; gap: .7rem; padding: 1rem 1.1rem } .dc-hook .note { margin: 0 }
+.dc-hrow { display: flex; align-items: center; gap: .7rem; min-width: 0 } .dc-hrow > b:first-child { flex: none; width: 7.5rem; font-size: .9rem }
+.dc-hrow .field { flex: 1; min-width: 0; padding: .5rem .7rem } .dc-hrow .btn { flex: none }
+.dc-mask { flex: 1; color: var(--muted); font-size: .82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0 }
+.dc-st { flex: none; font-size: .8rem; color: var(--muted) } .dc-st.on { color: #2ecc71 } .dc-st.on::before { content: "● " }
+.dc-ava { flex: none; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--accent); color: #fff; font: 700 .7rem var(--f-display) }
+
+.dc-posts { display: grid; gap: .6rem; margin-top: 1rem }
+.dc-post { border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: var(--r); background: var(--panel); transition: opacity .25s }
+.dc-post.off { opacity: .6 } .dc-post.off .dc-head b { text-decoration: line-through }
+.dc-row { display: flex; align-items: center; gap: .6rem; padding-right: .9rem }
+.dc-head { flex: 1; min-width: 0; display: flex; align-items: center; gap: .7rem; padding: .8rem 1rem; background: none; border: 0; color: inherit; text-align: left; cursor: pointer }
+.dc-head b { font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis } .dc-head .note { margin: 0; white-space: nowrap }
+.dc-head .ach-chev { margin-left: auto; width: 26px; height: 26px; flex: none } .dc-post.open .dc-head .ach-chev { transform: rotate(180deg) }
+.dc-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--c) } .dc-has { font-size: .85rem }
+.dc-sw { position: relative; flex: none; width: 38px; height: 22px; cursor: pointer } .dc-sw input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer }
+.dc-sw span { position: absolute; inset: 0; border-radius: 999px; background: var(--line-2); transition: background .2s }
+.dc-sw span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s var(--ease) }
+.dc-sw input:checked + span { background: #2ecc71 } .dc-sw input:checked + span::after { transform: translateX(16px) } .dc-sw input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px }
+.dc-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 1.2rem; padding: .2rem 1rem 1rem; animation: admIn .3s var(--ease) both }
+.dc-form { display: grid; gap: .7rem; align-content: start } .dc-grid { display: flex; flex-wrap: wrap; gap: .7rem; align-items: end } .dc-grid > label:not(.dc-color) { flex: 1 1 10rem; min-width: 0 }
+.dc-form .field, .dc-form textarea { padding: .5rem .7rem } .dc-form textarea { min-height: 76px }
+.dc-color input { width: 44px; height: 38px; padding: 2px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); cursor: pointer }
+.dc-imgrow { gap: .5rem; align-items: center } .dc-imgrow .note { margin: 0; font-size: .78rem }
+.dc-prev { display: grid; gap: .5rem; align-content: start } .dc-msg { display: flex; gap: .7rem; padding: .8rem; border-radius: 8px; background: #313338; color: #dbdee1; font: 400 .82rem/1.35 system-ui, sans-serif }
+.dc-msg-b { min-width: 0; display: grid; gap: .3rem } .dc-bot { color: #f2f3f5; font-weight: 600 } .dc-bot span { margin-left: .35rem; padding: 0 .25rem; border-radius: 3px; background: #5865f2; color: #fff; font-size: .6rem; vertical-align: 1px }
+.dc-embed { display: grid; gap: .35rem; padding: .6rem .75rem; border-left: 4px solid var(--c); border-radius: 4px; background: #2b2d31; min-width: 0 }
+.dc-embed p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere } .dc-et { color: #00a8fc; font-weight: 600 } .dc-link { color: #00a8fc }
+.dc-f { display: grid; gap: .05rem; font-size: .76rem } .dc-f b { color: #f2f3f5 } .dc-f span { overflow-wrap: anywhere }
+.dc-eimg { width: 100%; max-height: 160px; object-fit: cover; border-radius: 4px }
+.dc-mention { justify-self: start; padding: 0 .2rem; border-radius: 3px; background: rgba(88, 101, 242, .3); color: #c9cdfb; font-weight: 500 }
+.dc-at { flex: none; padding: .05rem .4rem; border-radius: 999px; background: rgba(88, 101, 242, .25); color: #c9cdfb; font: 600 .7rem var(--f-mono) }
+.dc-ping { gap: .6rem; align-items: flex-start; flex-wrap: nowrap } .dc-ping input { margin-top: .2rem } .dc-ping .note { margin: 0; font-size: .78rem }
+.log-tbl td:first-child { white-space: nowrap; width: 1% } .log-tbl td:nth-child(2) { white-space: nowrap; width: 1% } .log-tbl td:last-child { overflow-wrap: anywhere }
+.log-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .8rem } .log-head h2 { margin: 0 } .log-head .row { gap: .6rem; flex-wrap: nowrap } .log-head .field { width: 16rem; max-width: 100% }
+@media (max-width: 760px) { .dc-hrow { flex-wrap: wrap } .dc-hrow > b:first-child { width: 100% } .dc-head .note { display: none } }
 .trk-add { flex-wrap: nowrap; gap: .6rem } .trk-add .field { width: 16rem; max-width: 100% }
 .trk-list { display: grid; gap: .8rem; margin-top: 1rem } .trk-list > .trk-box + .trk-box { margin-top: 0 }
 .trk-body { display: grid; gap: .7rem }
@@ -2172,7 +2200,13 @@ const I18N = {
     setDiscord: "Discord", dcHook: "Вебхук канала", dcHookSet: "Подключён", dcHookEnv: "Подключён через Cloudflare", dcHookNone: "Не задан: объявления не отправляются",
     dcHookPh: "https://discord.com/api/webhooks/…", dcHookBind: "Привязать", dcHookSure: "Точно отвязать?", dcHookBound: "Вебхук уже привязан: сначала отвяжите его", dcHookDel: "Отвязать", dcHookSet: "Привязан", dcImgBig: "Картинка слишком большая даже после сжатия, возьмите поменьше", dcHookBad: "Это не адрес вебхука Discord",
     dcHookHint: "Discord: настройки канала → Интеграции → Вебхуки → «Копировать URL вебхука». Адрес хранится только на сервере и после сохранения нигде не показывается.",
-    dcPostReg: "Регистрация открыта", dcPostQual: "Регистрация закрыта", dcPostPairs: "Начало парных заездов", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Текст объявления", dcTextHint: "Пусто — стандартный текст. Название этапа, старт и ссылка на сайт добавляются сами, у парных заездов ещё ссылка на трансляцию.",
+    dcBotName: "Имя бота", dcBotNameBad: "Discord не принимает имя бота со словами «discord» или «clyde»", dcPostTitle: "Заголовок", dcColor: "Цвет", dcLink: "Текст кнопки", dcOn: "Включено", dcOff: "Выключено", dcWhen: "Статус", dcPreview: "Так будет в Discord",
+    dcLinkReg: "Записаться", dcLinkQual: "Открыть этап", dcLinkPairs: "Смотреть сетку", dcLinkDone: "Полные результаты", dcLinkRemind: "Открыть этап", dcFStart: "Старт",
+    dcPostDone: "Итоги этапа", dcDefDone: "Этап завершён! Поздравляем победителей и спасибо всем участникам.", dcPostRemind: "Старт через час", dcDefRemind: "Через час стартует этап! Проверьте профиль и машину и будьте онлайн вовремя.",
+    dcWhenRemind: "За час до старта этапа", dcPing: "Упомянуть @everyone", dcPingHint: "Уведомит всех участников сервера. Если упоминание не срабатывает, дайте вебхуку право «Упоминание @everyone» в настройках канала.",
+    dcPodium: ["🥇 1 место", "🥈 2 место", "🥉 3 место"], dcBestTeam: "🏁 Лучшая команда", ptsShortDc: "очк.",
+    aLog: "Журнал", logHint: "Кто и что менял: статусы, оценки, сетка, номера, настройки, Discord. Хранятся последние 3000 записей.", logDemo: "Журнал ведёт сервер, в макете его нет.",
+    logSearch: "Поиск по журналу", logReload: "Обновить", logMore: "Показать ещё", logWhen: "Когда", logWho: "Кто", logWhat: "Что изменено", dcFSite: "Сайт", dcFStream: "Трансляция", dcPostReg: "Регистрация открыта", dcPostQual: "Регистрация закрыта", dcPostPairs: "Начало парных заездов", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Текст объявления", dcTextHint: "Пусто — стандартный текст. Название этапа, старт и ссылка на сайт добавляются сами, у парных заездов ещё ссылка на трансляцию.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Изображение", dcImgChange: "Сменить изображение", dcImgHint: "PNG, JPG или WebP до 5 МБ. Показывается под текстом объявления.", dcDemo: "В макете настройки Discord не сохраняются, они работают на сайте.",
     setGeneral: "Общие", setSocials: "Соцсети", setTracks: "Трассы", maxStageDefL: "Мест на этап по умолчанию", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
@@ -2322,7 +2356,13 @@ const I18N = {
     setDiscord: "Discord", dcHook: "Channel webhook", dcHookSet: "Connected", dcHookEnv: "Connected via Cloudflare", dcHookNone: "Not set: nothing is posted",
     dcHookPh: "https://discord.com/api/webhooks/…", dcHookBind: "Link", dcHookSure: "Unlink for sure?", dcHookBound: "A webhook is already linked: unlink it first", dcHookDel: "Unlink", dcHookSet: "Linked", dcImgBig: "The image is too large even after compressing, use a smaller one", dcHookBad: "That is not a Discord webhook address",
     dcHookHint: "Discord: channel settings → Integrations → Webhooks → “Copy Webhook URL”. The address stays on the server and is never shown after saving.",
-    dcPostReg: "Registration open", dcPostQual: "Registration closed", dcPostPairs: "Pair battles start", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Post text", dcTextHint: "Empty — the standard text. Round name, start and site link are added automatically; the pairs post also links the stream.",
+    dcBotName: "Bot name", dcBotNameBad: "Discord refuses a bot name with “discord” or “clyde” in it", dcPostTitle: "Title", dcColor: "Colour", dcLink: "Button text", dcOn: "On", dcOff: "Off", dcWhen: "Status", dcPreview: "How it looks in Discord",
+    dcLinkReg: "Записаться", dcLinkQual: "Открыть этап", dcLinkPairs: "Смотреть сетку", dcLinkDone: "Полные результаты", dcLinkRemind: "Открыть этап", dcFStart: "Start",
+    dcPostDone: "Round results", dcDefDone: "Этап завершён! Поздравляем победителей и спасибо всем участникам.", dcPostRemind: "Starts in an hour", dcDefRemind: "Через час стартует этап! Проверьте профиль и машину и будьте онлайн вовремя.",
+    dcWhenRemind: "An hour before the round starts", dcPing: "Mention @everyone", dcPingHint: "Notifies everyone on the server. If the mention doesn't work, give the webhook the “Mention @everyone” permission in the channel settings.",
+    dcPodium: ["🥇 1st", "🥈 2nd", "🥉 3rd"], dcBestTeam: "🏁 Best team", ptsShortDc: "pts",
+    aLog: "Log", logHint: "Who changed what: statuses, scores, bracket, numbers, settings, Discord. The latest 3000 entries are kept.", logDemo: "The server keeps the log; the mockup has none.",
+    logSearch: "Search the log", logReload: "Refresh", logMore: "Show more", logWhen: "When", logWho: "Who", logWhat: "What changed", dcFSite: "Site", dcFStream: "Stream", dcPostReg: "Registration open", dcPostQual: "Registration closed", dcPostPairs: "Pair battles start", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Post text", dcTextHint: "Empty — the standard text. Round name, start and site link are added automatically; the pairs post also links the stream.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Image", dcImgChange: "Change image", dcImgHint: "PNG, JPG or WebP up to 5 MB. Shown under the post text.", dcDemo: "Discord settings aren't saved in the mockup, they work on the site.",
     setGeneral: "General", setSocials: "Socials", setTracks: "Tracks", maxStageDefL: "Default spots per round", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
@@ -2472,7 +2512,7 @@ const isBanned = name => sanctionsOf(name).some(s => s.type === "ban");
 const regCount = x => HOSTED ? stageRows(x).filter(([p]) => !p.mine).length : x.count;
 // in a stage: registered, or entered by an admin (x.add); test drivers only by an admin
 const entered = (x, p) => x.add?.includes(p.name) || (!p.test && (p.mine ? S.regs.includes(x.id) : !HOSTED || p.regs?.includes(x.id)));
-const stageRows = x => roster().map((p, i) => [p, i]).filter(([p]) => !x.out.includes(p.name) && entered(x, p)
+const stageRows = x => roster().map((p, i) => [p, i]).filter(([p]) => !(x.out ?? []).includes(p.name) && entered(x, p)
   && !isBanned(p.name) && !sanctionsOf(p.name).some(s => s.type === "dq" && s.tour === x.id));
 S.scores ??= {};
 const DATA_VER = 3;
@@ -2525,7 +2565,7 @@ const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJ
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -2921,6 +2961,9 @@ const teamStagePts = (x, tm) => { if (x.status !== "done") return 0; // only ent
   const best = ms.map(n => TEAM_TBL[bandOf(stagePlace(x, n))] ?? 0).sort((a, b) => b - a).slice(0, 2).reduce((s, v) => s + v, 0);
   return Math.round((best + Math.max(0, ...ms.map(n => qualBonus(x, n)))) * factorOf(x)); };
 const liveRound = x => BR_ROUNDS.indexOf(x.status);
+// top three pilots and the best team of a finished stage, as [name, points]
+const podiumOf = x => ({ p: bcRows(x).map(p => [p.name, stagePts(x, p.name)]).filter(z => z[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 3),
+  t: stageEntries(x).filter(r => r.ok).map(r => [r.tm.name, teamStagePts(x, r.tm)]).filter(z => z[1] > 0).sort((a, b) => b[1] - a[1])[0] || null });
 const brPilot = (x, m, side, edit) => { const n = m[side], s = m[side === "a" ? "sa" : "sb"];
   if (!n) return `<div class="bm-p empty"><span class="bm-seed"></span><span class="bm-ava"></span><span class="bm-n">${m.done || !m.r ? t("bye") : "…"}</span></div>`;
   return `<div class="bm-p ${m.win === n ? "win" : m.win ? "lose" : ""}"><span class="bm-seed">${s || ""}</span>${pAva(roster().find(p => p.name === n) || { name: n }, "bm-ava")}<span class="bm-n">${esc(n)}</span>${edit && (m.a && m.b || m.bye)
@@ -4102,15 +4145,15 @@ const adminSponsors = () => `<div class="head"><p class="note" style="margin:0">
 // Discord announcements: the server keeps the webhook (write-only) and each post's own text and picture
 let DC = null, dcLoading = false;
 function dcFetch() {
-  if (!HOSTED) return void (DC ??= { hook: false, envHook: false, reg: {}, qualifying: {}, top32: {} });
+  if (!HOSTED) return void (DC ??= { hook: false, envHook: false, name: "", reg: {}, qualifying: {}, top32: {}, done: {}, remind: {} });
   if (DC || dcLoading) return;
   dcLoading = true;
   api("/api/discord").then(r => { DC = r; dcLoading = false; render(); }, () => { dcLoading = false; toast(t("netErr")); });
 }
 function dcSave(extra = {}) {
   if (!HOSTED) { if ("hook" in extra) DC.hook = !!extra.hook; return render(); }
-  api("/api/discord", { method: "PUT", body: JSON.stringify({ ...Object.fromEntries(["reg", "qualifying", "top32"].map(k => [k, { text: DC[k]?.text || "" }])), ...extra }) })
-    .then(r => { DC = r; toast(t("saved")); render(); }, e => toast(t({ 400: "dcHookBad", 409: "dcHookBound", 413: "dcImgBig" }[e.message] || "netErr")));
+  api("/api/discord", { method: "PUT", body: JSON.stringify({ name: DC.name || "", ...Object.fromEntries(DC_POSTS.map(([k]) => [k, (({ text, title, link, color, off, ping }) => ({ text, title, link, color, off, ping }))(DC[k] || {})])), ...extra }) })
+    .then(r => { DC = r; toast(t("saved")); render(); }, e => { toast(t({ 400: "dcHookBad", 409: "dcHookBound", 413: "dcImgBig", 422: "dcBotNameBad" }[e.message] || "netErr")); DC = null; render(); }); // a refused save reloads what the server has
 }
 // a picture for a post: up to 1200 px on the long side, WebP (JPEG where the browser can't), at most ~900 KB, sent as a file
 function readBanner(fileObj, done, fail) {
@@ -4135,24 +4178,47 @@ function dcImgSend(k, blob) {
     .then(r => { DC = r; toast(t("saved")); render(); }, e => toast(t(e.message === "413" ? "dcImgBig" : "netErr")));
 }
 const dcImgSrc = (k, v) => v.url || `${API}/api/discord/img/${k}?v=${v.at || 0}`;
+// each post: [key, title, default colour, button text, default text, the stage status that sends it]
+const DC_POSTS = [["remind", "dcPostRemind", "#3498db", "dcLinkRemind", "dcDefRemind"], ["reg", "dcPostReg", "#2ecc71", "dcLinkReg", "dcDefReg"], ["qualifying", "dcPostQual", "#e5484d", "dcLinkQual", "dcDefQual"],
+  ["top32", "dcPostPairs", "#ff6b1a", "dcLinkPairs", "dcDefPairs"], ["done", "dcPostDone", "#f1c40f", "dcLinkDone", "dcDefDone"]];
 function adminDiscord() {
   dcFetch();
   if (!DC) return `<div class="box panel empty"><p class="note">…</p></div>`;
-  const on = DC.hook || DC.envHook;
-  const post = (k, l, d) => { const v = DC[k] || {}; return `<article class="box panel dc-post" data-s="${k}"><h3>${t(l)}</h3>
-    <label class="fieldlabel">${t("dcText")}<textarea data-dc="${k}" maxlength="1500" placeholder="${esc(t(d))}">${esc(v.text || "")}</textarea></label>
-    <p class="note">${t("dcTextHint")}</p>
-    ${v.img ? `<img class="dc-img" src="${esc(dcImgSrc(k, v))}" alt="">` : ""}
-    <div class="row" style="gap:.5rem"><label class="btn line sm">${t(v.img ? "dcImgChange" : "dcImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-dcimg="${k}" hidden></label>
-      ${v.img ? `<button class="btn text sm danger" data-act="dcImgDel" data-v="${k}">${t("removeLogo")}</button>` : ""}</div>
-    <p class="note">${t("dcImgHint")}</p></article>`; };
+  const on = DC.hook || DC.envHook, x = currentTour() || TOURS[0];
+  const imgBtns = (k, v, add, change) => `<label class="btn line sm">${t(v.img ? change : add)}<input type="file" accept="image/png,image/jpeg,image/webp" data-dcimg="${k}" hidden></label>
+    ${v.img ? `<button class="btn text sm danger" data-act="dcImgDel" data-v="${k}">${t("removeLogo")}</button>` : ""}`;
+  // a small copy of the Discord message, built from the same values the server will send
+  const preview = (k, v, d) => { const title = v.title || t(d[1]), color = v.color || d[2], link = v.link || t(d[3]), site = location.origin + location.pathname + "#t-" + (x?.id ?? "");
+    const pod = k === "done" && x?.status === "done" ? podiumOf(x) : { p: [["Pilot 1", 150], ["Pilot 2", 120], ["Pilot 3", 90]], t: ["Team", 114] }; // a sample until a stage is finished
+    const fields = [["reg", "qualifying", "remind"].includes(k) && x && when(x) !== "—" && [t("dcFStart"), when(x) + " " + t("msk")],
+      ...(k === "done" ? [...pod.p.map((z, i) => [t("dcPodium")[i], `${z[0]} — ${z[1]} ${t("ptsShortDc")}`]), pod.t && [t("dcBestTeam"), `${pod.t[0]} — ${pod.t[1]} ${t("ptsShortDc")}`]] : []),
+      [t("dcFSite"), site], ["top32", "remind"].includes(k) && twitchChan() && [t("dcFStream"), "twitch.tv/" + twitchChan()]].filter(Boolean);
+    return `<div class="dc-msg"><span class="dc-ava">LDS</span><div class="dc-msg-b"><b class="dc-bot">${esc(DC.name || "LDS")}<span>BOT</span></b>${v.ping ? '<span class="dc-mention">@everyone</span>' : ""}
+      <div class="dc-embed" style="--c:${esc(color)}"><b class="dc-et">${esc(title)} · ${t("stage")} ${x?.stage ?? 1} — ${esc(x?.track || "")}</b>
+        <p>${esc(v.text || t(d[4]))}</p><p class="dc-link">${esc(link)} →</p>
+        ${fields.map(([n, val]) => `<div class="dc-f"><b>${esc(n)}</b><span>${esc(val)}</span></div>`).join("")}
+        ${v.img ? `<img class="dc-eimg" src="${esc(dcImgSrc(k, v))}" alt="">` : ""}</div></div></div>`; };
+  const post = d => { const [k] = d, v = DC[k] || {}, open = tOpenIs("dc-" + k), color = v.color || d[2];
+    return `<div class="dc-post ${v.off ? "off" : ""} ${open ? "open" : ""}" style="--c:${esc(color)}">
+      <div class="dc-row"><button class="dc-head" data-act="dcOpen" data-v="${k}" aria-expanded="${open}"><i class="dc-dot"></i><b>${esc(v.title || t(d[1]))}</b>
+        <span class="note">${k === "remind" ? t("dcWhenRemind") : `${t("dcWhen")}: ${t(k)}`}</span>${v.ping ? '<span class="dc-at">@everyone</span>' : ""}${v.img ? '<span class="dc-has" aria-hidden="true">🖼</span>' : ""}<i class="ach-chev" aria-hidden="true"></i></button>
+        <label class="dc-sw" title="${t(v.off ? "dcOff" : "dcOn")}"><input type="checkbox" data-dc="${k}:on" ${v.off ? "" : "checked"} aria-label="${t("dcOn")}"><span></span></label></div>
+      ${open ? `<div class="dc-body"><div class="dc-form">
+        <div class="dc-grid"><label class="fieldlabel">${t("dcPostTitle")}<input class="field" data-dc="${k}:title" value="${esc(v.title || "")}" maxlength="100" placeholder="${esc(t(d[1]))}"></label>
+          <label class="fieldlabel">${t("dcLink")}<input class="field" data-dc="${k}:link" value="${esc(v.link || "")}" maxlength="40" placeholder="${esc(t(d[3]))}"></label>
+          <label class="fieldlabel dc-color">${t("dcColor")}<input type="color" data-dc="${k}:color" value="${esc(color)}"></label></div>
+        <label class="row dc-ping"><input type="checkbox" data-dc="${k}:ping" ${v.ping ? "checked" : ""}><span class="stack" style="gap:.1rem"><b>${t("dcPing")}</b><span class="note">${t("dcPingHint")}</span></span></label>
+        <label class="fieldlabel">${t("dcText")}<textarea data-dc="${k}:text" rows="3" maxlength="1500" placeholder="${esc(t(d[4]))}">${esc(v.text || "")}</textarea></label>
+        <div class="row dc-imgrow">${imgBtns(k, v, "dcImg", "dcImgChange")}<span class="note">${t("dcImgHint")}</span></div>
+      </div><div class="dc-prev"><span class="label">${t("dcPreview")}</span>${preview(k, v, d)}</div></div>` : ""}</div>`; };
   return `${HOSTED ? "" : `<p class="note">${t("dcDemo")}</p>`}
-    <div class="box panel dc-hook"><div class="head"><h3>${t("dcHook")}</h3><span class="dc-st ${on ? "on" : ""}">${t(DC.hook ? "dcHookSet" : DC.envHook ? "dcHookEnv" : "dcHookNone")}</span></div>
-      ${DC.hook ? `<div class="row dc-bound"><span class="dc-mask mono">https://discord.com/api/webhooks/••••••</span><button class="btn line sm danger" data-act="dcHookDel">${pending === "dchook" ? t("dcHookSure") : t("dcHookDel")}</button></div>`
-        : `<div class="row" style="gap:.6rem"><input class="field" id="dc-hook" type="password" autocomplete="off" spellcheck="false" placeholder="${t("dcHookPh")}" aria-label="${t("dcHook")}">
-        <button class="btn sm" data-act="dcBind">${t("dcHookBind")}</button></div>`}
+    <div class="box panel dc-hook">
+      <div class="dc-hrow"><b>${t("dcHook")}</b><span class="dc-st ${on ? "on" : ""}">${t(DC.hook ? "dcHookSet" : DC.envHook ? "dcHookEnv" : "dcHookNone")}</span>
+        ${DC.hook ? `<span class="dc-mask mono">discord.com/api/webhooks/••••••</span><button class="btn line sm danger" data-act="dcHookDel">${pending === "dchook" ? t("dcHookSure") : t("dcHookDel")}</button>`
+          : `<input class="field" id="dc-hook" type="password" autocomplete="off" spellcheck="false" placeholder="${t("dcHookPh")}" aria-label="${t("dcHook")}"><button class="btn sm" data-act="dcBind">${t("dcHookBind")}</button>`}</div>
+      <div class="dc-hrow"><b>${t("dcBotName")}</b><input class="field dc-name" data-dc="name" value="${esc(DC.name || "")}" maxlength="80" placeholder="LDS" aria-label="${t("dcBotName")}"></div>
       <p class="note">${t("dcHookHint")}</p></div>
-    <div class="dc-posts">${post("reg", "dcPostReg", "dcDefReg")}${post("qualifying", "dcPostQual", "dcDefQual")}${post("top32", "dcPostPairs", "dcDefPairs")}</div>`;
+    <div class="dc-posts">${DC_POSTS.map(post).join("")}</div>`;
 }
 // settings: one compact page per topic; sponsors and achievements live here too
 let setTab = "general";
@@ -4173,19 +4239,39 @@ function adminSettings() {
 }
 
 // sections by role: judges and streamers see seasons read-only (judges still score in the island), technical assistants only the rules
-const TAB_PERM = { seasons: "seasons", pilots: "edit", teams: "edit", rules: "rules", access: "edit", settings: "edit" };
+const TAB_PERM = { seasons: "seasons", pilots: "edit", teams: "edit", rules: "rules", access: "edit", settings: "edit", log: "edit" };
+// the action log lives on the server: read a page at a time, newest first; the search filters what is loaded, in place
+let LOG = null, logLoading = false, logQ = "";
+function logFetch(more) {
+  if (!HOSTED || logLoading) return;
+  logLoading = true;
+  const before = more ? LOG?.items.at(-1)?.id : 0;
+  api("/api/log" + (before ? "?before=" + before : "")).then(r => { LOG = more && LOG ? { items: [...LOG.items, ...r.items], more: r.more } : r; logLoading = false; render(); },
+    () => { logLoading = false; toast(t("netErr")); });
+}
+const logTime = at => { const d = new Date(at), p = n => String(n).padStart(2, "0"); return `${p(d.getDate())}.${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; };
+function adminLog() {
+  const head = `<div class="log-head"><h2>${t("aLog")}</h2>${HOSTED && LOG ? `<div class="row"><input class="field" id="log-q" value="${esc(logQ)}" placeholder="${t("logSearch")}" aria-label="${t("logSearch")}"><button class="btn line sm" data-act="logReload">${t("logReload")}</button></div>` : ""}</div>`;
+  if (!HOSTED) return `${head}<div class="box panel empty"><p class="note">${t("logDemo")}</p></div>`;
+  if (!LOG) { logFetch(); return `${head}<div class="box panel empty"><p class="note">…</p></div>`; }
+  const q = logQ.trim().toLowerCase();
+  return `${head}<p class="note" style="margin:0">${t("logHint")}</p>
+    <div class="tablebox panel"><table class="log-tbl"><thead><tr><th>${t("logWhen")}</th><th>${t("logWho")}</th><th>${t("logWhat")}</th></tr></thead><tbody>${LOG.items.map(i =>
+      `<tr ${q && !(i.who + " " + i.what).toLowerCase().includes(q) ? "hidden" : ""}><td class="mono muted">${logTime(i.at)}</td><td>${esc(i.who)}</td><td>${esc(i.what)}</td></tr>`).join("") || `<tr><td colspan="3" class="note">${t("nothing")}</td></tr>`}</tbody></table></div>
+    ${LOG.more ? `<div><button class="btn line sm" data-act="logMore">${t("logMore")}</button></div>` : ""}`;
+}
 function admin() {
   if (!hasPanel()) return `<div class="box panel empty"><p class="muted">${S.user ? t("adminOnly") : t("loginFirst")}</p><div><a class="btn line" href="#profile">${t("profile")} →</a></div></div>`;
   const tabs = Object.keys(TAB_PERM).filter(k => can(TAB_PERM[k]));
   if (!tabs.includes(aTab)) aTab = tabs[0] || "";
   const item = (k, l, badge) => tabs.includes(k) ? `<button data-tab="${k}" aria-pressed="${aTab === k}">${t(l)}${badge ? `<span class="badge">${badge}</span>` : ""}</button>` : "";
-  const view = { seasons: adminSeasons, pilots: adminPilots, teams: adminTeams, rules: adminRules, access: adminAccess, settings: adminSettings }[aTab] || (() => `<p class="note">${t("noPanelRole")}</p>`);
+  const view = { seasons: adminSeasons, pilots: adminPilots, teams: adminTeams, rules: adminRules, access: adminAccess, settings: adminSettings, log: adminLog }[aTab] || (() => `<p class="note">${t("noPanelRole")}</p>`);
   // any move to another admin view (section, season, stage, sub-tab, team, settings tab, achievement) plays the entry animation; saving a field doesn't
   const top = [aTab, aSeason, aTour].join("|"), vk = [top, aSub, aEditTeam, setTab, achTab, achSel].join("|");
   admLevel = vk === admView ? "" : admView.startsWith(top + "|") ? "adm-sub" : "adm-enter"; admView = vk; admAnim = !!admLevel;
   return `<div class="adm">
     <aside class="adm-side"><span class="label acc">${t("adminPanel")}</span><span class="note">${roleLabel(roleOf(S.user.name))}</span>
-      ${item("seasons", "aSeasons")}${item("pilots", "aSanctions")}${item("teams", "aTeams")}${item("rules", "aRules")}${item("access", "aAccess")}${item("settings", "aSettings")}
+      ${item("seasons", "aSeasons")}${item("pilots", "aSanctions")}${item("teams", "aTeams")}${item("rules", "aRules")}${item("access", "aAccess")}${item("settings", "aSettings")}${item("log", "aLog")}
       ${can("bc") ? `<a class="bc-link" href="#broadcast">${t("broadcastBtn")}</a>` : ""}</aside>
     <div class="adm-main stack ${can(aTab === "rules" ? "rules" : "edit") ? "" : "ro"} ${admLevel}" style="gap:1.2rem"><span class="note err" role="status">${adminMsg}</span>${view()}</div>
   </div>`;
@@ -4201,7 +4287,8 @@ function adminEdit([kind, id, f, k], v) {
   }
   if (kind === "tour") {
     const x = TOURS.find(z => z.id === +id);
-    if (f === "status") { if (BR_ROUNDS.includes(v) && !brOf(x)) brSet(x); if (STATUSES.includes(v)) x.status = v; } // the bracket freezes from the qualifying as entered, before the status moves on
+    if (f === "status") { if (BR_ROUNDS.includes(v) && !brOf(x)) brSet(x); if (STATUSES.includes(v)) x.status = v;
+      if (v === "done") (S.podiums ??= {})[x.id] = podiumOf(x); } // the bracket freezes from the qualifying as entered, before the status moves on
     else if (f === "max") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) x.max = n; else return render(); }
     else if (f === "maxTeams") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) x.maxTeams = n; else return render(); }
     else if (f === "start") { // the picker gives "YYYY-MM-DDTHH:MM"; stored as "DD.MM.YYYY HH:MM" (Moscow), the dates text follows it
@@ -4228,7 +4315,7 @@ function adminEdit([kind, id, f, k], v) {
     const drop = l => { const at = l.indexOf(name); if (at >= 0) l.splice(at, 1); };
     x.add ??= [];
     if (v) { drop(x.out); if (!stageRows(x).some(([p]) => p.name === name)) x.add.push(name); }
-    else { drop(x.add); x.out.push(name); }
+    else { drop(x.add); (x.out ??= []).push(name); }
     return dbSave();
   }
   if (kind === "grp") {
@@ -4525,7 +4612,7 @@ function delTestPilot(name) {
   if (i < 0) return;
   confirmTwice(`kick-${name}`, () => {
     PILOTS.splice(i, 1);
-    TOURS.forEach(x => { x.add = (x.add || []).filter(z => z !== name); x.out = x.out.filter(z => z !== name); if (x.groups) delete x.groups[name]; });
+    TOURS.forEach(x => { x.add = (x.add || []).filter(z => z !== name); x.out = (x.out || []).filter(z => z !== name); if (x.groups) delete x.groups[name]; });
     dbSave();
   });
 }
@@ -4782,7 +4869,7 @@ try { lastRaw = localStorage.getItem("lds"); } catch {}
 // live judging data (on-air state + scores) is shared through the artifact db, so the judges island, the broadcast panel
 // and overlays stay in step in every tab or device; without db (local file, signed out) only this browser is in sync
 const tourStatuses = () => Object.fromEntries(TOURS.map(x => [x.id, x.status]));
-const liveBody = () => JSON.stringify({ bc: S.bc ?? null, scores: S.scores ?? {}, statuses: tourStatuses(), brackets: S.brackets ?? {} });
+const liveBody = () => JSON.stringify({ bc: S.bc ?? null, scores: S.scores ?? {}, statuses: tourStatuses(), brackets: S.brackets ?? {}, podiums: S.podiums ?? {} });
 function pushLive() {
   if (!liveDoc) return;
   clearTimeout(liveTimer);
@@ -4853,7 +4940,7 @@ function applyMe({ user, admin, owner, role }) {
 }
 function applyRemote(st) {
   const mine = { user: S.user, team: S.team, num: S.num, car: S.car, about: S.about, regs: S.regs, regAt: S.regAt, created: S.created, declined: S.declined, lang: S.lang, teamRegs: S.teamRegs, teamReqs: S.teamReqs };
-  reloadState(JSON.stringify({ ...S, db: st.db || undefined, bc: st.live?.bc ?? undefined, scores: st.live?.scores ?? {}, brackets: st.live?.brackets ?? {} }));
+  reloadState(JSON.stringify({ ...S, db: st.db || undefined, bc: st.live?.bc ?? undefined, scores: st.live?.scores ?? {}, brackets: st.live?.brackets ?? {}, podiums: st.live?.podiums ?? {} }));
   Object.assign(S, mine);
   TOURS.forEach(x => { const v = st.live?.statuses?.[x.id]; if (STATUSES.includes(v)) x.status = v; });
   USERS = st.users || []; SRV_TEAMS = st.teams || [];
@@ -4970,6 +5057,7 @@ document.addEventListener("click", e => {
   if (ACT_PERM[el.dataset.act] && !can(ACT_PERM[el.dataset.act])) return;
   if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "dcHookDel", "trkConfDel", "trkPartDel", "trkDel", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "founderPass", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
   if (el.dataset.tab || el.dataset.season || el.dataset.qt || el.dataset.sub) admAnim = true;
+  if (el.dataset.tab === "log") LOG = null; // opening the log reads it fresh
   if (el.dataset.tab) { aTab = el.dataset.tab; aSeason = 0; aTour = 0; adminMsg = ""; return render(); }
   if (el.dataset.season) { aSeason = +el.dataset.season; aTour = 0; return render(); }
   if (el.dataset.qt) { aTour = +el.dataset.qt; aSub = "main"; return render(); }
@@ -5069,7 +5157,10 @@ document.addEventListener("click", e => {
     spLogoDel: () => { const s = SPONSORS[id]; if (!s) return; delete s.img; dbSave(); },
     dcHookDel: () => confirmTwice("dchook", () => dcSave({ hook: "" })),
     dcBind: () => { const inp = document.getElementById("dc-hook"), v = inp?.value.trim(); if (!v || !DC) return inp?.focus(); inp.value = ""; dcSave({ hook: v }); },
+    logReload: () => { LOG = null; render(); },
+    logMore: () => logFetch(true),
     dcImgDel: () => { const k = el.dataset.v; if (DC?.[k]?.img) dcImgSend(k, null); },
+    dcOpen: () => { const k = "dc-" + el.dataset.v; tOpen[k] = !tOpenIs(k); render(); },
     delSponsor: () => confirmTwice(`sp${id}`, () => { SPONSORS.splice(id, 1); dbSave(); }),
     // demo switch: turning it off also drops the role granted in the Access section
     toggleAdmin: () => { if (Object.keys(ROLES).length) return; ROLES[S.user.name] = "owner"; dbSave(); }, // demo only, while nobody has a role: the first one becomes head admin
@@ -5185,6 +5276,8 @@ document.addEventListener("submit", e => {
   }
 });
 document.addEventListener("input", e => {
+  if (e.target.id === "log-q") { logQ = e.target.value; const q = logQ.trim().toLowerCase();
+    document.querySelectorAll(".log-tbl tbody tr").forEach(tr => { tr.hidden = !!q && !tr.textContent.toLowerCase().includes(q); }); return; }
   if (e.target.id === "invq") { const q = e.target.value.trim().toLowerCase(); let n = 0;
     document.querySelectorAll("#invlist li").forEach(li => { const on = li.dataset.q.includes(q); li.hidden = !on; n += on; });
     document.getElementById("invnone").hidden = n > 0; return; }
@@ -5217,8 +5310,9 @@ document.addEventListener("change", e => {
   if (e.target.id === "teamrep") { const tm = teamById(S.team), ref = myTeamRef(), v = e.target.value;
     if (!isFounder(tm) || !ref || (v && !membersOf(tm).some(p => p.name === v))) return;
     if (v) ref.rep = v; else delete ref.rep; toast(t("saved")); return saveTeam(); }
-  if (e.target.dataset.dc && isAdmin() && DC) { const k = e.target.dataset.dc, v = e.target.value.trim();
-    DC[k] = { ...DC[k], text: v.slice(0, 1500) }; return dcSave(); }
+  if (e.target.dataset.dc && isAdmin() && DC) { const [k, f] = e.target.dataset.dc.split(":"), v = e.target.type === "checkbox" ? e.target.checked : e.target.value.trim();
+    if (k === "name") { DC.name = v.slice(0, 80); return dcSave(); }
+    DC[k] = { ...DC[k], ...(f === "on" ? { off: !v } : f === "ping" ? { ping: v } : f === "color" ? { color: v } : { [f]: v.slice(0, { text: 1500, title: 100, link: 40 }[f] || 40) }) }; return dcSave(); }
   if (e.target.dataset.dcimg && isAdmin() && DC) { const k = e.target.dataset.dcimg, f = e.target.files?.[0];
     return f && readBanner(f, blob => dcImgSend(k, blob), big => toast(t(big ? "dcImgBig" : "logoBad"))); }
   if (e.target.dataset.splogo && isAdmin()) { const s = SPONSORS[+e.target.dataset.splogo], f = e.target.files?.[0];

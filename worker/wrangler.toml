@@ -2,7 +2,11 @@ name = "lds-api"
 main = "src/index.js"
 compatibility_date = "2025-06-01"
 
+[triggers]
+crons = ["*/5 * * * *"] # one-hour reminders in Discord
+
 [vars]
+API_URL = "https://lds-api.lds-api.workers.dev"
 # the GitHub Pages address of the site, e.g. "https://yourname.github.io" (several: comma separated)
 SITE_ORIGIN = "https://lateraldriftseries.github.io"
 # the site page itself, used for links in Discord posts

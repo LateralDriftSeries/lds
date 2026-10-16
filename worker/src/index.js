@@ -21,6 +21,8 @@ export default {
       return json({ error: e instanceof HttpError ? e.message : "server error" }, status, cors);
     }
   },
+  // every 5 minutes (wrangler.toml [triggers]): stages starting within the hour get their reminder
+  async scheduled(ev, env, ctx) { ctx.waitUntil(remind(env, Date.now())); },
 };
 
 class HttpError extends Error { constructor(status, msg) { super(msg); this.status = status; } }
@@ -39,17 +41,18 @@ async function route(req, env, url) {
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (m === "POST" && p === "/api/ready") return postReady(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (p === "/api/discord") {
-    await requireRole(req, env, ["owner", "admin"]);
+    const { sid } = await requireRole(req, env, ["owner", "admin"]);
     if (m === "GET") return getDiscord(env);
-    if (m === "PUT") return putDiscord(req, env);
+    if (m === "PUT") return putDiscord(req, env, sid);
   }
   if (p.startsWith("/api/discord/img/")) {
     const st = p.slice(17);
     if (m === "GET") return discordImg(env, st);
-    await requireRole(req, env, ["owner", "admin"]);
-    if (m === "PUT") return putDiscordImg(req, env, st);
-    if (m === "DELETE") return delDiscordImg(env, st);
+    const { sid } = await requireRole(req, env, ["owner", "admin"]);
+    if (m === "PUT") return putDiscordImg(req, env, st, sid);
+    if (m === "DELETE") return delDiscordImg(env, st, sid);
   }
+  if (m === "GET" && p === "/api/log") return getLog(env, url, await requireRole(req, env, ["owner", "admin"]));
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
   if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
   if (m === "POST" && p === "/api/team/create") return createTeam(req, env, await auth(req, env));
@@ -323,13 +326,14 @@ async function disbandTeam(req, env, sid) {
 }
 
 // admins write the league data, but only the head admin changes roles; a technical assistant writes only the rules
-async function putDb(req, env, { role }) {
+async function putDb(req, env, { role, sid }) {
   const body = await readJson(req, MAX_DB);
   if (!body || typeof body.db !== "object" || !body.db) throw new HttpError(400, "db required");
   const stored = (await kvGet(env, "db")) || {};
   const next = role === "tech" ? { ...stored, rules: body.db.rules ?? stored.rules } : body.db;
   if (role !== "owner") for (const k of ["roleIds", "adminIds", "roles"]) next[k] = stored[k];
   await kvSet(env, "db", next);
+  await logIt(env, sid, await dbChanges(env, stored, next));
   const ann = await kvGet(env, "announced"), ids = new Set((next.tours || []).map(x => String(x.id)));
   if (ann && Object.keys(ann).some(k => !ids.has(k.split(":")[0]))) await kvSet(env, "announced", Object.fromEntries(Object.entries(ann).filter(([k]) => ids.has(k.split(":")[0]))));
   if (role !== "tech" && body.live && typeof body.live === "object") await kvSet(env, "live", keepCrew(await kvGet(env, "live"), body.live));
@@ -337,11 +341,12 @@ async function putDb(req, env, { role }) {
   return json({ ok: true });
 }
 
-async function putLive(req, env) {
+async function putLive(req, env, { sid }) {
   const body = await readJson(req, MAX_DB), stored = await kvGet(env, "live");
   await kvSet(env, "live", keepCrew(stored, body));
   await bump(env);
-  await announce(env, stored?.statuses || {}, body?.statuses || {}, new URL(req.url).origin);
+  await logIt(env, sid, liveChanges(await kvGet(env, "db"), stored || {}, body || {}));
+  await announce(env, stored?.statuses || {}, body?.statuses || {}, new URL(req.url).origin, body?.podiums || {});
   return json({ ok: true });
 }
 
@@ -353,8 +358,10 @@ const ANNOUNCE = {
   reg: { color: 0x2ecc71, title: "Регистрация открыта", text: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", link: "Записаться" },
   qualifying: { color: 0xe5484d, title: "Регистрация закрыта", text: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.", link: "Открыть этап" },
   top32: { color: 0xff6b1a, title: "Начало парных заездов", text: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", link: "Смотреть сетку" },
+  done: { color: 0xf1c40f, title: "Итоги этапа", text: "Этап завершён! Поздравляем победителей и спасибо всем участникам.", link: "Полные результаты" },
+  remind: { color: 0x3498db, title: "Старт через час", text: "Через час стартует этап! Проверьте профиль и машину и будьте онлайн вовремя.", link: "Открыть этап" }, // sent by the cron, not by a status
 };
-async function announce(env, before, after, origin) {
+async function announce(env, before, after, origin, podiums = {}) {
   const fresh = Object.entries(after).filter(([k, s]) => ANNOUNCE[s] && before[k] !== s);
   if (!fresh.length) return;
   const [db, done, cfg] = await Promise.all([kvGet(env, "db"), kvGet(env, "announced"), kvGet(env, "discord")]), seen = done || {}, hook = cfg?.hook || env.DISCORD_WEBHOOK;
@@ -363,45 +370,82 @@ async function announce(env, before, after, origin) {
   if (!posts.length) return;
   for (const [k, s] of posts) seen[`${k}:${s}`] = Date.now();
   await kvSet(env, "announced", seen);
-  await Promise.allSettled(posts.map(([k, s]) => postDiscord(env, db, k, s, hook, cfg?.[s], origin)));
+  await Promise.allSettled(posts.filter(([, s]) => cfg?.[s]?.off !== true).map(([k, s]) => postDiscord(env, db, k, s, hook, cfg, origin, podiums[k])));
 }
-async function postDiscord(env, db, id, status, hook, own, origin) {
+// the start is "DD.MM.YYYY HH:MM" Moscow time (UTC+3)
+const startMs = s => { const m = /(\d{2})\.(\d{2})\.(\d{4})\s+(\d{1,2}):(\d{2})/.exec(s || ""); return m ? Date.UTC(+m[3], +m[2] - 1, +m[1], +m[4] - 3, +m[5]) : 0; };
+// one reminder per stage and start time, between 60 and 30 minutes before it (a start set closer than that gets none)
+async function remind(env, now) {
+  const [db, live, done, cfg] = await Promise.all([kvGet(env, "db"), kvGet(env, "live"), kvGet(env, "announced"), kvGet(env, "discord")]);
+  const hook = cfg?.hook || env.DISCORD_WEBHOOK, seen = done || {};
+  if (!hook) return;
+  const due = (db?.tours || []).filter(x => { const st = live?.statuses?.[x.id] ?? x.status, left = startMs(x.start) - now;
+    return ["reg", "qualifying"].includes(st) && left > 30 * 60e3 && left <= 60 * 60e3 && !seen[`${x.id}:remind:${x.start}`]; });
+  if (!due.length) return;
+  for (const x of due) seen[`${x.id}:remind:${x.start}`] = now;
+  await kvSet(env, "announced", seen);
+  if (cfg?.remind?.off === true) return;
+  await Promise.allSettled(due.map(x => postDiscord(env, db, String(x.id), "remind", hook, cfg, env.API_URL || "https://lds-api.lds-api.workers.dev")));
+}
+async function postDiscord(env, db, id, status, hook, cfg, origin, podium) {
+  const own = cfg?.[status];
   const x = (db?.tours || []).find(z => String(z.id) === id);
   if (!x) return;
   const a = ANNOUNCE[status], season = (db.seasons || []).find(z => z.id === x.season)?.name || "";
   const site = String(env.SITE_URL || "https://lateraldriftseries.github.io/lds/").replace(/\/?$/, "/") + "#t-" + x.id;
   const twitch = String(db.settings?.socials?.Twitch || "").match(/twitch\.tv\/([A-Za-z0-9_]{3,25})\/?$/)?.[1];
-  const fields = [status !== "top32" && (/\d/.test(x.start || "") ? { name: "Старт", value: String(x.start).slice(0, 100) + " МСК", inline: true } : x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true }),
+  // the podium comes from the site that finished the stage (the scoring lives there); names and points are only shown
+  const pod = podium && typeof podium === "object" ? podium : {}, cell = z => Array.isArray(z) && z[0] ? `${String(z[0]).slice(0, 64)} — ${Number(z[1]) || 0} очк.` : "";
+  const fields = [["reg", "qualifying", "remind"].includes(status) && (/\d/.test(x.start || "") ? { name: "Старт", value: String(x.start).slice(0, 100) + " МСК", inline: true } : x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true }),
+    ...(status === "done" ? [...(Array.isArray(pod.p) ? pod.p.slice(0, 3) : []).map((z, i) => cell(z) && { name: ["🥇 1 место", "🥈 2 место", "🥉 3 место"][i], value: cell(z), inline: true }),
+      cell(pod.t) && { name: "🏁 Лучшая команда", value: cell(pod.t), inline: false }] : []),
     { name: "Сайт", value: site, inline: false },
-    status === "top32" && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
-  const embed = { title: `${a.title} · Этап ${x.stage} — ${String(x.track || "").slice(0, 60)}`, url: site, color: a.color, description: `${own?.text || a.text}\n\n[${a.link} →](${site})`,
+    ["top32", "remind"].includes(status) && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
+  const color = /^#[0-9a-f]{6}$/i.test(own?.color || "") ? parseInt(own.color.slice(1), 16) : a.color;
+  const embed = { title: `${own?.title || a.title} · Этап ${x.stage} — ${String(x.track || "").slice(0, 60)}`, url: site, color, description: `${own?.text || a.text}\n\n[${own?.link || a.link} →](${site})`,
     ...(own?.img === true ? { image: { url: `${origin}/api/discord/img/${status}?v=${own.at || 0}` } } : {}), fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
-  // allowed_mentions: none, so a track or season name can never ping @everyone
-  await fetch(hook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: "LDS", embeds: [embed], allowed_mentions: { parse: [] } }) });
+  // a ping only when the admin switched it on for this post; otherwise none, so a track or season name can never ping anyone
+  const ping = own?.ping === true;
+  await fetch(hook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: cfg?.name || "LDS", ...(ping ? { content: "@everyone" } : {}), embeds: [embed], allowed_mentions: { parse: ping ? ["everyone"] : [] } }) });
 }
 
 const HOOK_RE = /^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/api\/webhooks\/\d+\/[\w-]+$/;
 // pictures are kept as raw bytes in their own table, so text saves never carry (or wipe) them and nothing big is parsed per request
 const IMG_MAX = 1_000_000, FILES_SQL = "CREATE TABLE IF NOT EXISTS files (k TEXT PRIMARY KEY, type TEXT NOT NULL, data BLOB NOT NULL)";
-const postView = v => ({ text: v?.text || "", img: v?.img === true, at: v?.at || 0 });
+const postView = v => ({ text: v?.text || "", img: v?.img === true, at: v?.at || 0, title: v?.title || "", link: v?.link || "", color: /^#[0-9a-f]{6}$/i.test(v?.color || "") ? v.color : "", off: v?.off === true, ping: v?.ping === true });
+// Discord refuses the whole message when the bot's name has "discord" or "clyde" in it
+const BOT_NAME_BAD = /discord|clyde/i;
 async function getDiscord(env) {
   const c = await kvGet(env, "discord") || {};
   // the address itself never leaves the server: the panel only learns whether one is set
-  return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, ...Object.fromEntries(Object.keys(ANNOUNCE).map(k => [k, postView(c[k])])) });
+  return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, name: c.name || "",
+    ...Object.fromEntries(Object.keys(ANNOUNCE).map(k => [k, postView(c[k])])) });
 }
-async function putDiscord(req, env) {
-  const body = await readJson(req, 20_000), c = await kvGet(env, "discord") || {};
+async function putDiscord(req, env, sid) {
+  const body = await readJson(req, 20_000), c = await kvGet(env, "discord") || {}, was = JSON.stringify(c), log = [];
   if (typeof body.hook === "string") {
     const h = body.hook.trim();
     if (h && !HOOK_RE.test(h)) throw new HttpError(400, "not a discord webhook");
     if (h && c.hook) throw new HttpError(409, "unlink the webhook first");
     if (h) c.hook = h; else delete c.hook;
+    if (!!h !== !!JSON.parse(was).hook) log.push(h ? "Discord: вебхук привязан" : "Discord: вебхук отвязан");
+  }
+  if (typeof body.name === "string") {
+    const n = body.name.trim().slice(0, 80);
+    if (BOT_NAME_BAD.test(n)) throw new HttpError(422, "bad bot name");
+    c.name = n;
   }
   for (const k of Object.keys(ANNOUNCE)) {
     const v = body[k]; if (!v || typeof v !== "object") continue;
-    c[k] = { ...postView(c[k]), text: String(v.text || "").slice(0, 1500) }; // the picture is untouched here
+    c[k] = { ...postView(c[k]), text: String(v.text || "").slice(0, 1500), title: String(v.title || "").slice(0, 100), link: String(v.link || "").slice(0, 40),
+      color: /^#[0-9a-f]{6}$/i.test(v.color || "") ? v.color : "", off: v.off === true, ping: v.ping === true }; // the picture is untouched here
+    const before = postView(JSON.parse(was)[k]), after = c[k];
+    if (JSON.stringify(before) !== JSON.stringify(after)) log.push(`Discord: «${ANNOUNCE[k].title}» — ${[before.off !== after.off && (after.off ? "выключено" : "включено"),
+      before.ping !== after.ping && (after.ping ? "@everyone включён" : "@everyone выключен"), ["text", "title", "link", "color"].some(f => before[f] !== after[f]) && "оформление изменено"].filter(Boolean).join(", ")}`);
   }
+  if (typeof body.name === "string" && (JSON.parse(was).name || "") !== c.name) log.push(`Discord: имя бота → ${c.name || "LDS"}`);
   await kvSet(env, "discord", c);
+  await logIt(env, sid, log);
   return getDiscord(env);
 }
 async function discordImg(env, status) {
@@ -409,7 +453,7 @@ async function discordImg(env, status) {
   if (!r) throw new HttpError(404, "no image");
   return new Response(new Uint8Array(r.data), { headers: { "content-type": r.type, "cache-control": "public, max-age=300" } });
 }
-async function putDiscordImg(req, env, status) {
+async function putDiscordImg(req, env, status, sid) {
   if (!ANNOUNCE[status]) throw new HttpError(404, "no such post");
   const type = (req.headers.get("content-type") || "").split(";")[0].trim();
   if (!/^image\/(jpeg|png|webp)$/.test(type)) throw new HttpError(400, "png, jpeg or webp only");
@@ -421,15 +465,17 @@ async function putDiscordImg(req, env, status) {
   const c = await kvGet(env, "discord") || {};
   c[status] = { ...postView(c[status]), img: true, at: Date.now() }; // "at" changes the picture's address, so Discord fetches the new one
   await kvSet(env, "discord", c);
+  await logIt(env, sid, [`Discord: картинка «${ANNOUNCE[status].title}» загружена`]);
   return getDiscord(env);
 }
-async function delDiscordImg(env, status) {
+async function delDiscordImg(env, status, sid) {
   if (!ANNOUNCE[status]) throw new HttpError(404, "no such post");
   await env.DB.prepare(FILES_SQL).run();
   await env.DB.prepare("DELETE FROM files WHERE k = ?").bind("dc:" + status).run();
   const c = await kvGet(env, "discord") || {};
   c[status] = { ...postView(c[status]), img: false };
   await kvSet(env, "discord", c);
+  await logIt(env, sid, [`Discord: картинка «${ANNOUNCE[status].title}» удалена`]);
   return getDiscord(env);
 }
 
@@ -477,6 +523,7 @@ async function postProtest(req, env, sid) {
   list.push({ id: Math.max(0, ...list.map(p => p.id || 0)) + 1, tour, from: u.name, against, text, status: "new", verdict: "" });
   db.protests = list;
   await kvSet(env, "db", db);
+  await logIt(env, sid, [`Протест: ${u.name} против ${against} (${stageLabel(db, tour)})`]);
   await bump(env);
   return json({ ok: true });
 }
@@ -496,14 +543,81 @@ async function ownerUser(req, env, ownerSid) {
       if (db.roleIds) delete db.roleIds[sid];
       await kvSet(env, "db", db);
     }
+    await logIt(env, ownerSid, [`Пилот исключён: ${u.name}`]);
   } else {
     const num = body.num;
     if (!(Number.isInteger(num) && num >= 0 && num <= 999)) throw new HttpError(400, "bad number"); // 0 is the head admin's to give
     const rows = await env.DB.prepare("SELECT sid, data FROM users").all();
     if (rows.results.some(r => r.sid !== sid && JSON.parse(r.data).num === num)) throw new HttpError(409, "number taken");
+    await logIt(env, ownerSid, [`Номер ${u.name}: ${u.num ?? "—"} → ${num}`]);
     u.num = num;
     await setUser(env, sid, u);
   }
   await bump(env);
   return json({ ok: true });
+}
+
+// ---------- action log ----------
+const LOG_SQL = "CREATE TABLE IF NOT EXISTS log (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, who TEXT NOT NULL, what TEXT NOT NULL)";
+const LOG_KEEP = 3000, LOG_PER_WRITE = 30;
+async function logIt(env, sid, lines) {
+  if (!lines?.length) return;
+  const who = (await getUser(env, sid))?.name || (sid ? "SteamID " + sid : "сервер"), at = Date.now();
+  const rows = lines.length > LOG_PER_WRITE ? [...lines.slice(0, LOG_PER_WRITE - 1), `…и ещё ${lines.length - LOG_PER_WRITE + 1} изменений`] : lines;
+  await env.DB.prepare(LOG_SQL).run();
+  await env.DB.batch(rows.map(w => env.DB.prepare("INSERT INTO log (at, who, what) VALUES (?, ?, ?)").bind(at, who, String(w).slice(0, 300))));
+  if (Math.random() < .05) await env.DB.prepare("DELETE FROM log WHERE id <= (SELECT MAX(id) FROM log) - ?").bind(LOG_KEEP).run();
+}
+async function getLog(env, url) {
+  const before = Number(url.searchParams.get("before")) || Number.MAX_SAFE_INTEGER;
+  await env.DB.prepare(LOG_SQL).run();
+  const r = await env.DB.prepare("SELECT id, at, who, what FROM log WHERE id < ? ORDER BY id DESC LIMIT 101").bind(before).all();
+  return json({ items: r.results.slice(0, 100), more: r.results.length > 100 });
+}
+const ST_RU = { soon: "Скоро", reg: "Регистрация", qualifying: "Квалификация", top32: "Топ-32", top16: "Топ-16", top8: "Топ-8", top4: "Топ-4", final: "Финал", done: "Завершён" };
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const val = x => x == null || x === "" ? "—" : typeof x === "object" ? "…" : String(x).slice(0, 60);
+function stageLabel(db, id) {
+  const x = (db?.tours || []).find(z => String(z.id) === String(id)), s = x && (db.seasons || []).find(z => z.id === x.season)?.name;
+  return x ? `${s ? s + " · " : ""}этап ${x.stage} (${x.track})` : `этап #${id}`;
+}
+// a stage's status is logged from the live state (it is mirrored in db.tours)
+const TOUR_F = { start: "старт", track: "трасса", conf: "конфиг", max: "мест", maxTeams: "команд" };
+const DB_SECTIONS = { teams: "команды", sponsors: "спонсоры", protests: "протесты", sanctions: "санкции", rules: "регламент", trackDiff: "трассы", trackSet: "трассы",
+  achievements: "список достижений", teamEntries: "заявки команд на этапы", reqStatus: "запросы на состав", teamNames: "названия команд", teamFounders: "основатели команд", testPilots: "тестовые пилоты" };
+async function dbChanges(env, a = {}, b = {}) {
+  const out = [];
+  const ta = new Map((a.tours || []).map(x => [x.id, x])), tb = new Map((b.tours || []).map(x => [x.id, x]));
+  for (const [id, x] of tb) { const p = ta.get(id);
+    if (!p) { out.push(`Добавлен ${stageLabel(b, id)}`); continue; }
+    for (const f of Object.keys(TOUR_F)) if (!same(p[f], x[f])) out.push(`${stageLabel(b, id)}: ${TOUR_F[f]} ${f === "status" ? ST_RU[p[f]] || val(p[f]) : val(p[f])} → ${f === "status" ? ST_RU[x[f]] || val(x[f]) : val(x[f])}`); }
+  for (const [id] of ta) if (!tb.has(id)) out.push(`Удалён ${stageLabel(a, id)}`);
+  const sa = new Map((a.seasons || []).map(x => [x.id, x])), sb = new Map((b.seasons || []).map(x => [x.id, x]));
+  for (const [id, x] of sb) { const p = sa.get(id); if (!p) out.push(`Добавлен сезон ${x.name}`); else for (const f of ["name", "status"]) if (!same(p[f], x[f])) out.push(`Сезон ${x.name}: ${f === "name" ? "название" : "статус"} ${val(p[f])} → ${val(x[f])}`); }
+  for (const [id, x] of sa) if (!sb.has(id)) out.push(`Удалён сезон ${x.name}`);
+  for (const k of new Set([...Object.keys(a.settings || {}), ...Object.keys(b.settings || {})])) if (!same(a.settings?.[k], b.settings?.[k])) out.push(`Настройки: ${k} ${val(a.settings?.[k])} → ${val(b.settings?.[k])}`);
+  const achName = id => (b.achievements || a.achievements || []).find(z => z[1] === id)?.[2]?.[0] || id, holder = h => String(h).startsWith("t:") ? "команда #" + String(h).slice(2) : h;
+  for (const id of new Set([...Object.keys(a.awards || {}), ...Object.keys(b.awards || {})])) { const was = new Set(a.awards?.[id] || []), now = new Set(b.awards?.[id] || []);
+    for (const h of now) if (!was.has(h)) out.push(`Выдано достижение «${achName(id)}»: ${holder(h)}`);
+    for (const h of was) if (!now.has(h)) out.push(`Снято достижение «${achName(id)}»: ${holder(h)}`); }
+  const roleSids = [...new Set([...Object.keys(a.roleIds || {}), ...Object.keys(b.roleIds || {})])].filter(s => a.roleIds?.[s] !== b.roleIds?.[s]);
+  for (const s of roleSids.slice(0, 10)) out.push(`Роль ${(await getUser(env, s))?.name || s}: ${val(a.roleIds?.[s])} → ${val(b.roleIds?.[s])}`);
+  const changed = [...new Set(Object.entries(DB_SECTIONS).filter(([k]) => !same(a[k], b[k])).map(([, l]) => l))];
+  if (changed.length) out.push(`Изменено: ${changed.join(", ")}`);
+  return out;
+}
+const BR_RU = ["топ-32", "топ-16", "топ-8", "топ-4", "финал", "матч за 3 место"];
+function liveChanges(db, a = {}, b = {}) {
+  const out = [];
+  for (const id of new Set([...Object.keys(a.statuses || {}), ...Object.keys(b.statuses || {})])) if (a.statuses?.[id] !== b.statuses?.[id] && b.statuses?.[id])
+    out.push(`${stageLabel(db, id)}: статус ${ST_RU[a.statuses?.[id]] || "—"} → ${ST_RU[b.statuses[id]] || b.statuses[id]}`);
+  for (const key of new Set([...Object.keys(a.scores || {}), ...Object.keys(b.scores || {})])) { const p = a.scores?.[key] || {}, n = b.scores?.[key] || {};
+    if (same(p, n)) continue; const i = key.indexOf(":"), tour = key.slice(0, i), name = key.slice(i + 1);
+    for (const f of new Set([...Object.keys(p), ...Object.keys(n)])) if (!same(p[f], n[f])) out.push(`${stageLabel(db, tour)} · ${name}: ${f === "0" ? "попытка 1" : f === "1" ? "попытка 2" : f} ${val(p[f])} → ${val(n[f])}`); }
+  for (const id of new Set([...Object.keys(a.brackets || {}), ...Object.keys(b.brackets || {})])) { const p = a.brackets?.[id] || {}, n = b.brackets?.[id] || {};
+    if (same(p, n)) continue;
+    if (!same(p.slots, n.slots)) out.push(`${stageLabel(db, id)}: сетка составлена заново`);
+    for (const k of new Set([...Object.keys(p.w || {}), ...Object.keys(n.w || {})])) if (p.w?.[k] !== n.w?.[k]) { const [r, m] = k.split("-").map(Number);
+      out.push(`${stageLabel(db, id)}: сетка, ${BR_RU[r] || "раунд " + r}, пара ${m + 1} — ${n.w?.[k] ? "проходит " + n.w[k] : "решение снято"}`); } }
+  return out; // the broadcast panel (bc) and readiness change constantly and are left out
 }

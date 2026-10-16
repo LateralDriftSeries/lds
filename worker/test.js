@@ -190,6 +190,9 @@ const up = await (await iput("reg", PX)).json();
 ok(up.reg.img === true && up.reg.text === "Своё объявление", "the picture is uploaded on its own and the text stays");
 await dput({ reg: { text: "Своё объявление" }, qualifying: { text: "" } });
 ok((await (await call("/api/discord", { token: owner })).json()).reg.img === true, "saving the texts keeps the picture");
+ok((await dput({ name: "Discord Bot" })).status === 422, "a bot name Discord would refuse is caught");
+const full = await (await dput({ name: "LDS Бот", reg: { text: "Своё объявление", title: "Свой заголовок", link: "Вперёд", color: "#123abc" }, qualifying: { text: "", off: true } })).json();
+ok(full.name === "LDS Бот" && full.reg.title === "Свой заголовок" && full.reg.color === "#123abc" && full.qualifying.off === true && full.reg.img === true, "name, title, colour, button text and on/off are saved");
 ok((await dput({ hook: "" })).ok, "the webhook can be cleared");
 const imgRes = await call("/api/discord/img/reg");
 ok(imgRes.ok && imgRes.headers.get("content-type") === "image/png" && (await imgRes.arrayBuffer()).byteLength === 70, "the picture is served for Discord");
@@ -209,7 +212,25 @@ await new Promise(z => setTimeout(z, 300));
 const pairs = hooks.at(-1).embeds[0];
 ok(hooks.length === annLen + 2 && pairs.title.includes("Начало парных заездов") && pairs.fields.some(z => z.name === "Сайт" && z.value.endsWith("#t-901")), "the start of the pairs is posted with a link to the site");
 ok(hooks.slice(0, annLen + 1).every(h => h.embeds[0].fields.some(z => z.name === "Сайт") && !h.embeds[0].fields.some(z => z.name === "Трансляция")), "registration posts link the site, not the stream");
+ok(hooks[2].username === "LDS Бот" && !("avatar_url" in hooks[2]) && hooks[2].embeds[0].title.startsWith("Свой заголовок") && hooks[2].embeds[0].color === 0x123abc && hooks[2].embeds[0].description.includes("[Вперёд →]"), "the post uses the bot name, title, colour and button text");
 ok(annLen === 3 && hooks[2].embeds[0].description.startsWith("Своё объявление") && /\/api\/discord\/img\/reg\?v=\d+$/.test(hooks[2].embeds[0].image?.url || ""), "the post carries the admin's text and picture");
+// results with @everyone: the podium comes from the site, the ping only where the admin switched it on
+await dput({ done: { text: "", ping: true } });
+await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: { 901: "done", 902: "reg" }, podiums: { 901: { p: [["Pilot A", 150], ["Pilot B", 120], ["Pilot C", 90]], t: ["Team X", 114] } } }) });
+await new Promise(z => setTimeout(z, 300));
+const res = hooks.at(-1), rf = res.embeds[0].fields;
+ok(res.embeds[0].title.includes("Итоги этапа") && rf.some(z => z.name.includes("1 место") && z.value.startsWith("Pilot A — 150")) && rf.some(z => z.name.includes("Лучшая команда") && z.value.startsWith("Team X")), "the results post lists the podium and the best team");
+ok(res.content === "@everyone" && res.allowed_mentions.parse.includes("everyone") && hooks.slice(0, -1).every(h => !h.content && h.allowed_mentions.parse.length === 0), "@everyone only on the post it was switched on for");
+// one-hour reminder from the cron: stage 902 starts in 45 minutes (Moscow time), stage 903 in 3 hours
+const p2 = n => String(n).padStart(2, "0"), msk = ms => { const d = new Date(ms + 3 * 3600e3); return `${p2(d.getUTCDate())}.${p2(d.getUTCMonth() + 1)}.${d.getUTCFullYear()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`; };
+await call("/api/db", { method: "PUT", token: owner, body: JSON.stringify({ db: { tours: [{ id: 901, season: 9, stage: 2, track: "Hook Track", status: "done" }, { id: 902, season: 9, stage: 3, track: "Reused Id", status: "reg", start: msk(Date.now() + 45 * 60e3) }, { id: 903, season: 9, stage: 4, track: "Later", status: "reg", start: msk(Date.now() + 3 * 3600e3) }], seasons: [{ id: 9, name: "S9" }] } }) });
+const n0 = hooks.length, cron = () => fetch(API + "/__scheduled?cron=*/5+*+*+*+*");
+await cron(); await new Promise(z => setTimeout(z, 400)); await cron(); await new Promise(z => setTimeout(z, 400));
+ok(hooks.length === n0 + 1 && hooks.at(-1).embeds[0].title.includes("Старт через час") && hooks.at(-1).embeds[0].title.includes("Reused Id") && hooks.at(-1).embeds[0].fields.some(z => z.name === "Старт"), "the reminder goes out once, only for the stage starting within the hour");
+// the log: who changed what, in words; for the head admin and admins only
+const log = await (await call("/api/log", { token: owner })).json();
+ok(log.items.some(i => /статус Топ-32 → Завершён/.test(i.what) && i.who === "Test Owner") && log.items.some(i => i.what.startsWith("Discord:")) && log.items.some(i => i.what.startsWith("Номер ")), "the log records who changed what");
+ok((await call("/api/log", { token: pilot })).status === 403, "pilots can't read the log");
 hookSrv.close();
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");
