@@ -4414,7 +4414,7 @@ function confirmTwice(key, fn) {
 function newSeason() {
   const id = Math.max(0, ...SEASONS.map(s => s.id)) + 1;
   SEASONS.push({ id, name: `LDS ${id}.0`, status: "plan" });
-  for (let n = 1; n <= 6; n++) TOURS.push(tour(id, n, "—", "—", "—", null, "reg", 0));
+  for (let n = 1; n <= 6; n++) TOURS.push(tour(id, n, "—", "—", "—", null, "soon", 0));
   aSeason = id; aTour = 0;
   dbSave();
 }
@@ -4431,7 +4431,7 @@ function addStage(sid) {
   const n = seasonTours(sid).length + 1;
   if (n > 12) return;
   let tid = sid * 100 + 1; while (TOURS.some(z => z.id === tid)) tid++; // a deleted stage frees its id
-  TOURS.push({ ...tour(sid, n, "—", "—", "—", null, "reg", 0), id: tid });
+  TOURS.push({ ...tour(sid, n, "—", "—", "—", null, "soon", 0), id: tid });
   dbSave();
 }
 function delStage(id) {
