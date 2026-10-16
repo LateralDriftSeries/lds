@@ -1113,7 +1113,7 @@ a.partner:hover { transform: translateY(-3px); border-color: var(--accent) }
 @media (max-width: 860px) { .faq-sec { grid-template-columns: 1fr } }
 
 /* tracks */
-.tracks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 1rem }
+.tracks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 1rem; align-items: start } /* an opened section grows only its own card */
 .track { display: grid; align-content: start; overflow: hidden; padding: 0 }
 .track-map { display: block; width: 100%; height: auto; padding: 1.2rem 1.2rem .4rem; border-bottom: 1px solid var(--line);
   background: radial-gradient(70% 70% at 50% 45%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%) }
@@ -1554,7 +1554,7 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 /* ---- tracks: every card the same height, the difficulty row pinned to the bottom ---- */
 .track { display: flex !important; flex-direction: column }
 .track-body { flex: 1; display: flex !important; flex-direction: column; gap: 1rem }
-.track-body .specs { margin-top: auto; grid-template-columns: 1fr }
+.track-body .specs { margin-top: auto; grid-template-columns: 1fr } .track-body .specs div + div { padding-left: .2rem; border-left: 0; border-top: 1px solid var(--line) }
 
 /* ---- broadcast panel ---- */
 .bc-top { display: grid; grid-template-columns: minmax(0, 1fr); align-items: stretch; gap: 1.2rem }
@@ -5237,7 +5237,8 @@ document.addEventListener("keydown", e => {
 })();
 
 
-addEventListener("hashchange", () => { pending = null; protestMsg = ""; render(true); scrollTo(0, 0); });
+// track sections on the Tracks page fold again on every visit
+addEventListener("hashchange", () => { pending = null; protestMsg = ""; for (const k in tOpen) if (k.startsWith("tpv-")) delete tOpen[k]; render(true); scrollTo(0, 0); });
 render(true);
 </script>
 
