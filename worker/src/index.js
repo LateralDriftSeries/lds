@@ -324,6 +324,8 @@ async function putDb(req, env, { role }) {
   const next = role === "tech" ? { ...stored, rules: body.db.rules ?? stored.rules } : body.db;
   if (role !== "owner") for (const k of ["roleIds", "adminIds", "roles"]) next[k] = stored[k];
   await kvSet(env, "db", next);
+  const ann = await kvGet(env, "announced"), ids = new Set((next.tours || []).map(x => String(x.id)));
+  if (ann && Object.keys(ann).some(k => !ids.has(k.split(":")[0]))) await kvSet(env, "announced", Object.fromEntries(Object.entries(ann).filter(([k]) => ids.has(k.split(":")[0]))));
   if (role !== "tech" && body.live && typeof body.live === "object") await kvSet(env, "live", keepCrew(await kvGet(env, "live"), body.live));
   await bump(env);
   return json({ ok: true });
@@ -378,15 +380,17 @@ async function getDiscord(env) {
   return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, reg: c.reg || {}, qualifying: c.qualifying || {} });
 }
 async function putDiscord(req, env) {
-  const body = await readJson(req, 3_500_000), c = await kvGet(env, "discord") || {};
+  const body = await readJson(req, 1_800_000), c = await kvGet(env, "discord") || {};
   if (typeof body.hook === "string") {
     const h = body.hook.trim();
     if (h && !HOOK_RE.test(h)) throw new HttpError(400, "not a discord webhook");
+    if (h && c.hook) throw new HttpError(409, "unlink the webhook first");
     if (h) c.hook = h; else delete c.hook;
   }
   for (const k of Object.keys(ANNOUNCE)) {
     const v = body[k]; if (!v || typeof v !== "object") continue;
-    const img = typeof v.img === "string" && v.img.length <= 1_500_000 && DC_IMG.test(v.img) ? v.img : "";
+    if (typeof v.img === "string" && v.img.length > 800_000) throw new HttpError(413, "image too large");
+    const img = typeof v.img === "string" && DC_IMG.test(v.img) ? v.img : "";
     c[k] = { text: String(v.text || "").slice(0, 1500), img, at: img === c[k]?.img ? c[k]?.at || 0 : Date.now() };
   }
   await kvSet(env, "discord", c);

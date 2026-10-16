@@ -910,6 +910,7 @@ footer.site { border-top: 1px solid var(--line); background: var(--bg) }
 /* admin motion: section changes slide in, rows follow one by one, active menu item draws its marker, saves confirm with a toast */
 @keyframes admIn { from { opacity: 0; transform: translateY(10px) } }
 .adm-main.adm-enter > * { animation: admIn .45s var(--ease) both }
+.adm-main.adm-sub > .tabs ~ * { animation: admIn .35s var(--ease) both }
 .adm-main.adm-enter > :nth-child(3) { animation-delay: .05s } .adm-main.adm-enter > :nth-child(n+4) { animation-delay: .1s }
 .adm-enter tbody tr { animation: admIn .4s var(--ease) both; animation-delay: calc(var(--r, 0) * 22ms + .12s) }
 .adm-enter .box, .adm-enter .island > *, .adm-enter .rule-ed, .adm-enter .protest { animation: admIn .45s var(--ease) both; animation-delay: .08s }
@@ -2043,6 +2044,8 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .adm-main .pl-num input { width: 4.6rem }
 .dc-hook { display: grid; gap: .8rem } .dc-hook .head { margin: 0 } .dc-hook h3, .dc-post h3 { margin: 0 }
 .dc-hook .row { flex-wrap: nowrap } .dc-hook .field { flex: 1; min-width: 0 }
+.dc-bound { justify-content: space-between; gap: .8rem; padding: .7rem .9rem; border: 1px solid color-mix(in srgb, #2ecc71 40%, var(--line)); border-radius: 8px; background: color-mix(in srgb, #2ecc71 6%, var(--panel-2)) }
+.dc-mask { color: var(--muted); font-size: .85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0 }
 .dc-st { font-size: .85rem; color: var(--muted) } .dc-st.on { color: #2ecc71 } .dc-st.on::before { content: "● " }
 .dc-posts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1rem; margin-top: 1rem }
 .dc-post { display: grid; gap: .7rem; align-content: start; border-left: 4px solid #2ecc71 } .dc-post[data-s="qualifying"] { border-left-color: #e5484d }
@@ -2167,7 +2170,7 @@ const I18N = {
     rolesOwnerOnly: "Менять роли может только главный администратор.", noPanelRole: "У вашей роли нет доступа к этому разделу.", maxPilotsCol: "Мест", seatsL: "Мест на этапе", teamEntriesAdm: "Заявки команд на этап", warnShort: "Предупреждения",
     autoDq: "3 предупреждения — выдан DQ с этапа", autoBan: "2 DQ — выдан бан", sancAuto: "авто", sancRule: "3 предупреждения = DQ с этапа, 2 DQ = бан: регистрация на этапы закрыта.",
     setDiscord: "Discord", dcHook: "Вебхук канала", dcHookSet: "Подключён", dcHookEnv: "Подключён через Cloudflare", dcHookNone: "Не задан: объявления не отправляются",
-    dcHookPh: "https://discord.com/api/webhooks/…", dcHookNew: "Вставьте новый адрес, чтобы заменить", dcHookDel: "Отключить", dcHookBad: "Это не адрес вебхука Discord",
+    dcHookPh: "https://discord.com/api/webhooks/…", dcHookBind: "Привязать", dcHookSure: "Точно отвязать?", dcHookBound: "Вебхук уже привязан: сначала отвяжите его", dcHookDel: "Отвязать", dcHookSet: "Привязан", dcImgBig: "Картинка слишком большая даже после сжатия, возьмите поменьше", dcHookBad: "Это не адрес вебхука Discord",
     dcHookHint: "Discord: настройки канала → Интеграции → Вебхуки → «Копировать URL вебхука». Адрес хранится только на сервере и после сохранения нигде не показывается.",
     dcPostReg: "Регистрация открыта", dcPostQual: "Регистрация закрыта", dcText: "Текст объявления", dcTextHint: "Пусто — стандартный текст. Название этапа, даты, ссылка на сайт и трансляция добавляются сами.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
@@ -2317,7 +2320,7 @@ const I18N = {
     rolesOwnerOnly: "Only the head admin can change roles.", noPanelRole: "Your role has no access to this section.", maxPilotsCol: "Spots", seatsL: "Spots in this round", teamEntriesAdm: "Team entries for the round", warnShort: "Warnings",
     autoDq: "3 warnings — DQ from the round given", autoBan: "2 DQs — ban given", sancAuto: "auto", sancRule: "3 warnings = DQ from the round, 2 DQs = ban: round registration is closed.",
     setDiscord: "Discord", dcHook: "Channel webhook", dcHookSet: "Connected", dcHookEnv: "Connected via Cloudflare", dcHookNone: "Not set: nothing is posted",
-    dcHookPh: "https://discord.com/api/webhooks/…", dcHookNew: "Paste a new address to replace it", dcHookDel: "Disconnect", dcHookBad: "That is not a Discord webhook address",
+    dcHookPh: "https://discord.com/api/webhooks/…", dcHookBind: "Link", dcHookSure: "Unlink for sure?", dcHookBound: "A webhook is already linked: unlink it first", dcHookDel: "Unlink", dcHookSet: "Linked", dcImgBig: "The image is too large even after compressing, use a smaller one", dcHookBad: "That is not a Discord webhook address",
     dcHookHint: "Discord: channel settings → Integrations → Webhooks → “Copy Webhook URL”. The address stays on the server and is never shown after saving.",
     dcPostReg: "Registration open", dcPostQual: "Registration closed", dcText: "Post text", dcTextHint: "Empty — the standard text. Round name, dates, site link and stream are added automatically.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
@@ -2522,7 +2525,7 @@ const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJ
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcImgDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -3922,7 +3925,7 @@ function profile() {
 
 // shortcut: admin role is a client-side demo toggle; real admin rights must be checked on a server
 // admAnim: set when the admin moves to another section, so only navigation animates, not every saved field
-let admAnim = false, admView = "";
+let admAnim = false, admView = "", admLevel = "";
 let aEditTeam = 0, aTab = "seasons", aSeason = 0, aTour = 0, aSub = "main", adminMsg = "", pending = null;
 const stageMax = x => x.max ?? SETTINGS.maxStage; // per stage, falling back to the settings default
 const stageTeamsMax = x => x.maxTeams ?? SETTINGS.maxTeamsStage; // teams per stage, set on the stage's "Основное"
@@ -4107,7 +4110,7 @@ function dcFetch() {
 function dcSave(extra = {}) {
   if (!HOSTED) { if ("hook" in extra) DC.hook = !!extra.hook; return render(); }
   api("/api/discord", { method: "PUT", body: JSON.stringify({ reg: DC.reg, qualifying: DC.qualifying, ...extra }) })
-    .then(r => { DC = r; toast(t("saved")); render(); }, e => toast(t(e.message === "400" ? "dcHookBad" : "netErr")));
+    .then(r => { DC = r; toast(t("saved")); render(); }, e => toast(t({ 400: "dcHookBad", 409: "dcHookBound", 413: "dcImgBig" }[e.message] || "netErr")));
 }
 // a picture for a post: up to 1200 px on the long side, WebP (JPEG where the browser can't), small enough for the server
 function readBanner(fileObj, done, fail) {
@@ -4117,10 +4120,10 @@ function readBanner(fileObj, done, fail) {
     const k = Math.min(1, 1200 / img.naturalWidth, 1200 / img.naturalHeight), c = document.createElement("canvas");
     c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
     c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-    let data = c.toDataURL("image/webp", .85);
-    if (!data.startsWith("data:image/webp")) data = c.toDataURL("image/jpeg", .85);
+    const type = c.toDataURL("image/webp", .1).startsWith("data:image/webp") ? "image/webp" : "image/jpeg";
+    let data = ""; for (const q of [.85, .7, .55, .4]) { data = c.toDataURL(type, q); if (data.length <= 700_000) break; }
     URL.revokeObjectURL(url);
-    data.length > 1_500_000 ? fail() : done(data);
+    data.length > 700_000 ? fail(true) : done(data);
   };
   img.onerror = () => { URL.revokeObjectURL(url); fail(); };
   img.src = url;
@@ -4138,8 +4141,9 @@ function adminDiscord() {
     <p class="note">${t("dcImgHint")}</p></article>`; };
   return `${HOSTED ? "" : `<p class="note">${t("dcDemo")}</p>`}
     <div class="box panel dc-hook"><div class="head"><h3>${t("dcHook")}</h3><span class="dc-st ${on ? "on" : ""}">${t(DC.hook ? "dcHookSet" : DC.envHook ? "dcHookEnv" : "dcHookNone")}</span></div>
-      <div class="row" style="gap:.6rem"><input class="field" type="password" autocomplete="off" spellcheck="false" data-dc="hook" placeholder="${t(DC.hook ? "dcHookNew" : "dcHookPh")}">
-        ${DC.hook ? `<button class="btn text danger sm" data-act="dcHookDel">${pending === "dchook" ? t("delSure") : t("dcHookDel")}</button>` : ""}</div>
+      ${DC.hook ? `<div class="row dc-bound"><span class="dc-mask mono">https://discord.com/api/webhooks/••••••</span><button class="btn line sm danger" data-act="dcHookDel">${pending === "dchook" ? t("dcHookSure") : t("dcHookDel")}</button></div>`
+        : `<div class="row" style="gap:.6rem"><input class="field" id="dc-hook" type="password" autocomplete="off" spellcheck="false" placeholder="${t("dcHookPh")}" aria-label="${t("dcHook")}">
+        <button class="btn sm" data-act="dcBind">${t("dcHookBind")}</button></div>`}
       <p class="note">${t("dcHookHint")}</p></div>
     <div class="dc-posts">${post("reg", "dcPostReg", "dcDefReg")}${post("qualifying", "dcPostQual", "dcDefQual")}</div>`;
 }
@@ -4170,12 +4174,13 @@ function admin() {
   const item = (k, l, badge) => tabs.includes(k) ? `<button data-tab="${k}" aria-pressed="${aTab === k}">${t(l)}${badge ? `<span class="badge">${badge}</span>` : ""}</button>` : "";
   const view = { seasons: adminSeasons, pilots: adminPilots, teams: adminTeams, rules: adminRules, access: adminAccess, settings: adminSettings }[aTab] || (() => `<p class="note">${t("noPanelRole")}</p>`);
   // any move to another admin view (section, season, stage, sub-tab, team, settings tab, achievement) plays the entry animation; saving a field doesn't
-  const vk = [aTab, aSeason, aTour, aSub, aEditTeam, setTab, achTab, achSel].join("|"); if (vk !== admView) { admView = vk; admAnim = true; }
+  const top = [aTab, aSeason, aTour].join("|"), vk = [top, aSub, aEditTeam, setTab, achTab, achSel].join("|");
+  admLevel = vk === admView ? "" : admView.startsWith(top + "|") ? "adm-sub" : "adm-enter"; admView = vk; admAnim = !!admLevel;
   return `<div class="adm">
     <aside class="adm-side"><span class="label acc">${t("adminPanel")}</span><span class="note">${roleLabel(roleOf(S.user.name))}</span>
       ${item("seasons", "aSeasons")}${item("pilots", "aSanctions")}${item("teams", "aTeams")}${item("rules", "aRules")}${item("access", "aAccess")}${item("settings", "aSettings")}
       ${can("bc") ? `<a class="bc-link" href="#broadcast">${t("broadcastBtn")}</a>` : ""}</aside>
-    <div class="adm-main stack ${can(aTab === "rules" ? "rules" : "edit") ? "" : "ro"} ${admAnim ? "adm-enter" : ""}" style="gap:1.2rem"><span class="note err" role="status">${adminMsg}</span>${view()}</div>
+    <div class="adm-main stack ${can(aTab === "rules" ? "rules" : "edit") ? "" : "ro"} ${admLevel}" style="gap:1.2rem"><span class="note err" role="status">${adminMsg}</span>${view()}</div>
   </div>`;
 }
 
@@ -4862,7 +4867,7 @@ async function poll() {
   clearTimeout(pollTimer);
   if (pollBusy) return;
   pollBusy = true;
-  const h = location.hash, live = h.startsWith("#obs-") || h === "#broadcast" || h === "#admin";
+  const h = location.hash, live = h.startsWith("#obs-") || h === "#broadcast";
   let retry = 0;
   try {
     const st = await api("/api/state" + (apiV != null ? `?v=${apiV}${document.hidden ? "" : "&wait=25"}` : ""));
@@ -4935,7 +4940,9 @@ function render(animate = false) {
   app.innerHTML = m ? tournament(+m[1]) : tmm ? teamPage(+tmm[1]) : pp !== null ? pilotPage(pp) : ({ tournaments, tracks, rating, teams, rules, profile, admin, broadcast }[route] || home)();
   if (tw) { const fresh = app.querySelector(".tw-frame"); if (fresh && fresh.src === tw.src) { fresh.parentNode.moveBefore(tw, fresh); fresh.remove(); } else tw.remove(); }
   app.classList.remove("enter");
-  if (!animate && route === lastRoute && !admAnim) app.getAnimations({ subtree: true }).forEach(a => { if (a.animationName && a.effect.getTiming().iterations !== Infinity) a.finish(); }); // entry animations (rise, admIn...) only play on navigation or a new admin view
+  // entry animations (rise, admIn...) only play on navigation; in the admin only the part that changed (and the tab marker) plays
+  if (!animate && route === lastRoute) app.getAnimations({ subtree: true }).forEach(a => { if (!a.animationName || a.effect.getTiming().iterations === Infinity) return;
+    const el = a.effect.target; if (admAnim && (el.closest(".adm-enter, .adm-sub > .tabs ~ *") || a.animationName === "segIn")) return; a.finish(); });
   lastRoute = route;
   fitHeroNum();
   if (animate) { app.querySelectorAll(".pl-grid, .ach-grid, .treg-list, .tablebox tbody, .bc-ovs, .ready-btns").forEach(l => [...l.children].forEach((c, i) => c.style.setProperty("--i", i)));
@@ -5054,6 +5061,7 @@ document.addEventListener("click", e => {
     achTake: () => { const a = ACHIEVEMENTS[id]; if (!a) return; AWARDS[a[1]] = (AWARDS[a[1]] || []).filter(n => n !== el.dataset.name); dbSave(); },
     spLogoDel: () => { const s = SPONSORS[id]; if (!s) return; delete s.img; dbSave(); },
     dcHookDel: () => confirmTwice("dchook", () => dcSave({ hook: "" })),
+    dcBind: () => { const inp = document.getElementById("dc-hook"), v = inp?.value.trim(); if (!v || !DC) return inp?.focus(); inp.value = ""; dcSave({ hook: v }); },
     dcImgDel: () => { const k = el.dataset.v; if (!DC?.[k]) return; DC[k] = { ...DC[k], img: "" }; dcSave(); },
     delSponsor: () => confirmTwice(`sp${id}`, () => { SPONSORS.splice(id, 1); dbSave(); }),
     // demo switch: turning it off also drops the role granted in the Access section
@@ -5203,10 +5211,9 @@ document.addEventListener("change", e => {
     if (!isFounder(tm) || !ref || (v && !membersOf(tm).some(p => p.name === v))) return;
     if (v) ref.rep = v; else delete ref.rep; toast(t("saved")); return saveTeam(); }
   if (e.target.dataset.dc && isAdmin() && DC) { const k = e.target.dataset.dc, v = e.target.value.trim();
-    if (k === "hook") { e.target.value = ""; return v && dcSave({ hook: v }); }
     DC[k] = { ...DC[k], text: v.slice(0, 1500) }; return dcSave(); }
   if (e.target.dataset.dcimg && isAdmin() && DC) { const k = e.target.dataset.dcimg, f = e.target.files?.[0];
-    return f && readBanner(f, data => { DC[k] = { ...DC[k], img: data }; dcSave(); }, () => toast(t("logoBad"))); }
+    return f && readBanner(f, data => { DC[k] = { ...DC[k], img: data }; dcSave(); }, big => toast(t(big ? "dcImgBig" : "logoBad"))); }
   if (e.target.dataset.splogo && isAdmin()) { const s = SPONSORS[+e.target.dataset.splogo], f = e.target.files?.[0];
     return s && f && readLogo(f, data => { s.img = data; dbSave(); toast(t("saved")); }, () => toast(t("logoBad")), true); }
   const k = e.target.dataset.car, a = e.target.dataset.a;
@@ -5218,7 +5225,7 @@ document.addEventListener("change", e => {
 document.addEventListener("wheel", e => { if (e.target.matches?.("input[type=number]") && e.target === document.activeElement) e.target.blur(); }, { passive: true });
 document.addEventListener("keydown", e => {
   if (e.key === "Enter" && e.target.matches?.("tr[data-qt], tr[data-season]")) e.target.click();
-  if (e.key === "Enter" && e.target.id === "trk-new") e.target.nextElementSibling?.click();
+  if (e.key === "Enter" && (e.target.id === "trk-new" || e.target.id === "dc-hook")) e.target.nextElementSibling?.click();
 });
 
 // background: a quiet lava lamp — a few warm blobs rise, sink and merge (metaballs on a small canvas, scaled up and softened);
