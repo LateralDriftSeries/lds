@@ -2048,7 +2048,7 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .dc-mask { color: var(--muted); font-size: .85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0 }
 .dc-st { font-size: .85rem; color: var(--muted) } .dc-st.on { color: #2ecc71 } .dc-st.on::before { content: "● " }
 .dc-posts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1rem; margin-top: 1rem }
-.dc-post { display: grid; gap: .7rem; align-content: start; border-left: 4px solid #2ecc71 } .dc-post[data-s="qualifying"] { border-left-color: #e5484d }
+.dc-post { display: grid; gap: .7rem; align-content: start; border-left: 4px solid #2ecc71 } .dc-post[data-s="qualifying"] { border-left-color: #e5484d } .dc-post[data-s="top32"] { border-left-color: #ff6b1a }
 .dc-post .note { margin: 0 } .dc-img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line) }
 .trk-add { flex-wrap: nowrap; gap: .6rem } .trk-add .field { width: 16rem; max-width: 100% }
 .trk-list { display: grid; gap: .8rem; margin-top: 1rem } .trk-list > .trk-box + .trk-box { margin-top: 0 }
@@ -2172,7 +2172,7 @@ const I18N = {
     setDiscord: "Discord", dcHook: "Вебхук канала", dcHookSet: "Подключён", dcHookEnv: "Подключён через Cloudflare", dcHookNone: "Не задан: объявления не отправляются",
     dcHookPh: "https://discord.com/api/webhooks/…", dcHookBind: "Привязать", dcHookSure: "Точно отвязать?", dcHookBound: "Вебхук уже привязан: сначала отвяжите его", dcHookDel: "Отвязать", dcHookSet: "Привязан", dcImgBig: "Картинка слишком большая даже после сжатия, возьмите поменьше", dcHookBad: "Это не адрес вебхука Discord",
     dcHookHint: "Discord: настройки канала → Интеграции → Вебхуки → «Копировать URL вебхука». Адрес хранится только на сервере и после сохранения нигде не показывается.",
-    dcPostReg: "Регистрация открыта", dcPostQual: "Регистрация закрыта", dcText: "Текст объявления", dcTextHint: "Пусто — стандартный текст. Название этапа, даты, ссылка на сайт и трансляция добавляются сами.",
+    dcPostReg: "Регистрация открыта", dcPostQual: "Регистрация закрыта", dcPostPairs: "Начало парных заездов", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Текст объявления", dcTextHint: "Пусто — стандартный текст. Название этапа, старт и ссылка на сайт добавляются сами, у парных заездов ещё ссылка на трансляцию.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Изображение", dcImgChange: "Сменить изображение", dcImgHint: "PNG, JPG или WebP до 5 МБ. Показывается под текстом объявления.", dcDemo: "В макете настройки Discord не сохраняются, они работают на сайте.",
     setGeneral: "Общие", setSocials: "Соцсети", setTracks: "Трассы", maxStageDefL: "Мест на этап по умолчанию", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
@@ -2322,7 +2322,7 @@ const I18N = {
     setDiscord: "Discord", dcHook: "Channel webhook", dcHookSet: "Connected", dcHookEnv: "Connected via Cloudflare", dcHookNone: "Not set: nothing is posted",
     dcHookPh: "https://discord.com/api/webhooks/…", dcHookBind: "Link", dcHookSure: "Unlink for sure?", dcHookBound: "A webhook is already linked: unlink it first", dcHookDel: "Unlink", dcHookSet: "Linked", dcImgBig: "The image is too large even after compressing, use a smaller one", dcHookBad: "That is not a Discord webhook address",
     dcHookHint: "Discord: channel settings → Integrations → Webhooks → “Copy Webhook URL”. The address stays on the server and is never shown after saving.",
-    dcPostReg: "Registration open", dcPostQual: "Registration closed", dcText: "Post text", dcTextHint: "Empty — the standard text. Round name, dates, site link and stream are added automatically.",
+    dcPostReg: "Registration open", dcPostQual: "Registration closed", dcPostPairs: "Pair battles start", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Post text", dcTextHint: "Empty — the standard text. Round name, start and site link are added automatically; the pairs post also links the stream.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Image", dcImgChange: "Change image", dcImgHint: "PNG, JPG or WebP up to 5 MB. Shown under the post text.", dcDemo: "Discord settings aren't saved in the mockup, they work on the site.",
     setGeneral: "General", setSocials: "Socials", setTracks: "Tracks", maxStageDefL: "Default spots per round", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
@@ -4102,14 +4102,14 @@ const adminSponsors = () => `<div class="head"><p class="note" style="margin:0">
 // Discord announcements: the server keeps the webhook (write-only) and each post's own text and picture
 let DC = null, dcLoading = false;
 function dcFetch() {
-  if (!HOSTED) return void (DC ??= { hook: false, envHook: false, reg: {}, qualifying: {} });
+  if (!HOSTED) return void (DC ??= { hook: false, envHook: false, reg: {}, qualifying: {}, top32: {} });
   if (DC || dcLoading) return;
   dcLoading = true;
   api("/api/discord").then(r => { DC = r; dcLoading = false; render(); }, () => { dcLoading = false; toast(t("netErr")); });
 }
 function dcSave(extra = {}) {
   if (!HOSTED) { if ("hook" in extra) DC.hook = !!extra.hook; return render(); }
-  api("/api/discord", { method: "PUT", body: JSON.stringify({ reg: DC.reg, qualifying: DC.qualifying, ...extra }) })
+  api("/api/discord", { method: "PUT", body: JSON.stringify({ reg: DC.reg, qualifying: DC.qualifying, top32: DC.top32, ...extra }) })
     .then(r => { DC = r; toast(t("saved")); render(); }, e => toast(t({ 400: "dcHookBad", 409: "dcHookBound", 413: "dcImgBig" }[e.message] || "netErr")));
 }
 // a picture for a post: up to 1200 px on the long side, WebP (JPEG where the browser can't), small enough for the server
@@ -4121,9 +4121,9 @@ function readBanner(fileObj, done, fail) {
     c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
     c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
     const type = c.toDataURL("image/webp", .1).startsWith("data:image/webp") ? "image/webp" : "image/jpeg";
-    let data = ""; for (const q of [.85, .7, .55, .4]) { data = c.toDataURL(type, q); if (data.length <= 700_000) break; }
+    let data = ""; for (const q of [.85, .7, .55, .4]) { data = c.toDataURL(type, q); if (data.length <= 550_000) break; }
     URL.revokeObjectURL(url);
-    data.length > 700_000 ? fail(true) : done(data);
+    data.length > 550_000 ? fail(true) : done(data);
   };
   img.onerror = () => { URL.revokeObjectURL(url); fail(); };
   img.src = url;
@@ -4145,7 +4145,7 @@ function adminDiscord() {
         : `<div class="row" style="gap:.6rem"><input class="field" id="dc-hook" type="password" autocomplete="off" spellcheck="false" placeholder="${t("dcHookPh")}" aria-label="${t("dcHook")}">
         <button class="btn sm" data-act="dcBind">${t("dcHookBind")}</button></div>`}
       <p class="note">${t("dcHookHint")}</p></div>
-    <div class="dc-posts">${post("reg", "dcPostReg", "dcDefReg")}${post("qualifying", "dcPostQual", "dcDefQual")}</div>`;
+    <div class="dc-posts">${post("reg", "dcPostReg", "dcDefReg")}${post("qualifying", "dcPostQual", "dcDefQual")}${post("top32", "dcPostPairs", "dcDefPairs")}</div>`;
 }
 // settings: one compact page per topic; sponsors and achievements live here too
 let setTab = "general";

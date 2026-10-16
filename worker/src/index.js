@@ -346,6 +346,7 @@ async function putLive(req, env) {
 const ANNOUNCE = {
   reg: { color: 0x2ecc71, title: "Регистрация открыта", text: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", link: "Записаться" },
   qualifying: { color: 0xe5484d, title: "Регистрация закрыта", text: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.", link: "Открыть этап" },
+  top32: { color: 0xff6b1a, title: "Начало парных заездов", text: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", link: "Смотреть сетку" },
 };
 async function announce(env, before, after, origin) {
   const fresh = Object.entries(after).filter(([k, s]) => ANNOUNCE[s] && before[k] !== s);
@@ -364,8 +365,9 @@ async function postDiscord(env, db, id, status, hook, own, origin) {
   const a = ANNOUNCE[status], season = (db.seasons || []).find(z => z.id === x.season)?.name || "";
   const site = String(env.SITE_URL || "https://lateraldriftseries.github.io/lds/").replace(/\/?$/, "/") + "#t-" + x.id;
   const twitch = String(db.settings?.socials?.Twitch || "").match(/twitch\.tv\/([A-Za-z0-9_]{3,25})\/?$/)?.[1];
-  const fields = [/d/.test(x.start || "") ? { name: "Старт", value: String(x.start).slice(0, 100) + " МСК", inline: true } : x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true },
-    status === "qualifying" && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
+  const fields = [status !== "top32" && (/\d/.test(x.start || "") ? { name: "Старт", value: String(x.start).slice(0, 100) + " МСК", inline: true } : x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true }),
+    { name: "Сайт", value: site, inline: false },
+    status === "top32" && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
   const embed = { title: `${a.title} · Этап ${x.stage} — ${String(x.track || "").slice(0, 60)}`, url: site, color: a.color, description: `${own?.text || a.text}\n\n[${a.link} →](${site})`,
     ...(own?.img ? { image: { url: `${origin}/api/discord/img/${status}?v=${own.at || 0}` } } : {}), fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
   // allowed_mentions: none, so a track or season name can never ping @everyone
@@ -377,10 +379,10 @@ const DC_IMG = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/;
 async function getDiscord(env) {
   const c = await kvGet(env, "discord") || {};
   // the address itself never leaves the server: the panel only learns whether one is set
-  return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, reg: c.reg || {}, qualifying: c.qualifying || {} });
+  return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, reg: c.reg || {}, qualifying: c.qualifying || {}, top32: c.top32 || {} });
 }
 async function putDiscord(req, env) {
-  const body = await readJson(req, 1_800_000), c = await kvGet(env, "discord") || {};
+  const body = await readJson(req, 1_950_000), c = await kvGet(env, "discord") || {};
   if (typeof body.hook === "string") {
     const h = body.hook.trim();
     if (h && !HOOK_RE.test(h)) throw new HttpError(400, "not a discord webhook");
@@ -389,7 +391,7 @@ async function putDiscord(req, env) {
   }
   for (const k of Object.keys(ANNOUNCE)) {
     const v = body[k]; if (!v || typeof v !== "object") continue;
-    if (typeof v.img === "string" && v.img.length > 800_000) throw new HttpError(413, "image too large");
+    if (typeof v.img === "string" && v.img.length > 600_000) throw new HttpError(413, "image too large");
     const img = typeof v.img === "string" && DC_IMG.test(v.img) ? v.img : "";
     c[k] = { text: String(v.text || "").slice(0, 1500), img, at: img === c[k]?.img ? c[k]?.at || 0 : Date.now() };
   }

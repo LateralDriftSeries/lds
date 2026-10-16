@@ -183,7 +183,7 @@ ok((await dput({ hook: "https://evil.example/api/webhooks/1/abc" })).status === 
 const dc = await (await dput({ hook: "https://discord.com/api/webhooks/123/abc-DEF_9", reg: { text: "Своё объявление", img: PX }, qualifying: { text: "" } })).json();
 ok(dc.hook === true && !JSON.stringify(dc).includes("abc-DEF_9") && dc.reg.text === "Своё объявление", "the webhook is saved but never sent back");
 ok((await dput({ hook: "https://discord.com/api/webhooks/456/other" })).status === 409, "a linked webhook must be unlinked before another is linked");
-ok((await dput({ reg: { text: "x", img: "data:image/png;base64," + "A".repeat(800_004) } })).status === 413, "an oversized picture is refused");
+ok((await dput({ reg: { text: "x", img: "data:image/png;base64," + "A".repeat(600_004) } })).status === 413, "an oversized picture is refused");
 ok((await dput({ hook: "" })).ok, "the webhook can be cleared");
 const imgRes = await call("/api/discord/img/reg");
 ok(imgRes.ok && imgRes.headers.get("content-type") === "image/png" && (await imgRes.arrayBuffer()).byteLength === 70, "the picture is served for Discord");
@@ -198,6 +198,11 @@ await call("/api/db", { method: "PUT", token: owner, body: JSON.stringify({ db: 
 await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: { 901: "reg", 902: "reg" } }) });
 await new Promise(z => setTimeout(z, 300));
 ok(hooks.length === annLen + 1 && hooks.at(-1).embeds[0].title.includes("Reused Id"), "a new stage on a freed id is announced");
+await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: null, scores: {}, statuses: { 901: "top32", 902: "reg" } }) });
+await new Promise(z => setTimeout(z, 300));
+const pairs = hooks.at(-1).embeds[0];
+ok(hooks.length === annLen + 2 && pairs.title.includes("Начало парных заездов") && pairs.fields.some(z => z.name === "Сайт" && z.value.endsWith("#t-901")), "the start of the pairs is posted with a link to the site");
+ok(hooks.slice(0, annLen + 1).every(h => h.embeds[0].fields.some(z => z.name === "Сайт") && !h.embeds[0].fields.some(z => z.name === "Трансляция")), "registration posts link the site, not the stream");
 ok(annLen === 3 && hooks[2].embeds[0].description.startsWith("Своё объявление") && /\/api\/discord\/img\/reg\?v=\d+$/.test(hooks[2].embeds[0].image?.url || ""), "the post carries the admin's text and picture");
 hookSrv.close();
 // CORS only for the site
