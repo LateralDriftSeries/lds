@@ -2047,7 +2047,11 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .trk-add { flex-wrap: nowrap; gap: .6rem } .trk-add .field { width: 16rem; max-width: 100% }
 .trk-list { display: grid; gap: .8rem; margin-top: 1rem } .trk-list > .trk-box + .trk-box { margin-top: 0 }
 .trk-body { display: grid; gap: .7rem }
-.trk-row { display: grid; grid-template-columns: minmax(0, 14rem) auto minmax(5rem, 1fr) auto; gap: .8rem; align-items: center }
+.trk-row { display: grid; grid-template-columns: minmax(0, 14rem) auto auto minmax(4rem, 1fr) auto; gap: .8rem; align-items: center }
+.k-pick { display: inline-flex; border: 1px solid var(--line-2); border-radius: 999px; overflow: hidden }
+.k-pick button { padding: .3rem .6rem; font: 600 .78rem var(--f-mono); color: var(--muted); background: transparent; border: 0; transition: background .2s, color .2s }
+.k-pick button + button { border-left: 1px solid var(--line-2) } .k-pick button:hover { color: var(--text) }
+.k-pick button[aria-pressed="true"] { background: var(--accent); color: #fff }
 .trk-dl { font-size: .9rem }
 .trk-part { padding: .2rem 0 .2rem .9rem; border-left: 2px solid var(--line-2) } .trk-part > summary .ach-chev, .trk-pd > summary .ach-chev { width: 26px; height: 26px }
 .trk-part[open] > summary, .trk-pd[open] > summary { margin-bottom: .6rem } .trk-part-body { display: grid; gap: .6rem }
@@ -2151,8 +2155,9 @@ const I18N = {
     stageTeamEntries: "Команды этапа", stageTeamEntriesNote: "В командном зачёте участвуют только зарегистрированные команды, в порядке подачи заявок.", maxTeamsStageL: "Команд на этап", teamStageMaxL: "Пилотов в заявке команды", critAngle: "Угол", critLine: "Траектория", critStyle: "Стиль", sumL: "Сумма", sectionsN: "разд.", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
     spHint: "Спонсоры показываются на главной под лидерами сезона. Логотип: PNG, JPG или WebP до 5 МБ, он впишется в квадрат целиком.", bracketTitle: "Сетка топ-32", brPreview: "Предварительно — по текущей квалификации", bye: "Без соперника", brSetWin: "Отметить победителя",
     brRecorded: "Результат записан в сетку", brPairs: "Пары сетки", brReseed: "Пересобрать из квалификации", brEditHint: "Сетка заполняется сама из судейского острова. Здесь можно исправить ошибку: ✓ отмечает победителя пары, повторный клик снимает.",
-    stageFirst: "Лидер этапа", stageNote: "Очки активного этапа: место в сетке, бонус за квалификацию и коэффициент сложности трассы. Когда начинается следующий этап, рейтинг обнуляется.",
-    stageTeamNote: "Очки команд за активный этап: два лучших пилота и бонус за квалификацию. Обнуляется со следующим этапом.",
+    stageFirst: "Лидер этапа", stageNote: "Очки последнего завершённого этапа: место в сетке топ-32, бонус за квалификацию и коэффициент конфига. Очки начисляются, когда этап получает статус «Завершён».",
+    stageTeamNote: "Очки команд за последний завершённый этап: два лучших пилота из топ-32 и бонус за квалификацию.",
+    stPending: "Очки начислятся, когда этап получит статус «Завершён».", trkK: "Коэффициент очков",
     noAch: "Достижений пока нет.", noAchAdmin: "Достижений нет. Создайте первое — потом его можно выдать пилотам.", achAdminHint2: "Создавайте свои достижения и выдавайте их пилотам вручную.", achHolders: "Получили", achGiven: "Достижение выдано", mdBar: "Форматирование", mdH: "Заголовок", mdList: "Список", mdBold: "Жирный", mdWarn: "Предупреждение", mdTable: "Таблица", mdCol: "Столбец",
     rulePreview: "Как увидят пилоты", pickSection: "Выберите раздел слева или добавьте новый.", regName: "Название регламента", roleJudge: "Судья", roleStreamer: "Стример", roleTech: "Технический помощник", roleNone: "Без роли",
     accessHint2: "Главный администратор — полный доступ к сайту. Администратор — вся админ-панель. Судья — только судейский остров. Стример — пульт трансляции и просмотр сезонов. Технический помощник — регламент. Роли выдаёт только главный администратор.",
@@ -2300,8 +2305,9 @@ const I18N = {
     stageTeamEntries: "Round teams", stageTeamEntriesNote: "Only entered teams take part in the team standings, in filing order.", maxTeamsStageL: "Teams per round", teamStageMaxL: "Drivers per team entry", critAngle: "Angle", critLine: "Line", critStyle: "Style", sumL: "Total", sectionsN: "sections", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
     spHint: "Sponsors show on the home page under the season leaders. Logo: PNG, JPG or WebP up to 5 MB, fitted whole into a square.", bracketTitle: "Top 32 bracket", brPreview: "Preview — from the current qualifying", bye: "Bye", brSetWin: "Mark the winner",
     brRecorded: "Result saved to the bracket", brPairs: "Bracket pairs", brReseed: "Rebuild from qualifying", brEditHint: "The bracket fills itself from the judges’ island. Fix mistakes here: ✓ marks a pair’s winner, a second click clears it.",
-    stageFirst: "Round leader", stageNote: "Points for the active round: bracket place, qualifying bonus and the track difficulty factor. The rating resets when the next round starts.",
-    stageTeamNote: "Team points for the active round: two best drivers and the qualifying bonus. Resets with the next round.",
+    stageFirst: "Round leader", stageNote: "Points for the latest finished round: top-32 place, qualifying bonus and the config factor. Points count once a round is marked Finished.",
+    stageTeamNote: "Team points for the latest finished round: two best top-32 drivers and the qualifying bonus.",
+    stPending: "Points are counted once the round is marked Finished.", trkK: "Points factor",
     noAch: "No achievements yet.", noAchAdmin: "No achievements. Create the first one, then hand it to drivers.", achAdminHint2: "Create your own achievements and hand them to drivers.", achHolders: "Awarded to", achGiven: "Achievement given", mdBar: "Formatting", mdH: "Heading", mdList: "List", mdBold: "Bold", mdWarn: "Warning", mdTable: "Table", mdCol: "Column",
     rulePreview: "What drivers will see", pickSection: "Pick a section on the left or add a new one.", regName: "Regulation name", roleJudge: "Judge", roleStreamer: "Streamer", roleTech: "Technical assistant", roleNone: "No role",
     accessHint2: "Head admin — full access to the site. Admin — the whole admin panel. Judge — the judges’ island only. Streamer — the broadcast panel and read-only seasons. Technical assistant — the rules. Only the head admin hands out roles.",
@@ -2513,7 +2519,7 @@ const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJ
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcImgDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcImgDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -2757,7 +2763,9 @@ const partsOf = n => { const z = TRACK_SET[n]; if (!z) return [];
   if (z.conf) { if (z.conf.length) (z.parts ??= []).unshift({ n: "", conf: z.conf }); delete z.conf; }
   return z.parts ??= []; };
 const confLabel = (p, c) => p.n ? `${p.n} · ${c.n}` : c.n;
-const confOf = n => partsOf(n).flatMap(p => p.conf.map(c => ({ n: confLabel(p, c), d: c.d })));
+const K_LIST = [1, 1.2, 1.5], kOfDiff = d => d >= 4 ? 1.5 : d === 3 ? 1.2 : 1, kOf = c => K_LIST.includes(c.k) ? c.k : kOfDiff(c.d);
+const kTxt = k => "×" + k.toFixed(1);
+const confOf = n => partsOf(n).flatMap(p => p.conf.map(c => ({ n: confLabel(p, c), d: c.d, k: kOf(c) })));
 // renames and deletes inside a track: stages on it follow their config by position, or lose it if it is gone
 function relabel(n, change) {
   const was = confOf(n).map(z => z.n); change(); const now = confOf(n).map(z => z.n);
@@ -2777,6 +2785,7 @@ const adminTracks = () => `<div class="head"><div class="stack" style="gap:.3rem
           <div class="trk-part-body"><div class="trk-part-head"><input class="field trk-part-in" data-a="tpart:${i}:${pi}" value="${esc(p.n)}" maxlength="40" placeholder="${t("trkPartPh")}" aria-label="${t("trkPartPh")}">
             <button class="btn text danger sm" data-act="trkPartDel" data-name="${esc(n)}" data-p="${pi}">${pending === `tp${i}:${pi}` ? t("delSure") : t("trkPartDel")}</button></div>
           ${p.conf.map((z, j) => `<div class="trk-row"><input class="field" data-a="tconf:${i}:${pi}:${j}" value="${esc(z.n)}" maxlength="40" aria-label="${t("trkConf")}">${diffPick(n, `${pi}:${j}`, z.d)}
+            <div class="k-pick" role="group" aria-label="${t("trkK")}">${K_LIST.map(k => `<button data-act="trkK" data-name="${esc(n)}" data-c="${pi}:${j}" data-v="${k}" aria-pressed="${kOf(z) === k}">${kTxt(k)}</button>`).join("")}</div>
             <span class="muted trk-dl">${z.d ? t("diff" + z.d) : "—"}</span><button class="btn text danger sm" data-act="trkConfDel" data-name="${esc(n)}" data-p="${pi}" data-c="${j}">${pending === `tc${i}:${pi}:${j}` ? t("delSure") : t("del")}</button></div>`).join("")}
           <div><button class="btn text sm" data-act="trkConfAdd" data-name="${esc(n)}" data-p="${pi}">${t("trkConfAdd")}</button></div></div></details>`).join("")}
         <div class="row" style="gap:.6rem;justify-content:space-between"><button class="btn line sm" data-act="trkPartAdd" data-name="${esc(n)}">${t("trkPartAdd")}</button>
@@ -2791,7 +2800,7 @@ function tracks() {
       <div class="track-body">
         <h3>${esc(n)}</h3>
         ${d[S.lang] ? `<p class="note">${esc(d[S.lang])}</p>` : ""}
-        ${partsOf(n).filter(p => p.conf.length).map((p, pi) => { const rows = `<dl class="specs">${p.conf.map(z => `<div class="diff-row"><dt>${esc(z.n)}${z.d ? `<span>${t("diff" + z.d)}</span>` : ""}</dt><dd><span class="diff" aria-label="${z.d}/5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= z.d ? "on" : ""}"></i>`).join("")}</span></dd></div>`).join("")}</dl>`;
+        ${partsOf(n).filter(p => p.conf.length).map((p, pi) => { const rows = `<dl class="specs">${p.conf.map(z => `<div class="diff-row"><dt>${esc(z.n)}<span>${z.d ? t("diff" + z.d) + " · " : ""}${kTxt(kOf(z))}</span></dt><dd><span class="diff" aria-label="${z.d}/5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= z.d ? "on" : ""}"></i>`).join("")}</span></dd></div>`).join("")}</dl>`;
           return p.n ? `<details class="br-box trk-pd" data-topen="tpv-${esc(n)}-${pi}" ${tOpenIs(`tpv-${n}-${pi}`) ? "open" : ""}><summary class="psec-head"><span class="label acc">${esc(p.n)}</span><i class="ach-chev" aria-hidden="true"></i></summary>${rows}</details>` : rows; }).join("")}
       </div></article>`; }).join("")}</div>`;
 }
@@ -2893,14 +2902,16 @@ function stagePlace(x, name) {
   }
   return null;
 }
-// points by the rules: place + qualifying bonus (top 4), times the stage config's difficulty factor (easy ×1, medium ×1.2, hard ×1.5)
+// points by the rules: place + qualifying bonus (top 4), times the stage config's factor (×1.0 / ×1.2 / ×1.5);
+// counted only once the stage is finished, and a pilot outside the top 32 gets nothing
 const bandOf = p => p == null ? 0 : p <= 4 ? p : p <= 8 ? 5 : p <= 16 ? 9 : 17;
 const PILOT_PTS = { 1: 100, 2: 80, 3: 60, 4: 50, 5: 40, 9: 25, 17: 10 }, TEAM_TBL = { 1: 70, 2: 60, 3: 45, 4: 30, 5: 15, 9: 5, 17: 2 };
-const stageDiff = x => confOf(x.track).find(z => z.n === x.conf)?.d ?? diffOf(x.track);
-const factorOf = x => { const d = stageDiff(x); return d >= 4 ? 1.5 : d === 3 ? 1.2 : 1; };
+const factorOf = x => confOf(x.track).find(z => z.n === x.conf)?.k ?? kOfDiff(diffOf(x.track)); // the stage's config; no config: the built-in track rating
 const qualBonus = (x, name) => [20, 15, 10, 5][qualOrder(x).indexOf(name)] ?? 0;
-const stagePts = (x, name) => Math.round(((PILOT_PTS[bandOf(stagePlace(x, name))] ?? 0) + qualBonus(x, name)) * factorOf(x));
-const teamStagePts = (x, tm) => { const r = stageEntries(x).find(z => z.tm.id === tm.id && z.ok), ms = r ? r.e.pilots.map(p => p.name) : []; // only entered teams, with their entered line-up
+const stagePts = (x, name) => { if (x.status !== "done") return 0; const pl = stagePlace(x, name); if (pl == null) return 0;
+  return Math.round(((PILOT_PTS[bandOf(pl)] ?? 0) + qualBonus(x, name)) * factorOf(x)); };
+const teamStagePts = (x, tm) => { if (x.status !== "done") return 0; // only entered teams, with their entered line-up, and only the pilots who made the top 32
+  const r = stageEntries(x).find(z => z.tm.id === tm.id && z.ok), ms = r ? r.e.pilots.map(p => p.name).filter(n => stagePlace(x, n) != null) : [];
   const best = ms.map(n => TEAM_TBL[bandOf(stagePlace(x, n))] ?? 0).sort((a, b) => b - a).slice(0, 2).reduce((s, v) => s + v, 0);
   return Math.round((best + Math.max(0, ...ms.map(n => qualBonus(x, n)))) * factorOf(x)); };
 const liveRound = x => BR_ROUNDS.indexOf(x.status);
@@ -2986,12 +2997,12 @@ function tournament(id) {
     const pl = rows.map(p => ({ p, pts: stagePts(x, p.name) })).sort((q, r) => r.pts - q.pts || r.p.best - q.p.best);
     const tm = stageEntries(x).filter(r => r.ok).map(({ tm, e }) => ({ tm, n: e.pilots.length, pts: teamStagePts(x, tm) })).sort((q, r) => r.pts - q.pts);
     const none = `<tr><td colspan="4" class="note">${t("nothing")}</td></tr>`;
-    return `<details class="box panel br-box" data-topen="st-${x.id}" ${tOpenIs(`st-${x.id}`) ? "open" : ""}><summary class="psec-head"><span class="stack" style="gap:.3rem"><h3>${t("stStand")}</h3><span class="note">${t("stStandNote")}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
+    return `<details class="box panel br-box" data-topen="st-${x.id}" ${tOpenIs(`st-${x.id}`) ? "open" : ""}><summary class="psec-head"><span class="stack" style="gap:.3rem"><h3>${t("stStand")}</h3><span class="note">${t(x.status === "done" ? "stStandNote" : "stPending")}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
       <div class="st-split">
         <div class="stack" style="gap:.6rem"><span class="label acc">${t("stPersonal")}</span><div class="tablebox"><table><thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
-          <tbody>${pl.map(({ p, pts }, i) => `<tr class="${p.mine ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${pAva(p, "t-ava")}${esc(p.name)}</td><td class="mono best" style="text-align:right">${pts}</td></tr>`).join("") || none}</tbody></table></div></div>
+          <tbody>${pl.map(({ p, pts }, i) => `<tr class="${p.mine ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${pAva(p, "t-ava")}${esc(p.name)}</td><td class="mono best" style="text-align:right">${x.status === "done" ? pts : "—"}</td></tr>`).join("") || none}</tbody></table></div></div>
         <div class="stack" style="gap:.6rem"><span class="label acc">${t("stTeam")}</span><div class="tablebox"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
-          <tbody>${tm.map((r, i) => `<tr class="${r.tm.id === S.team ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${r.pts}</td></tr>`).join("") || none}</tbody></table></div></div>
+          <tbody>${tm.map((r, i) => `<tr class="${r.tm.id === S.team ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${x.status === "done" ? r.pts : "—"}</td></tr>`).join("") || none}</tbody></table></div></div>
       </div></details>`;
   })() : ""}
   ${S.user && (protestOpen(x) || myProtests(x).length) ? `<section class="box panel"><h3>${t("fileProtest")}</h3><p class="note">${t("protestHint")}</p>
@@ -3013,8 +3024,9 @@ let query = "";
 // ---- rating: season points only (no leagues) — podium of three, then the full list with search; drivers or teams ----
 let rTab = "pilots";
 const pHref = name => `#p-${encodeURIComponent(name)}`;
-// the rating is the active stage only: it starts from zero when the next stage becomes the current one
-const rItems = () => { const x = currentTour(), byPts = (a, b) => b.pts - a.pts || a.name.localeCompare(b.name);
+// the rating is the latest finished stage of the season: points are counted only when a stage is finished
+const ratingTour = () => seasonTours(curSeason()).filter(z => z.status === "done").at(-1);
+const rItems = () => { const x = ratingTour(), byPts = (a, b) => b.pts - a.pts || a.name.localeCompare(b.name);
   return rTab === "teams"
     ? allTeams().map(tm => ({ id: "t" + tm.id, href: `#tm-${tm.id}`, ava: logo(tm), name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: x ? teamStagePts(x, tm) : 0, mine: tm.id === S.team })).sort(byPts)
     : roster().filter(p => !p.test).map(p => ({ id: p.name, href: pHref(p.name), ava: pAva(p, "r-ava"), name: p.name,
@@ -3035,7 +3047,7 @@ function rating() {
       <span class="r-pts"><span class="label">${t("totalPts")}</span><b>${r.pts}</b></span></a>` : "";
   return `<section class="r-hero">
     <div class="stack" style="gap:.8rem"><h1 class="r-title">${t("rating")}</h1>
-      ${currentTour() ? `<span class="label acc">${t("stage")} ${currentTour().stage} · ${esc(currentTour().track)}</span>` : ""}
+      ${ratingTour() ? `<span class="label acc">${t("stage")} ${ratingTour().stage} · ${esc(ratingTour().track)}</span>` : ""}
       <p class="note">${t(rTab === "teams" ? "stageTeamNote" : "stageNote")}</p></div>
     <div class="seg2" role="tablist">${["pilots", "teams"].map(k => `<button role="tab" data-act="rTab" data-v="${k}" aria-selected="${rTab === k}">${t(k === "pilots" ? "tabPilots" : "tabTeams")}</button>`).join("")}</div>
   </section>
@@ -4961,6 +4973,8 @@ document.addEventListener("click", e => {
       if (!(v >= 1 && v <= 5) || !trackNames().includes(n)) return;
       if (c != null) { const [pi, j] = c.split(":"), z = partsOf(n)[+pi]?.conf[+j]; if (!z) return; z.d = v; } else TRACK_DIFF[n] = v;
       dbSave(); toast(t("saved")); },
+    trkK: () => { const k = +el.dataset.v, [pi, j] = (el.dataset.c || "").split(":"), z = partsOf(el.dataset.name)[+pi]?.conf[+j];
+      if (!z || !K_LIST.includes(k)) return; z.k = k; dbSave(); toast(t("saved")); },
     trkAdd: () => { const inp = document.getElementById("trk-new"), n = inp?.value.trim().slice(0, 40);
       if (!n) return inp?.focus(); if (trackNames().includes(n)) { toast(t("trkDup")); return; }
       TRACK_SET[n] = { own: true, parts: [] }; tOpen["trk-" + n] = true; dbSave(); toast(t("saved")); },
