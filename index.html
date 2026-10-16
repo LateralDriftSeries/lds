@@ -1540,6 +1540,9 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 .ach:hover { border-color: var(--line-2) }
 .ach.on { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); background-color: color-mix(in srgb, var(--accent) 7%, var(--panel-2)) }
 .ach.on .ach-ic { filter: none; opacity: 1 } .ach.on b { color: var(--text) }
+.ach.veiled { border-style: dashed } .ach.veiled .ach-ic { font: 700 1.4rem var(--f-display); filter: none; opacity: .4 } .ach.veiled b { letter-spacing: .2em }
+.ach-hid { gap: .7rem; align-items: flex-start; flex-wrap: nowrap } .ach-hid input { margin-top: .2rem }
+.ach-hid-tag { font: 700 .65rem var(--f-mono); color: var(--muted); border: 1px dashed var(--line-2); border-radius: 4px; padding: 0 .3rem }
 .ach-count { font: 600 1.1rem var(--f-head); color: var(--text) } .ach-count span { color: var(--muted) }
 
 /* ---- profile: start number (picked number on the left, grid on the right), team + about side by side with equal height ---- */
@@ -2158,7 +2161,7 @@ const I18N = {
     stageFirst: "Лидер этапа", stageNote: "Очки последнего завершённого этапа: место в сетке топ-32, бонус за квалификацию и коэффициент конфига. Очки начисляются, когда этап получает статус «Завершён».",
     stageTeamNote: "Очки команд за последний завершённый этап: два лучших пилота из топ-32 и бонус за квалификацию.",
     stPending: "Очки начислятся, когда этап получит статус «Завершён».", trkK: "Коэффициент очков",
-    noAch: "Достижений пока нет.", noAchAdmin: "Достижений нет. Создайте первое — потом его можно выдать пилотам.", achAdminHint2: "Создавайте свои достижения и выдавайте их пилотам вручную.", achHolders: "Получили", achGiven: "Достижение выдано", mdBar: "Форматирование", mdH: "Заголовок", mdList: "Список", mdBold: "Жирный", mdWarn: "Предупреждение", mdTable: "Таблица", mdCol: "Столбец",
+    noAch: "Достижений пока нет.", noAchAdmin: "Достижений нет. Создайте первое — потом его можно выдать пилотам.", achAdminHint2: "Создавайте свои достижения и выдавайте их пилотам вручную.", achHidden: "Скрытое достижение", achHiddenHint: "Пока его не получили, в профиле видно только «???», и оно стоит в самом конце списка.", achHiddenD: "Скрытое достижение", achHolders: "Получили", achGiven: "Достижение выдано", mdBar: "Форматирование", mdH: "Заголовок", mdList: "Список", mdBold: "Жирный", mdWarn: "Предупреждение", mdTable: "Таблица", mdCol: "Столбец",
     rulePreview: "Как увидят пилоты", pickSection: "Выберите раздел слева или добавьте новый.", regName: "Название регламента", roleJudge: "Судья", roleStreamer: "Стример", roleTech: "Технический помощник", roleNone: "Без роли",
     accessHint2: "Главный администратор — полный доступ к сайту. Администратор — вся админ-панель. Судья — только судейский остров. Стример — пульт трансляции и просмотр сезонов. Технический помощник — регламент. Роли выдаёт только главный администратор.",
     rolesOwnerOnly: "Менять роли может только главный администратор.", noPanelRole: "У вашей роли нет доступа к этому разделу.", maxPilotsCol: "Мест", seatsL: "Мест на этапе", teamEntriesAdm: "Заявки команд на этап", warnShort: "Предупреждения",
@@ -2308,7 +2311,7 @@ const I18N = {
     stageFirst: "Round leader", stageNote: "Points for the latest finished round: top-32 place, qualifying bonus and the config factor. Points count once a round is marked Finished.",
     stageTeamNote: "Team points for the latest finished round: two best top-32 drivers and the qualifying bonus.",
     stPending: "Points are counted once the round is marked Finished.", trkK: "Points factor",
-    noAch: "No achievements yet.", noAchAdmin: "No achievements. Create the first one, then hand it to drivers.", achAdminHint2: "Create your own achievements and hand them to drivers.", achHolders: "Awarded to", achGiven: "Achievement given", mdBar: "Formatting", mdH: "Heading", mdList: "List", mdBold: "Bold", mdWarn: "Warning", mdTable: "Table", mdCol: "Column",
+    noAch: "No achievements yet.", noAchAdmin: "No achievements. Create the first one, then hand it to drivers.", achAdminHint2: "Create your own achievements and hand them to drivers.", achHidden: "Hidden achievement", achHiddenHint: "Until earned it shows only as “???” and sits at the end of the list.", achHiddenD: "Hidden achievement", achHolders: "Awarded to", achGiven: "Achievement given", mdBar: "Formatting", mdH: "Heading", mdList: "List", mdBold: "Bold", mdWarn: "Warning", mdTable: "Table", mdCol: "Column",
     rulePreview: "What drivers will see", pickSection: "Pick a section on the left or add a new one.", regName: "Regulation name", roleJudge: "Judge", roleStreamer: "Streamer", roleTech: "Technical assistant", roleNone: "No role",
     accessHint2: "Head admin — full access to the site. Admin — the whole admin panel. Judge — the judges’ island only. Streamer — the broadcast panel and read-only seasons. Technical assistant — the rules. Only the head admin hands out roles.",
     rolesOwnerOnly: "Only the head admin can change roles.", noPanelRole: "Your role has no access to this section.", maxPilotsCol: "Spots", seatsL: "Spots in this round", teamEntriesAdm: "Team entries for the round", warnShort: "Warnings",
@@ -2496,7 +2499,7 @@ const PERMS = { owner: ["edit", "judge", "bc", "rules", "seasons", "roles"], adm
   judge: ["judge", "seasons"], streamer: ["bc", "seasons"], tech: ["rules"] };
 // team entries per stage: what the organisers set or approved (by stage id, then team id), the status of founders' requests, approved team names
 const TEAM_ENTRIES = S.db?.teamEntries || {}, REQ_STATUS = S.db?.reqStatus || {}, TEAM_NAMES = S.db?.teamNames || {}, TEAM_FOUNDERS = S.db?.teamFounders || {};
-const ACHIEVEMENTS = S.db?.achievements || [], AWARDS = S.db?.awards || {}; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc]]; admin edits them
+const ACHIEVEMENTS = S.db?.achievements || [], AWARDS = S.db?.awards || {}; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc], kind, hidden]; admin edits them
 const TRACK_DIFF = S.db?.trackDiff || {}; // admin overrides of track difficulty, by track name
 const TRACK_SET = S.db?.trackSet || {}; // by track name: { own: added in the settings, parts: [{ n: section title, conf: [{ n: name, d: difficulty }] }] }
 // head admin: the SteamIDs in the server's OWNER_STEAM_IDS on the hosted site; only they change numbers, remove drivers and hand out roles
@@ -3875,8 +3878,10 @@ const achHolder = h => h.startsWith("t:") ? `🏁 ${teamById(+h.slice(2))?.name 
 // one look for pilots and teams: every achievement of the kind, the earned ones lit, with an earned/total count
 const achGrid = (list, got) => { const lang = S.lang === "en" ? 3 : 2;
   if (!list.length) return `<p class="note">${t("noAch")}</p>`;
-  return `<div class="ach-grid">${list.map(a => { const on = got.has(a[1]), title = a[lang][0] || tr(a[2][0]), desc = a[lang][1] || tr(a[2][1]);
-    return `<div class="ach ${on ? "on" : ""}" title="${on ? t("achOn") : t("achOff")}"><span class="ach-ic" aria-hidden="true">${esc(a[0])}</span><span><b>${esc(title)}</b><span class="ach-d">${esc(desc)}</span></span></div>`; }).join("")}</div>`; };
+  const veiled = a => !!a[5] && !got.has(a[1]);
+  return `<div class="ach-grid">${[...list.filter(a => !veiled(a)), ...list.filter(veiled)].map(a => { const on = got.has(a[1]), v = veiled(a);
+    const title = v ? "???" : a[lang][0] || tr(a[2][0]), desc = v ? t("achHiddenD") : a[lang][1] || tr(a[2][1]);
+    return `<div class="ach ${on ? "on" : ""} ${v ? "veiled" : ""}" title="${on ? t("achOn") : t("achOff")}"><span class="ach-ic" aria-hidden="true">${v ? "?" : esc(a[0])}</span><span><b>${esc(title)}</b><span class="ach-d">${esc(desc)}</span></span></div>`; }).join("")}</div>`; };
 const achTally = (list, got) => `<span class="ach-count">${list.filter(a => got.has(a[1])).length}<span>/${list.length}</span></span>`;
 const achBlock = name => achGrid(pilotAch(), achUnlocked(name));
 const achCount = name => achTally(pilotAch(), achUnlocked(name));
@@ -4057,6 +4062,7 @@ function adminAch() {
       <div class="ach-prev"><span class="label">${t("rulePreview")}</span><div class="ach on"><span class="ach-ic" aria-hidden="true">${esc(a[0])}</span><span><b>${esc(a[lang][0] || a[2][0])}</b><span class="ach-d">${esc(a[lang][1] || a[2][1])}</span></span></div></div>
       <label class="fieldlabel ach-own">${t("achIcon")}<span class="row"><input class="field ach-ic-in" data-a="ach:${i}:ic" value="${esc(a[0])}" placeholder="🙂" maxlength="16" autocomplete="off" aria-label="${t("achIcon")}">
           <span class="note">${t("achOwnHint")}</span></span></label>
+      <label class="row ach-hid"><input type="checkbox" data-a="ach:${i}:hid" ${a[5] ? "checked" : ""}><span class="stack" style="gap:.15rem"><b>${t("achHidden")} (???)</b><span class="note">${t("achHiddenHint")}</span></span></label>
       <div class="ach-langs">
         <div class="stack" style="gap:.6rem"><span class="label acc">RU</span><label class="fieldlabel">${t("achTitle")}<input class="field" data-a="ach:${i}:ruT" value="${esc(a[2][0])}" maxlength="40"></label>
           <label class="fieldlabel">${t("achDesc")}<textarea class="field" rows="2" data-a="ach:${i}:ruD" maxlength="120">${esc(a[2][1])}</textarea></label></div>
@@ -4071,7 +4077,7 @@ function adminAch() {
       <button class="btn" data-act="newAch">${t("addAch")}</button></div>
     <p class="note" style="margin:0">${t(isTeam ? "achTeamHint" : "achPilotHint")}</p>
     <div class="ach-ed2">
-      <aside class="rt panel">${list.map(([z, j], k) => `<div class="rt-row ${z === a ? "on" : ""}"><button class="rt-name ach-li" data-act="achPick" data-v="${esc(z[1])}"><span aria-hidden="true">${esc(z[0])}</span>${esc(z[2][0] || "—")}<span class="muted">${(AWARDS[z[1]] || []).length}</span></button>
+      <aside class="rt panel">${list.map(([z, j], k) => `<div class="rt-row ${z === a ? "on" : ""}"><button class="rt-name ach-li" data-act="achPick" data-v="${esc(z[1])}"><span aria-hidden="true">${esc(z[0])}</span>${esc(z[2][0] || "—")}${z[5] ? `<span class="ach-hid-tag" title="${t("achHidden")}">???</span>` : ""}<span class="muted">${(AWARDS[z[1]] || []).length}</span></button>
         <span class="rt-ctl"><button data-act="achMove" data-id="${j}" data-v="-1" ${k === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button><button data-act="achMove" data-id="${j}" data-v="1" ${k === list.length - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button></span></div>`).join("")
         || `<p class="note">—</p>`}</aside>
       <div class="stack" style="gap:1rem;min-width:0">${editor}</div>
@@ -4280,8 +4286,10 @@ function adminEdit([kind, id, f, k], v) {
     return dbSave(false);
   }
   if (kind === "ach") {
-    const a = ACHIEVEMENTS[+id], val = v.trim();
+    const a = ACHIEVEMENTS[+id];
     if (!a) return;
+    if (f === "hid") { a[4] = achKind(a); a[5] = v ? 1 : 0; return dbSave(); } // the kind is pinned first so the array has no hole before the flag
+    const val = v.trim();
     // one emoji, kept whole: a joined emoji (❤️‍🔥, skin tones, flags) is several code units, so cutting by length broke it
     if (f === "ic") { const parts = globalThis.Intl?.Segmenter ? [...new Intl.Segmenter().segment(val)].map(g => g.segment) : [...val];
       a[0] = parts.find(g => /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(g)) || a[0]; if (a[0] !== val) render(); } // letters are ignored: the first emoji wins
