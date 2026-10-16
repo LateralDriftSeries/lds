@@ -126,7 +126,10 @@ ok(st.db.settings.maxStage === 40 && st.db.protests.at(-1).from === "Test Pilot"
 // head admin: numbers and removals; others can't
 const ownerCall = (body, token = owner) => call("/api/owner/user", { method: "POST", token, body: JSON.stringify(body) });
 ok((await ownerCall({ sid: OWNER, num: 7 }, pilot)).status === 403, "pilot cannot use head admin tools");
-ok((await ownerCall({ sid: PILOT, num: 0 })).status === 400, "bad number refused");
+ok((await ownerCall({ sid: PILOT, num: -1 })).status === 400 && (await ownerCall({ sid: PILOT, num: 1000 })).status === 400, "bad number refused");
+ok((await ownerCall({ sid: PILOT, num: 0 })).ok, "head admin can give number 0");
+await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ num: 5, regs: [203] }) });
+ok((await (await call("/api/me", { token: pilot })).json()).user.num === 0, "number 0 survives the pilot's own saves");
 ok((await ownerCall({ sid: PILOT, num: 12 })).ok, "head admin sets a number");
 st = await (await call("/api/state")).json();
 ok(st.users.find(u => u.steamId === PILOT).num === 12 && st.users.find(u => u.steamId === OWNER).owner === true, "number saved, owner flagged");

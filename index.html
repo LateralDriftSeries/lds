@@ -2962,7 +2962,7 @@ function tournament(id) {
     else if (!isReg && regCount(x) >= stageMax(x)) action = `<p class="note">${t("stageFull")}</p>`;
     else if (S.user && isBanned(S.user.name)) action = `<p class="note err">${t("youBanned")}</p>`;
     else if (!S.user) action = `<p class="note">${t("needLogin")}</p><button class="btn steam" data-act="login">${STEAM_ICON}${t("login")}</button>`;
-    else if (!S.num) action = `<p class="note">${t("needNum")}</p><a class="btn line" href="#profile">${t("profile")} →</a>`;
+    else if (S.num == null) action = `<p class="note">${t("needNum")}</p><a class="btn line" href="#profile">${t("profile")} →</a>`;
     else if (!isReg && !carOk()) action = `<p class="note">${t("needCar")}</p><a class="btn line" href="#profile">${t("profile")} →</a>`;
     else action = isReg ? `<span class="pill plain ok-pill">${t("participating")}</span><button class="btn text" data-act="unreg" data-id="${id}">${t("cancel")}</button>`
                         : `<button class="btn" data-act="reg" data-id="${id}">${t("register")}</button>`;
@@ -3024,7 +3024,7 @@ function rRows() {
   const list = all.map((r, k) => ({ ...r, place: k + 1 })).filter(r => !q || r.name.toLowerCase().includes(q) || String(r.num ?? "").startsWith(q));
   return list.slice(0, 20).map((r, k) => `<li class="r-row ${r.mine ? "mine" : ""} ${r.place <= 3 ? `top p${r.place}` : ""}" style="--i:${k}"><a href="${r.href}">
       <span class="r-pos">${pad(r.place)}</span>${r.ava}
-      <span class="r-name"><b>${esc(r.name)}${r.num ? `<span class="r-numv mono">#${r.num}</span>` : ""}</b><span class="note">${esc(r.sub)}</span></span>
+      <span class="r-name"><b>${esc(r.name)}${r.num != null ? `<span class="r-numv mono">#${r.num}</span>` : ""}</b><span class="note">${esc(r.sub)}</span></span>
       <span class="r-bar" aria-hidden="true"><i style="--w:${(r.pts / max).toFixed(3)}"></i></span>
       <span class="r-ptsv">${r.pts}</span></a></li>`).join("") || `<li class="note">${t("nothing")}</li>`;
 }
@@ -3107,7 +3107,7 @@ function teamPage(id) {
   <section class="stack sec"><div class="sec-head"><span class="label idx">01 — ${t("rosterL")}</span><h2>${t("rosterTitle")}</h2></div>
     ${ms.length ? `<div class="pl-grid">${ms.map((p, i) => `<a class="pl-card" href="${pHref(p.name)}" style="--i:${i}">${pAva(p, "pl-ava")}
       <span class="stack" style="gap:.2rem;min-width:0"><b>${esc(p.name)} ${founderTag(tm, p)}</b><span class="note">${esc(p.car || "—")}</span></span>
-      <span class="pl-right"><span class="pl-num">${p.num ? "#" + p.num : ""}</span><span class="note">${p.pts} ${t("pointsShort")}</span></span></a>`).join("")}</div>` : `<p class="note">${t("noMembers")}</p>`}
+      <span class="pl-right"><span class="pl-num">${p.num != null ? "#" + p.num : ""}</span><span class="note">${p.pts} ${t("pointsShort")}</span></span></a>`).join("")}</div>` : `<p class="note">${t("noMembers")}</p>`}
   </section>`;
 }
 
@@ -3562,7 +3562,7 @@ function ruleEdit(di, k, field, v) {
 }
 
 let teamMsg = "", pick = null;
-const numInner = v => v ? `<span><small>#</small>${v}</span>` : "—";
+const numInner = v => v != null ? `<span><small>#</small>${v}</span>` : "—";
 const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
 // a grid click previews the number and fills the field; "Занять" (form submit) confirms it
 function showPick(v) {
@@ -3647,7 +3647,7 @@ function leaderTools(tm) {
       <span class="note">${t(tm.closed ? "closedHint" : "openHint")}</span></div>
     <div class="inv-box"><span class="label">${t("inviteL")}</span>
       <input class="field" type="search" id="invq" placeholder="${t("inviteSearch")}" aria-label="${t("inviteSearch")}" autocomplete="off" ${full ? "disabled" : ""}>
-      <ul class="inv-list" id="invlist">${cands.map(p => `<li data-q="${esc(`${p.name} ${p.num ?? ""}`.toLowerCase())}"><span class="inv-num">${p.num ? `#${p.num}` : "—"}</span>
+      <ul class="inv-list" id="invlist">${cands.map(p => `<li data-q="${esc(`${p.name} ${p.num ?? ""}`.toLowerCase())}"><span class="inv-num">${p.num != null ? `#${p.num}` : "—"}</span>
         <span class="inv-who"><b>${esc(p.name)}</b><span>${teamById(p.team) ? esc(teamById(p.team).name) : t("freeAgent")}</span></span>
         <button class="btn line sm" data-act="invite" data-name="${esc(p.name)}" ${full ? "disabled" : ""}>${t("inviteBtn")}</button></li>`).join("")}</ul>
       <p class="note" id="invnone" ${cands.length ? "hidden" : ""}>${t("inviteNone")}</p></div>
@@ -3788,7 +3788,7 @@ function stageRegBox() {
     else if (!SETTINGS.regOpen) act = `<span class="note">${t("regClosed")}</span>`;
     else if (regCount(x) >= stageMax(x)) act = `<span class="note">${t("stageFull")}</span>`;
     else if (isBanned(S.user.name)) act = `<span class="note err">${t("youBanned")}</span>`;
-    else if (!S.num) act = `<span class="note">${t("needNumHere")}</span>`;
+    else if (S.num == null) act = `<span class="note">${t("needNumHere")}</span>`;
     else if (!carOk()) act = `<span class="note">${t("needCarHere")}</span>`;
     else act = `<button class="btn sm" data-act="reg" data-id="${x.id}">${t("register")}</button>`;
     return `<div class="regrow ${mine ? "mine" : ""} ${isCur ? "cur" : "later"}">
@@ -3817,7 +3817,7 @@ function pilotHero(p, own) {
     <span class="pp-role ${roleOf(p.name) ? "admin" : ""}">${roleLabel(roleOf(p.name))}</span>
     <div class="pp-main">${pAva(p, "pp-ava")}
       <div class="pp-who"><h1>${esc(p.name)}</h1>
-        <div class="pp-chips">${sanctionChips(p.name)}${p.num ? `<span class="chip4 acc">#${p.num}</span>` : ""}${tm ? `<a class="chip4" href="#tm-${tm.id}">${logo(tm)}${esc(tm.name)}</a>` : `<span class="chip4">${t("freeAgent")}</span>`}${own ? `<span class="chip4">Steam ID ${esc(S.user.steamId)}</span>` : ""}</div>
+        <div class="pp-chips">${sanctionChips(p.name)}${p.num != null ? `<span class="chip4 acc">#${p.num}</span>` : ""}${tm ? `<a class="chip4" href="#tm-${tm.id}">${logo(tm)}${esc(tm.name)}</a>` : `<span class="chip4">${t("freeAgent")}</span>`}${own ? `<span class="chip4">Steam ID ${esc(S.user.steamId)}</span>` : ""}</div>
         ${own || bio ? `<p class="pp-bio ${bio ? "" : "muted"}">${bio ? esc(tr(bio)) : t("noBio")}</p>` : ""}</div></div>
     ${garage.length ? `<dl class="pp-car">${garage.map(([k, v]) => `<div><dt>${t(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
     ${statRow([[place ? `#${place}` : "—", "cmpPlace"], [p.pts, "points"], [q.length, "statRaced"]])}
@@ -3873,7 +3873,7 @@ const teamAchGot = tm => new Set(teamAchList(tm).map(a => a[1]));
 function profile() {
   if (!S.user) return `<div class="box panel empty"><p class="muted">${t("loginFirst")}</p><div><button class="btn steam" data-act="login">${STEAM_ICON}${t("login")}</button></div></div>`;
   // a claimed number stays with the pilot for the whole season; only the head admin changes it
-  const p = roster().find(z => z.mine), tk = taken(), locked = !!S.num, about = S.about || {};
+  const p = roster().find(z => z.mine), tk = taken(), locked = S.num != null, about = S.about || {};
   const counter = key => `<span class="counter" id="cnt-${key}">${Math.min((about[key] || "").length, ABOUT_MAX)} / ${ABOUT_MAX}</span>`;
   return `<div class="pp-bar"><span class="label">${t("myProfile")}</span>
     <div class="row" style="gap:1rem"><a class="btn text sm" href="${pHref(p.name)}">${t("publicView")} ↗</a>
@@ -3883,7 +3883,7 @@ function profile() {
   <details class="psec panel ach-box" id="ach-box" ${S.achOpen ? "open" : ""}><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achCount(S.user.name)}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achBlock(S.user.name)}</details>
   ${stageRegBox()}
   <div class="pp-pair">
-    ${psec(t("numReg"), `<div class="num-wrap"><div class="stack" style="gap:.8rem"><div class="numshow ${S.num ? "" : "none"}" id="numshow">${numInner(S.num)}${locked ? '<span class="lock" aria-hidden="true">🔒</span>' : ""}</div>
+    ${psec(t("numReg"), `<div class="num-wrap"><div class="stack" style="gap:.8rem"><div class="numshow ${S.num != null ? "" : "none"}" id="numshow">${numInner(S.num)}${locked ? '<span class="lock" aria-hidden="true">🔒</span>' : ""}</div>
       <p class="note">${locked ? t("numLocked") : t("numHint")}</p>
       ${locked ? "" : `<form class="numcustom" id="numform"><label for="own" class="note">${t("own")}</label>
         <input id="own" type="number" min="1" max="999" inputmode="numeric" placeholder="1–999"><button class="btn line sm" id="numtake">${t("take")}</button></form>
@@ -4252,8 +4252,9 @@ function adminEdit([kind, id, f, k], v) {
       if (p) p.rating = r; else S.myRating = r;
     }
     if (f === "num") {
-      const used = new Set([...PILOTS.filter((_, i) => i !== idx).map(q => q.num), ...(idx !== -1 && S.num ? [S.num] : [])]);
-      if (!Number.isInteger(n) || n < 1 || n > 999) { adminMsg = t("numBad"); return render(); }
+      const used = new Set([...PILOTS.filter((_, i) => i !== idx).map(q => q.num), ...(idx !== -1 && S.num != null ? [S.num] : [])]);
+      if (!Number.isInteger(n) || n < 0 || n > 999) { adminMsg = t("numBad"); return render(); } // 0: only the head admin hands it out
+      if (idx === -1 && HOSTED) { ownerCall({ sid: S.user.steamId, num: n }); return render(); } // a claimed number is locked for the pilot, so the change goes through the head-admin call
       if (used.has(n)) { adminMsg = `${t("numDup")}: ${n}`; return render(); }
       if (p && HOSTED && !p.test) { ownerCall({ sid: p.steamId, num: n }); return render(); }
       if (p) p.num = n; else S.num = n;

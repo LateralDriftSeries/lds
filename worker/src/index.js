@@ -216,7 +216,7 @@ async function putMe(req, env, sid) {
   // joining a team: an open team with room, or a closed one that invited this pilot; otherwise the pilot stays where they were
   if ((u.team ?? null) !== prevTeam && u.team != null && !(await canJoin(env, u, Number(u.team)))) u.team = prevTeam;
   // shortcut: field shapes are trusted (number range, team id); validate per field once real abuse shows up
-  if (u.num != null && !(Number.isInteger(u.num) && u.num >= 1 && u.num <= 999)) u.num = null;
+  if (u.num != null && !(Number.isInteger(u.num) && (u.num >= 1 || u.num === prevNum) && u.num <= 999)) u.num = null; // 0 only from the head admin
   if (typeof u.about === "object" && u.about) u.about = { ru: String(u.about.ru || "").slice(0, 60) };
   if (prevTeam != null && (u.team ?? null) !== prevTeam) await dropRep(env, prevTeam, u.name);
   await setUser(env, sid, u);
@@ -463,7 +463,7 @@ async function ownerUser(req, env, ownerSid) {
     }
   } else {
     const num = body.num;
-    if (!(Number.isInteger(num) && num >= 1 && num <= 999)) throw new HttpError(400, "bad number");
+    if (!(Number.isInteger(num) && num >= 0 && num <= 999)) throw new HttpError(400, "bad number"); // 0 is the head admin's to give
     const rows = await env.DB.prepare("SELECT sid, data FROM users").all();
     if (rows.results.some(r => r.sid !== sid && JSON.parse(r.data).num === num)) throw new HttpError(409, "number taken");
     u.num = num;
