@@ -449,7 +449,7 @@ async function postProtest(req, env, sid) {
 // head admin: set another pilot's number, or remove the pilot (their profile is deleted; signing in again starts a fresh one)
 async function ownerUser(req, env, ownerSid) {
   const body = await readJson(req, 1_000), sid = String(body.sid || "");
-  if (!/^\d{17}$/.test(sid) || sid === ownerSid) throw new HttpError(400, "bad pilot");
+  if (!/^\d{17}$/.test(sid) || (sid === ownerSid && body.kick)) throw new HttpError(400, "bad pilot"); // the head admin may renumber but not remove themselves
   const u = await getUser(env, sid);
   if (!u) throw new HttpError(404, "no such pilot");
   if (body.kick === true) {

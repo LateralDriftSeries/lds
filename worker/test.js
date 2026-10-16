@@ -131,6 +131,8 @@ ok((await ownerCall({ sid: PILOT, num: 0 })).ok, "head admin can give number 0")
 await call("/api/me", { method: "PUT", token: pilot, body: JSON.stringify({ num: 5, regs: [203] }) });
 ok((await (await call("/api/me", { token: pilot })).json()).user.num === 0, "number 0 survives the pilot's own saves");
 ok((await ownerCall({ sid: PILOT, num: 12 })).ok, "head admin sets a number");
+ok((await ownerCall({ sid: OWNER, num: 77 })).ok && (await (await call("/api/me", { token: owner })).json()).user.num === 77, "head admin changes their own number");
+ok((await ownerCall({ sid: OWNER, kick: true })).status === 400, "head admin can't remove themselves");
 st = await (await call("/api/state")).json();
 ok(st.users.find(u => u.steamId === PILOT).num === 12 && st.users.find(u => u.steamId === OWNER).owner === true, "number saved, owner flagged");
 ok((await ownerCall({ sid: PILOT, kick: true })).ok, "head admin removes a pilot");
