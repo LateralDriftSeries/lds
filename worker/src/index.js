@@ -43,7 +43,13 @@ async function route(req, env, url) {
     if (m === "GET") return getDiscord(env);
     if (m === "PUT") return putDiscord(req, env);
   }
-  if (m === "GET" && p.startsWith("/api/discord/img/")) return discordImg(env, p.slice(17));
+  if (p.startsWith("/api/discord/img/")) {
+    const st = p.slice(17);
+    if (m === "GET") return discordImg(env, st);
+    await requireRole(req, env, ["owner", "admin"]);
+    if (m === "PUT") return putDiscordImg(req, env, st);
+    if (m === "DELETE") return delDiscordImg(env, st);
+  }
   if (m === "POST" && p === "/api/protest") return postProtest(req, env, await auth(req, env));
   if (m === "POST" && p === "/api/owner/user") return ownerUser(req, env, await requireOwner(req, env));
   if (m === "POST" && p === "/api/team/create") return createTeam(req, env, await auth(req, env));
@@ -61,7 +67,7 @@ function corsHeaders(req, env) {
   const origin = req.headers.get("origin") || "";
   const allowed = siteOrigins(env);
   return allowed.includes(origin)
-    ? { "access-control-allow-origin": origin, "access-control-allow-methods": "GET, PUT, POST, OPTIONS", "access-control-allow-headers": "authorization, content-type", "access-control-max-age": "86400", vary: "origin" }
+    ? { "access-control-allow-origin": origin, "access-control-allow-methods": "GET, PUT, POST, DELETE, OPTIONS", "access-control-allow-headers": "authorization, content-type", "access-control-max-age": "86400", vary: "origin" }
     : {};
 }
 const siteOrigins = env => String(env.SITE_ORIGIN || "").split(",").map(s => s.trim()).filter(Boolean);
@@ -369,20 +375,22 @@ async function postDiscord(env, db, id, status, hook, own, origin) {
     { name: "Сайт", value: site, inline: false },
     status === "top32" && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
   const embed = { title: `${a.title} · Этап ${x.stage} — ${String(x.track || "").slice(0, 60)}`, url: site, color: a.color, description: `${own?.text || a.text}\n\n[${a.link} →](${site})`,
-    ...(own?.img ? { image: { url: `${origin}/api/discord/img/${status}?v=${own.at || 0}` } } : {}), fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
+    ...(own?.img === true ? { image: { url: `${origin}/api/discord/img/${status}?v=${own.at || 0}` } } : {}), fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
   // allowed_mentions: none, so a track or season name can never ping @everyone
   await fetch(hook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: "LDS", embeds: [embed], allowed_mentions: { parse: [] } }) });
 }
 
 const HOOK_RE = /^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/api\/webhooks\/\d+\/[\w-]+$/;
-const DC_IMG = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/;
+// pictures are kept as raw bytes in their own table, so text saves never carry (or wipe) them and nothing big is parsed per request
+const IMG_MAX = 1_000_000, FILES_SQL = "CREATE TABLE IF NOT EXISTS files (k TEXT PRIMARY KEY, type TEXT NOT NULL, data BLOB NOT NULL)";
+const postView = v => ({ text: v?.text || "", img: v?.img === true, at: v?.at || 0 });
 async function getDiscord(env) {
   const c = await kvGet(env, "discord") || {};
   // the address itself never leaves the server: the panel only learns whether one is set
-  return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, reg: c.reg || {}, qualifying: c.qualifying || {}, top32: c.top32 || {} });
+  return json({ hook: !!c.hook, envHook: !!env.DISCORD_WEBHOOK, ...Object.fromEntries(Object.keys(ANNOUNCE).map(k => [k, postView(c[k])])) });
 }
 async function putDiscord(req, env) {
-  const body = await readJson(req, 1_950_000), c = await kvGet(env, "discord") || {};
+  const body = await readJson(req, 20_000), c = await kvGet(env, "discord") || {};
   if (typeof body.hook === "string") {
     const h = body.hook.trim();
     if (h && !HOOK_RE.test(h)) throw new HttpError(400, "not a discord webhook");
@@ -391,17 +399,38 @@ async function putDiscord(req, env) {
   }
   for (const k of Object.keys(ANNOUNCE)) {
     const v = body[k]; if (!v || typeof v !== "object") continue;
-    if (typeof v.img === "string" && v.img.length > 600_000) throw new HttpError(413, "image too large");
-    const img = typeof v.img === "string" && DC_IMG.test(v.img) ? v.img : "";
-    c[k] = { text: String(v.text || "").slice(0, 1500), img, at: img === c[k]?.img ? c[k]?.at || 0 : Date.now() };
+    c[k] = { ...postView(c[k]), text: String(v.text || "").slice(0, 1500) }; // the picture is untouched here
   }
   await kvSet(env, "discord", c);
   return getDiscord(env);
 }
 async function discordImg(env, status) {
-  const m = DC_IMG.exec((await kvGet(env, "discord"))?.[status]?.img || "");
-  if (!m) throw new HttpError(404, "no image");
-  return new Response(Uint8Array.from(atob(m[2]), ch => ch.charCodeAt(0)), { headers: { "content-type": "image/" + m[1], "cache-control": "public, max-age=300" } });
+  const r = await env.DB.prepare("SELECT type, data FROM files WHERE k = ?").bind("dc:" + status).first().catch(() => null); // no table yet: no picture
+  if (!r) throw new HttpError(404, "no image");
+  return new Response(new Uint8Array(r.data), { headers: { "content-type": r.type, "cache-control": "public, max-age=300" } });
+}
+async function putDiscordImg(req, env, status) {
+  if (!ANNOUNCE[status]) throw new HttpError(404, "no such post");
+  const type = (req.headers.get("content-type") || "").split(";")[0].trim();
+  if (!/^image\/(jpeg|png|webp)$/.test(type)) throw new HttpError(400, "png, jpeg or webp only");
+  if (+(req.headers.get("content-length") || 0) > IMG_MAX) throw new HttpError(413, "image too large");
+  const data = await req.arrayBuffer();
+  if (!data.byteLength || data.byteLength > IMG_MAX) throw new HttpError(413, "image too large");
+  await env.DB.prepare(FILES_SQL).run();
+  await env.DB.prepare("INSERT INTO files (k, type, data) VALUES (?, ?, ?) ON CONFLICT(k) DO UPDATE SET type = excluded.type, data = excluded.data").bind("dc:" + status, type, data).run();
+  const c = await kvGet(env, "discord") || {};
+  c[status] = { ...postView(c[status]), img: true, at: Date.now() }; // "at" changes the picture's address, so Discord fetches the new one
+  await kvSet(env, "discord", c);
+  return getDiscord(env);
+}
+async function delDiscordImg(env, status) {
+  if (!ANNOUNCE[status]) throw new HttpError(404, "no such post");
+  await env.DB.prepare(FILES_SQL).run();
+  await env.DB.prepare("DELETE FROM files WHERE k = ?").bind("dc:" + status).run();
+  const c = await kvGet(env, "discord") || {};
+  c[status] = { ...postView(c[status]), img: false };
+  await kvSet(env, "discord", c);
+  return getDiscord(env);
 }
 
 // crew readiness (marshal, judge, streamer) is changed only through /api/ready, one field at a time,

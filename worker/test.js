@@ -176,14 +176,20 @@ await setStatus("qualifying"); await setStatus("reg"); await setStatus("qualifyi
 await new Promise(z => setTimeout(z, 300));
 ok(hooks.length === 2 && hooks[1].embeds[0].title.includes("Регистрация закрыта"), "qualifying start is posted once, flipping back doesn't repeat");
 // Discord settings from the admin panel: own text and picture; the webhook address is checked and never read back
-const PX = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+const PX = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64");
+const iput = (st, body, type = "image/png", token = owner) => fetch(API + "/api/discord/img/" + st, { method: "PUT", headers: { origin: SITE, "content-type": type, authorization: "Bearer " + token }, body });
 const dput = (body, token = owner) => call("/api/discord", { method: "PUT", token, body: JSON.stringify(body) });
 ok((await dput({ reg: { text: "x" } }, pilot)).status === 403 && (await call("/api/discord", { token: pilot })).status === 403, "a pilot can't read or change Discord settings");
 ok((await dput({ hook: "https://evil.example/api/webhooks/1/abc" })).status === 400, "only a discord.com webhook address is taken");
-const dc = await (await dput({ hook: "https://discord.com/api/webhooks/123/abc-DEF_9", reg: { text: "Своё объявление", img: PX }, qualifying: { text: "" } })).json();
+const dc = await (await dput({ hook: "https://discord.com/api/webhooks/123/abc-DEF_9", reg: { text: "Своё объявление" }, qualifying: { text: "" } })).json();
 ok(dc.hook === true && !JSON.stringify(dc).includes("abc-DEF_9") && dc.reg.text === "Своё объявление", "the webhook is saved but never sent back");
 ok((await dput({ hook: "https://discord.com/api/webhooks/456/other" })).status === 409, "a linked webhook must be unlinked before another is linked");
-ok((await dput({ reg: { text: "x", img: "data:image/png;base64," + "A".repeat(600_004) } })).status === 413, "an oversized picture is refused");
+ok((await iput("reg", PX, "image/png", pilot)).status === 403, "a pilot can't upload a post picture");
+ok((await iput("reg", Buffer.alloc(1_000_001), "image/png")).status === 413 && (await iput("reg", PX, "text/html")).status === 400, "an oversized or non-image upload is refused");
+const up = await (await iput("reg", PX)).json();
+ok(up.reg.img === true && up.reg.text === "Своё объявление", "the picture is uploaded on its own and the text stays");
+await dput({ reg: { text: "Своё объявление" }, qualifying: { text: "" } });
+ok((await (await call("/api/discord", { token: owner })).json()).reg.img === true, "saving the texts keeps the picture");
 ok((await dput({ hook: "" })).ok, "the webhook can be cleared");
 const imgRes = await call("/api/discord/img/reg");
 ok(imgRes.ok && imgRes.headers.get("content-type") === "image/png" && (await imgRes.arrayBuffer()).byteLength === 70, "the picture is served for Discord");

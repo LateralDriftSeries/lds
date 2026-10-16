@@ -4109,10 +4109,10 @@ function dcFetch() {
 }
 function dcSave(extra = {}) {
   if (!HOSTED) { if ("hook" in extra) DC.hook = !!extra.hook; return render(); }
-  api("/api/discord", { method: "PUT", body: JSON.stringify({ reg: DC.reg, qualifying: DC.qualifying, top32: DC.top32, ...extra }) })
+  api("/api/discord", { method: "PUT", body: JSON.stringify({ ...Object.fromEntries(["reg", "qualifying", "top32"].map(k => [k, { text: DC[k]?.text || "" }])), ...extra }) })
     .then(r => { DC = r; toast(t("saved")); render(); }, e => toast(t({ 400: "dcHookBad", 409: "dcHookBound", 413: "dcImgBig" }[e.message] || "netErr")));
 }
-// a picture for a post: up to 1200 px on the long side, WebP (JPEG where the browser can't), small enough for the server
+// a picture for a post: up to 1200 px on the long side, WebP (JPEG where the browser can't), at most ~900 KB, sent as a file
 function readBanner(fileObj, done, fail) {
   if (!/^image\/(png|jpeg|webp)$/.test(fileObj?.type || "") || fileObj.size > 5 * 1024 * 1024) return fail();
   const url = URL.createObjectURL(fileObj), img = new Image();
@@ -4121,13 +4121,20 @@ function readBanner(fileObj, done, fail) {
     c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
     c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
     const type = c.toDataURL("image/webp", .1).startsWith("data:image/webp") ? "image/webp" : "image/jpeg";
-    let data = ""; for (const q of [.85, .7, .55, .4]) { data = c.toDataURL(type, q); if (data.length <= 550_000) break; }
     URL.revokeObjectURL(url);
-    data.length > 550_000 ? fail(true) : done(data);
+    const tryQ = qs => c.toBlob(b => !b ? fail() : b.size <= 900_000 ? done(b) : qs.length ? tryQ(qs.slice(1)) : fail(true), type, qs[0]);
+    tryQ([.85, .7, .55, .4]);
   };
   img.onerror = () => { URL.revokeObjectURL(url); fail(); };
   img.src = url;
 }
+function dcImgSend(k, blob) {
+  if (!HOSTED) { DC[k] = { ...DC[k], img: !!blob, url: blob ? URL.createObjectURL(blob) : "" }; return render(); }
+  fetch(`${API}/api/discord/img/${k}`, { method: blob ? "PUT" : "DELETE", headers: { authorization: "Bearer " + token, ...(blob ? { "content-type": blob.type } : {}) }, body: blob || undefined })
+    .then(r => r.ok ? r.json() : Promise.reject(new Error(String(r.status))))
+    .then(r => { DC = r; toast(t("saved")); render(); }, e => toast(t(e.message === "413" ? "dcImgBig" : "netErr")));
+}
+const dcImgSrc = (k, v) => v.url || `${API}/api/discord/img/${k}?v=${v.at || 0}`;
 function adminDiscord() {
   dcFetch();
   if (!DC) return `<div class="box panel empty"><p class="note">…</p></div>`;
@@ -4135,7 +4142,7 @@ function adminDiscord() {
   const post = (k, l, d) => { const v = DC[k] || {}; return `<article class="box panel dc-post" data-s="${k}"><h3>${t(l)}</h3>
     <label class="fieldlabel">${t("dcText")}<textarea data-dc="${k}" maxlength="1500" placeholder="${esc(t(d))}">${esc(v.text || "")}</textarea></label>
     <p class="note">${t("dcTextHint")}</p>
-    ${v.img ? `<img class="dc-img" src="${esc(v.img)}" alt="">` : ""}
+    ${v.img ? `<img class="dc-img" src="${esc(dcImgSrc(k, v))}" alt="">` : ""}
     <div class="row" style="gap:.5rem"><label class="btn line sm">${t(v.img ? "dcImgChange" : "dcImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-dcimg="${k}" hidden></label>
       ${v.img ? `<button class="btn text sm danger" data-act="dcImgDel" data-v="${k}">${t("removeLogo")}</button>` : ""}</div>
     <p class="note">${t("dcImgHint")}</p></article>`; };
@@ -5062,7 +5069,7 @@ document.addEventListener("click", e => {
     spLogoDel: () => { const s = SPONSORS[id]; if (!s) return; delete s.img; dbSave(); },
     dcHookDel: () => confirmTwice("dchook", () => dcSave({ hook: "" })),
     dcBind: () => { const inp = document.getElementById("dc-hook"), v = inp?.value.trim(); if (!v || !DC) return inp?.focus(); inp.value = ""; dcSave({ hook: v }); },
-    dcImgDel: () => { const k = el.dataset.v; if (!DC?.[k]) return; DC[k] = { ...DC[k], img: "" }; dcSave(); },
+    dcImgDel: () => { const k = el.dataset.v; if (DC?.[k]?.img) dcImgSend(k, null); },
     delSponsor: () => confirmTwice(`sp${id}`, () => { SPONSORS.splice(id, 1); dbSave(); }),
     // demo switch: turning it off also drops the role granted in the Access section
     toggleAdmin: () => { if (Object.keys(ROLES).length) return; ROLES[S.user.name] = "owner"; dbSave(); }, // demo only, while nobody has a role: the first one becomes head admin
@@ -5213,7 +5220,7 @@ document.addEventListener("change", e => {
   if (e.target.dataset.dc && isAdmin() && DC) { const k = e.target.dataset.dc, v = e.target.value.trim();
     DC[k] = { ...DC[k], text: v.slice(0, 1500) }; return dcSave(); }
   if (e.target.dataset.dcimg && isAdmin() && DC) { const k = e.target.dataset.dcimg, f = e.target.files?.[0];
-    return f && readBanner(f, data => { DC[k] = { ...DC[k], img: data }; dcSave(); }, big => toast(t(big ? "dcImgBig" : "logoBad"))); }
+    return f && readBanner(f, blob => dcImgSend(k, blob), big => toast(t(big ? "dcImgBig" : "logoBad"))); }
   if (e.target.dataset.splogo && isAdmin()) { const s = SPONSORS[+e.target.dataset.splogo], f = e.target.files?.[0];
     return s && f && readLogo(f, data => { s.img = data; dbSave(); toast(t("saved")); }, () => toast(t("logoBad")), true); }
   const k = e.target.dataset.car, a = e.target.dataset.a;
