@@ -2049,7 +2049,12 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .trk-body { display: grid; gap: .7rem }
 .trk-row { display: grid; grid-template-columns: minmax(0, 14rem) auto minmax(5rem, 1fr) auto; gap: .8rem; align-items: center }
 .trk-dl { font-size: .9rem }
-@media (max-width: 600px) { .trk-add { flex-wrap: wrap } .trk-add .field { width: 100% } .trk-row { grid-template-columns: 1fr auto } .trk-row .trk-dl { display: none } }
+.trk-part { padding: .2rem 0 .2rem .9rem; border-left: 2px solid var(--line-2) } .trk-part > summary .ach-chev, .trk-pd > summary .ach-chev { width: 26px; height: 26px }
+.trk-part[open] > summary, .trk-pd[open] > summary { margin-bottom: .6rem } .trk-part-body { display: grid; gap: .6rem }
+.trk-pt { display: flex; gap: .7rem; align-items: baseline; font-weight: 600; min-width: 0 } .trk-pt .note { font-weight: 400 }
+.trk-pd { margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--line) }
+.trk-part-head { display: flex; gap: .6rem; align-items: center } .trk-part-in { max-width: 20rem; font-weight: 600 }
+@media (max-width: 600px) { .trk-add { flex-wrap: wrap } .trk-add .field { width: 100% } .trk-row { grid-template-columns: 1fr auto } .trk-row .trk-dl { display: none } .trk-part-head { flex-wrap: wrap } .trk-part-in { max-width: none } }
 .set-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1rem }
 .chip4.sanc { border-color: color-mix(in srgb, #e5a33a 50%, var(--line)); color: #e5a33a }
 .chip4.sanc.dq, .chip4.sanc.ban { border-color: color-mix(in srgb, var(--err, #e5484d) 55%, var(--line)); color: var(--err, #e5484d) }
@@ -2175,8 +2180,8 @@ const I18N = {
     backShort: "Назад", noPilot: "Такого участника нет.", qualResults: "Результаты квалификаций", noQual: "Пока нет завершённых этапов с результатами.", noMedalsPub: "Подиумов пока нет.",
     noTeamPub: "Выступает без команды.", teamsLead: "Команды лиги: состав и очки сезона. Откройте команду, чтобы посмотреть профили пилотов.", statRaced: "Этапов пройдено", bestRun: "Лучшая попытка", createOrJoin: "Создать или вступить",
     teamWord: "Команда", teamPlace: "Место команды", rosterL: "Состав", rosterTitle: "Пилоты <em>команды</em>", noMembers: "В команде пока нет пилотов.", pointsShort: "очк.", fullTable: "Полная таблица",
-    aTracks: "Трассы", aTracksHint: "Трассы и их конфиги со сложностью от 1 до 5 видны на странице «Трассы» и в выборе трассы этапа.",
-    trkNewPh: "Название новой трассы", trkAdd: "+ Трасса", trkDup: "Такая трасса уже есть", trkConf: "Конфиг", trkConfs: "конфигов", trkConfAdd: "+ Конфиг", trkMain: "Основной", trkDel: "Удалить трассу", diff1: "Лёгкая", diff2: "Простая", diff3: "Средняя", diff4: "Сложная", diff5: "Экстремальная",
+    aTracks: "Трассы", aTracksHint: "У трассы есть участки, у каждого участка свои конфиги со сложностью от 1 до 5. Сложность выбранного конфига задаёт множитель очков этапа.",
+    trkNewPh: "Название новой трассы", trkAdd: "+ Трасса", trkDup: "Такая трасса уже есть", trkConf: "Конфиг", trkConfs: "конфигов", trkConfAdd: "+ Конфиг", trkPart: "Участок", trkParts: "участков", trkPartAdd: "+ Участок", trkPartDel: "Удалить участок", trkPartPh: "Название участка", trkMain: "Основной", trkDel: "Удалить трассу", diff1: "Лёгкая", diff2: "Простая", diff3: "Средняя", diff4: "Сложная", diff5: "Экстремальная",
     champShort: "Онлайн-чемпионат по дрифту",
     stageFull: "Мест на этап больше нет", netErr: "Нет связи с сервером, изменение не сохранено", sessionEnded: "Сессия закончилась, войдите через Steam ещё раз", authFailed: "Не удалось войти через Steam", addAch: "+ Достижение", achIcon: "Иконка", achOwnIc: "Свой эмодзи", achOwnHint: "Скопируйте любой эмодзи (Ctrl + C) и вставьте сюда (Ctrl + V), он применится сразу. Список эмодзи: Win + . (точка) на Windows, Ctrl + Cmd + пробел на Mac.", achTitle: "Название", achDesc: "Условие", achAuto: "выдаётся само", achManual: "не выдаётся", achNewRu: "Новое достижение", achAdminHint: "Достижения в профиле пилота. Иконка — эмодзи. Если английский текст пустой, показывается русский.", needCar: "Чтобы зарегистрироваться, заполните в профиле машину, двигатель, КПП и мощность.", needCarHere: "Заполните машину, двигатель, КПП и мощность, чтобы зарегистрироваться.", hpMinL: "Мощность от, л.с.", hpMaxL: "Мощность до, л.с.", hpBad: "Мощность: от 50 до 3000 л.с., «от» меньше «до»", maxStageL: "Максимум участников на этап", top20: "Топ 20", achOn: "Получено", achOff: "Пока не получено", achievements: "Достижения", noMedals: "Займите место на подиуме этапа (1–3), чтобы получить медаль.", placeWord: "место",
     aResults: "Итоги", fromQual: "По квалификации", podiumHint: "Подиум этапа. Если место не выбрано, после завершения этапа оно берётся из квалификации. Пилоты с 1–3 местом получают медаль в профиле.",
@@ -2324,8 +2329,8 @@ const I18N = {
     backShort: "Back", noPilot: "No such participant.", qualResults: "Qualifying results", noQual: "No finished rounds with results yet.", noMedalsPub: "No podiums yet.",
     noTeamPub: "Races without a team.", teamsLead: "League teams: roster and season points. Open a team to see its drivers' profiles.", statRaced: "Rounds raced", bestRun: "Best run", createOrJoin: "Create or join",
     teamWord: "Team", teamPlace: "Team place", rosterL: "Roster", rosterTitle: "Team <em>drivers</em>", noMembers: "No drivers in this team yet.", pointsShort: "pts", fullTable: "Full table",
-    aTracks: "Tracks", aTracksHint: "Tracks and their configs with difficulty 1–5 show on the Tracks page and in the round's track choice.",
-    trkNewPh: "New track name", trkAdd: "+ Track", trkDup: "That track already exists", trkConf: "Config", trkConfs: "configs", trkConfAdd: "+ Config", trkMain: "Main", trkDel: "Delete track", diff1: "Easy", diff2: "Simple", diff3: "Medium", diff4: "Hard", diff5: "Extreme",
+    aTracks: "Tracks", aTracksHint: "A track has sections, each with its own configs rated 1–5. The chosen config's difficulty sets the round's points factor.",
+    trkNewPh: "New track name", trkAdd: "+ Track", trkDup: "That track already exists", trkConf: "Config", trkConfs: "configs", trkConfAdd: "+ Config", trkPart: "Section", trkParts: "sections", trkPartAdd: "+ Section", trkPartDel: "Delete section", trkPartPh: "Section name", trkMain: "Main", trkDel: "Delete track", diff1: "Easy", diff2: "Simple", diff3: "Medium", diff4: "Hard", diff5: "Extreme",
     champShort: "Online drift championship",
     stageFull: "The round is full", netErr: "No connection to the server, change not saved", sessionEnded: "Session ended, sign in with Steam again", authFailed: "Steam sign-in failed", addAch: "+ Achievement", achIcon: "Icon", achOwnIc: "Your own emoji", achOwnHint: "Copy any emoji (Ctrl + C) and paste it here (Ctrl + V), it applies at once. Emoji picker: Win + . (period) on Windows, Ctrl + Cmd + Space on Mac.", achTitle: "Title", achDesc: "Condition", achAuto: "unlocks automatically", achManual: "not awarded", achNewRu: "Новое достижение", achAdminHint: "Achievements in the driver profile. The icon is an emoji. Empty English text falls back to Russian.", needCar: "Fill in car, engine, gearbox and power in your profile to register.", needCarHere: "Fill in car, engine, gearbox and power to register.", hpMinL: "Power from, hp", hpMaxL: "Power up to, hp", hpBad: "Power: 50–3000 hp, \"from\" below \"up to\"", maxStageL: "Max drivers per round", top20: "Top 20", achOn: "Unlocked", achOff: "Not unlocked yet", achievements: "Achievements", noMedals: "Finish on a round podium (1–3) to earn a medal.", placeWord: "place",
     aResults: "Results", fromQual: "From qualifying", podiumHint: "Round podium. An empty place is taken from qualifying once the round is finished. Drivers placed 1–3 get a medal in their profile.",
@@ -2487,7 +2492,7 @@ const PERMS = { owner: ["edit", "judge", "bc", "rules", "seasons", "roles"], adm
 const TEAM_ENTRIES = S.db?.teamEntries || {}, REQ_STATUS = S.db?.reqStatus || {}, TEAM_NAMES = S.db?.teamNames || {}, TEAM_FOUNDERS = S.db?.teamFounders || {};
 const ACHIEVEMENTS = S.db?.achievements || [], AWARDS = S.db?.awards || {}; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc]]; admin edits them
 const TRACK_DIFF = S.db?.trackDiff || {}; // admin overrides of track difficulty, by track name
-const TRACK_SET = S.db?.trackSet || {}; // by track name: { own: added in the settings, conf: [{ n: name, d: difficulty }] }
+const TRACK_SET = S.db?.trackSet || {}; // by track name: { own: added in the settings, parts: [{ n: section title, conf: [{ n: name, d: difficulty }] }] }
 // head admin: the SteamIDs in the server's OWNER_STEAM_IDS on the hosted site; only they change numbers, remove drivers and hand out roles
 function roleOf(name) {
   if (!name) return "";
@@ -2508,7 +2513,7 @@ const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJ
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcImgDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spLogoDel: "edit", dcHookDel: "edit", dcImgDel: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -2747,19 +2752,34 @@ const TRACKS = {
 const diffOf = n => TRACK_DIFF[n] ?? TRACKS[n]?.diff ?? 0;
 // built-in maps, tracks added in the settings, and older tracks the admin had already rated (they can be deleted here)
 const trackNames = () => [...new Set([...Object.keys(TRACKS), ...Object.keys(TRACK_SET).filter(n => TRACK_SET[n].own), ...Object.keys(TRACK_DIFF)])];
-const confOf = n => TRACK_SET[n]?.conf || [];
+// older saves kept one flat config list: it becomes an untitled section, so stage labels stay the same
+const partsOf = n => { const z = TRACK_SET[n]; if (!z) return [];
+  if (z.conf) { if (z.conf.length) (z.parts ??= []).unshift({ n: "", conf: z.conf }); delete z.conf; }
+  return z.parts ??= []; };
+const confLabel = (p, c) => p.n ? `${p.n} · ${c.n}` : c.n;
+const confOf = n => partsOf(n).flatMap(p => p.conf.map(c => ({ n: confLabel(p, c), d: c.d })));
+// renames and deletes inside a track: stages on it follow their config by position, or lose it if it is gone
+function relabel(n, change) {
+  const was = confOf(n).map(z => z.n); change(); const now = confOf(n).map(z => z.n);
+  TOURS.forEach(x => { if (x.track !== n || !x.conf) return; const i = was.indexOf(x.conf);
+    if (now.length === was.length && i >= 0) x.conf = now[i]; else if (!now.includes(x.conf)) delete x.conf; });
+}
 const diffPick = (n, c, cur) => `<div class="diff-pick" role="group" aria-label="${t("trackDiff")} ${esc(n)}">${[1, 2, 3, 4, 5].map(k =>
   `<button data-act="trackDiff" data-name="${esc(n)}" ${c != null ? `data-c="${c}"` : ""} data-v="${k}" aria-pressed="${k <= cur}" aria-label="${k}">${k}</button>`).join("")}</div>`;
 const adminTracks = () => `<div class="head"><div class="stack" style="gap:.3rem"><h3>${t("aTracks")}</h3><p class="note" style="margin:0">${t("aTracksHint")}</p></div>
     <div class="row trk-add"><input class="field" id="trk-new" maxlength="40" placeholder="${t("trkNewPh")}" aria-label="${t("trkNewPh")}"><button class="btn" data-act="trkAdd">${t("trkAdd")}</button></div></div>
-  <div class="trk-list">${trackNames().map((n, i) => { const c = confOf(n), d = diffOf(n);
+  <div class="trk-list">${trackNames().map((n, i) => { const parts = partsOf(n), nc = confOf(n).length;
     return `<details class="box panel br-box trk-box" data-topen="trk-${esc(n)}" ${tOpenIs("trk-" + n) ? "open" : ""}><summary class="psec-head"><span class="stack" style="gap:.25rem;min-width:0"><h3>${esc(n)}</h3>
-      <span class="note">${d ? t("diff" + d) : "—"} · ${t("trkConfs")}: ${c.length}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
+      <span class="note">${t("trkParts")}: ${parts.length} · ${t("trkConfs")}: ${nc}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
       <div class="trk-body">
-        <div class="trk-row"><b>${t("trkMain")}</b>${diffPick(n, null, d)}<span class="muted trk-dl">${d ? t("diff" + d) : "—"}</span><span></span></div>
-        ${c.map((z, j) => `<div class="trk-row"><input class="field" data-a="tconf:${i}:${j}" value="${esc(z.n)}" maxlength="40" aria-label="${t("trkConf")}">${diffPick(n, j, z.d)}
-          <span class="muted trk-dl">${z.d ? t("diff" + z.d) : "—"}</span><button class="btn text danger sm" data-act="trkConfDel" data-name="${esc(n)}" data-c="${j}">${pending === `tc${i}:${j}` ? t("delSure") : t("del")}</button></div>`).join("")}
-        <div class="row" style="gap:.6rem;justify-content:space-between"><button class="btn line sm" data-act="trkConfAdd" data-name="${esc(n)}">${t("trkConfAdd")}</button>
+        ${parts.map((p, pi) => `<details class="br-box trk-part" data-topen="tp-${esc(n)}-${pi}" ${tOpenIs(`tp-${n}-${pi}`) ? "open" : ""}>
+          <summary class="psec-head"><span class="trk-pt">${p.n ? esc(p.n) : `<span class="muted">${t("trkPartPh")}</span>`}<span class="note">${t("trkConfs")}: ${p.conf.length}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
+          <div class="trk-part-body"><div class="trk-part-head"><input class="field trk-part-in" data-a="tpart:${i}:${pi}" value="${esc(p.n)}" maxlength="40" placeholder="${t("trkPartPh")}" aria-label="${t("trkPartPh")}">
+            <button class="btn text danger sm" data-act="trkPartDel" data-name="${esc(n)}" data-p="${pi}">${pending === `tp${i}:${pi}` ? t("delSure") : t("trkPartDel")}</button></div>
+          ${p.conf.map((z, j) => `<div class="trk-row"><input class="field" data-a="tconf:${i}:${pi}:${j}" value="${esc(z.n)}" maxlength="40" aria-label="${t("trkConf")}">${diffPick(n, `${pi}:${j}`, z.d)}
+            <span class="muted trk-dl">${z.d ? t("diff" + z.d) : "—"}</span><button class="btn text danger sm" data-act="trkConfDel" data-name="${esc(n)}" data-p="${pi}" data-c="${j}">${pending === `tc${i}:${pi}:${j}` ? t("delSure") : t("del")}</button></div>`).join("")}
+          <div><button class="btn text sm" data-act="trkConfAdd" data-name="${esc(n)}" data-p="${pi}">${t("trkConfAdd")}</button></div></div></details>`).join("")}
+        <div class="row" style="gap:.6rem;justify-content:space-between"><button class="btn line sm" data-act="trkPartAdd" data-name="${esc(n)}">${t("trkPartAdd")}</button>
           ${!TRACKS[n] ? `<button class="btn text danger sm" data-act="trkDel" data-name="${esc(n)}">${pending === `trk${i}` ? t("delSure") : t("trkDel")}</button>` : ""}</div>
       </div></details>`; }).join("")}</div>`;
 function tracks() {
@@ -2771,8 +2791,8 @@ function tracks() {
       <div class="track-body">
         <h3>${esc(n)}</h3>
         ${d[S.lang] ? `<p class="note">${esc(d[S.lang])}</p>` : ""}
-        <dl class="specs"><div class="diff-row"><dt>${t("trackDiff")}${diffOf(n) ? `<span>${t("diff" + diffOf(n))}</span>` : ""}</dt><dd><span class="diff" aria-label="${diffOf(n)}/5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= diffOf(n) ? "on" : ""}"></i>`).join("")}</span></dd></div>
-          ${confOf(n).map(z => `<div class="diff-row"><dt>${esc(z.n)}${z.d ? `<span>${t("diff" + z.d)}</span>` : ""}</dt><dd><span class="diff" aria-label="${z.d}/5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= z.d ? "on" : ""}"></i>`).join("")}</span></dd></div>`).join("")}</dl>
+        ${partsOf(n).filter(p => p.conf.length).map((p, pi) => { const rows = `<dl class="specs">${p.conf.map(z => `<div class="diff-row"><dt>${esc(z.n)}${z.d ? `<span>${t("diff" + z.d)}</span>` : ""}</dt><dd><span class="diff" aria-label="${z.d}/5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= z.d ? "on" : ""}"></i>`).join("")}</span></dd></div>`).join("")}</dl>`;
+          return p.n ? `<details class="br-box trk-pd" data-topen="tpv-${esc(n)}-${pi}" ${tOpenIs(`tpv-${n}-${pi}`) ? "open" : ""}><summary class="psec-head"><span class="label acc">${esc(p.n)}</span><i class="ach-chev" aria-hidden="true"></i></summary>${rows}</details>` : rows; }).join("")}
       </div></article>`; }).join("")}</div>`;
 }
 
@@ -2873,10 +2893,11 @@ function stagePlace(x, name) {
   }
   return null;
 }
-// points by the rules: place + qualifying bonus (top 4), times the track difficulty factor (easy ×1, medium ×1.2, hard ×1.5)
+// points by the rules: place + qualifying bonus (top 4), times the stage config's difficulty factor (easy ×1, medium ×1.2, hard ×1.5)
 const bandOf = p => p == null ? 0 : p <= 4 ? p : p <= 8 ? 5 : p <= 16 ? 9 : 17;
 const PILOT_PTS = { 1: 100, 2: 80, 3: 60, 4: 50, 5: 40, 9: 25, 17: 10 }, TEAM_TBL = { 1: 70, 2: 60, 3: 45, 4: 30, 5: 15, 9: 5, 17: 2 };
-const factorOf = x => { const d = diffOf(x.track); return d >= 4 ? 1.5 : d === 3 ? 1.2 : 1; };
+const stageDiff = x => confOf(x.track).find(z => z.n === x.conf)?.d ?? diffOf(x.track);
+const factorOf = x => { const d = stageDiff(x); return d >= 4 ? 1.5 : d === 3 ? 1.2 : 1; };
 const qualBonus = (x, name) => [20, 15, 10, 5][qualOrder(x).indexOf(name)] ?? 0;
 const stagePts = (x, name) => Math.round(((PILOT_PTS[bandOf(stagePlace(x, name))] ?? 0) + qualBonus(x, name)) * factorOf(x));
 const teamStagePts = (x, tm) => { const r = stageEntries(x).find(z => z.tm.id === tm.id && z.ok), ms = r ? r.e.pilots.map(p => p.name) : []; // only entered teams, with their entered line-up
@@ -3929,8 +3950,9 @@ function adminTour(x) {
   if (aSub === "main") body = `<div class="box panel"><div class="cols" style="gap:1rem">
       <div class="cols" style="gap:1rem"><label class="fieldlabel">${t("track")}<select class="field" data-a="tour:${x.id}:track">${[...new Set([...trackNames(), x.track])].map(n =>
         `<option value="${esc(n)}" ${n === x.track ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></label>
-      ${confOf(x.track).length ? `<label class="fieldlabel">${t("trkConf")}<select class="field" data-a="tour:${x.id}:conf"><option value="">${t("trkMain")}</option>${confOf(x.track).map(z =>
-        `<option value="${esc(z.n)}" ${z.n === x.conf ? "selected" : ""}>${esc(z.n)}</option>`).join("")}</select></label>` : ""}</div>
+      ${confOf(x.track).length ? `<label class="fieldlabel">${t("trkConf")}<select class="field" data-a="tour:${x.id}:conf"><option value="">${t("trkMain")}</option>${partsOf(x.track).map(p => { const o = p.conf.map(c =>
+        `<option value="${esc(confLabel(p, c))}" ${confLabel(p, c) === x.conf ? "selected" : ""}>${esc(c.n)}</option>`).join("");
+        return p.n ? `<optgroup label="${esc(p.n)}">${o}</optgroup>` : o; }).join("")}</select></label>` : ""}</div>
       <label class="fieldlabel">${t("startAt")} · ${t("msk")}<input class="field" type="datetime-local" data-a="tour:${x.id}:start" value="${startOf({ start: x.start })?.slice(0, 16) || ""}"></label>
       <div class="cols" style="gap:1rem"><label class="fieldlabel">${t("seatsL")}<input class="field" type="number" min="2" max="256" data-a="tour:${x.id}:max" value="${stageMax(x)}"></label>
       <label class="fieldlabel">${t("maxTeamsStageL")}<input class="field" type="number" min="1" max="64" data-a="tour:${x.id}:maxTeams" value="${stageTeamsMax(x)}"></label></div>
@@ -4141,10 +4163,10 @@ function admin() {
 
 function adminEdit([kind, id, f, k], v) {
   adminMsg = "";
-  if (kind === "tconf") {
-    const n = trackNames()[+id], z = confOf(n)[+f], name = v.trim().slice(0, 40);
-    if (!z || !name || confOf(n).some(c => c !== z && c.n === name)) return render();
-    TOURS.forEach(x => { if (x.track === n && x.conf === z.n) x.conf = name; }); z.n = name;
+  if (kind === "tconf" || kind === "tpart") { // names stay unique: configs within their section, sections within the track
+    const n = trackNames()[+id], p = partsOf(n)[+f], z = kind === "tconf" ? p?.conf[+k] : p, list = kind === "tconf" ? p?.conf : partsOf(n), name = v.trim().slice(0, 40);
+    if (!z || (!name && kind === "tconf") || list.some(c => c !== z && c.n === name)) return render();
+    relabel(n, () => { z.n = name; });
     return dbSave();
   }
   if (kind === "tour") {
@@ -4911,7 +4933,7 @@ document.addEventListener("click", e => {
   if (!el) return;
   if (el.matches("tr") && e.target.closest("select, input, label")) return; // inline editors in a table row don't open the row
   if (ACT_PERM[el.dataset.act] && !can(ACT_PERM[el.dataset.act])) return;
-  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "dcHookDel", "trkConfDel", "trkDel", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "founderPass", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
+  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "dcHookDel", "trkConfDel", "trkPartDel", "trkDel", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "founderPass", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
   if (el.dataset.tab || el.dataset.season || el.dataset.qt || el.dataset.sub) admAnim = true;
   if (el.dataset.tab) { aTab = el.dataset.tab; aSeason = 0; aTour = 0; adminMsg = ""; return render(); }
   if (el.dataset.season) { aSeason = +el.dataset.season; aTour = 0; return render(); }
@@ -4936,17 +4958,22 @@ document.addEventListener("click", e => {
     goBack: () => { if (history.length > 1) history.back(); else location.hash = "#teams"; },
     trackDiff: () => { const v = +el.dataset.v, n = el.dataset.name, c = el.dataset.c;
       if (!(v >= 1 && v <= 5) || !trackNames().includes(n)) return;
-      if (c != null) { const z = confOf(n)[+c]; if (!z) return; z.d = v; } else TRACK_DIFF[n] = v;
+      if (c != null) { const [pi, j] = c.split(":"), z = partsOf(n)[+pi]?.conf[+j]; if (!z) return; z.d = v; } else TRACK_DIFF[n] = v;
       dbSave(); toast(t("saved")); },
     trkAdd: () => { const inp = document.getElementById("trk-new"), n = inp?.value.trim().slice(0, 40);
       if (!n) return inp?.focus(); if (trackNames().includes(n)) { toast(t("trkDup")); return; }
-      TRACK_SET[n] = { own: true, conf: [] }; tOpen["trk-" + n] = true; dbSave(); toast(t("saved")); },
-    trkConfAdd: () => { const n = el.dataset.name; if (!trackNames().includes(n)) return;
-      const set = TRACK_SET[n] ??= { conf: [] }, c = set.conf ??= [];
-      let k = c.length + 1; while (c.some(z => z.n === `${t("trkConf")} ${k}`)) k++;
-      c.push({ n: `${t("trkConf")} ${k}`, d: diffOf(n) || 3 }); tOpen["trk-" + n] = true; dbSave(); },
-    trkConfDel: () => { const n = el.dataset.name, j = +el.dataset.c, z = confOf(n)[j]; if (!z) return;
-      confirmTwice(`tc${trackNames().indexOf(n)}:${j}`, () => { TRACK_SET[n].conf.splice(j, 1); TOURS.forEach(x => { if (x.track === n && x.conf === z.n) delete x.conf; }); dbSave(); }); },
+      TRACK_SET[n] = { own: true, parts: [] }; tOpen["trk-" + n] = true; dbSave(); toast(t("saved")); },
+    trkPartAdd: () => { const n = el.dataset.name; if (!trackNames().includes(n)) return;
+      TRACK_SET[n] ??= {}; const ps = partsOf(n);
+      let k = ps.length + 1; while (ps.some(p => p.n === `${t("trkPart")} ${k}`)) k++;
+      ps.push({ n: `${t("trkPart")} ${k}`, conf: [] }); tOpen["trk-" + n] = tOpen[`tp-${n}-${ps.length - 1}`] = true; dbSave(); },
+    trkPartDel: () => { const n = el.dataset.name, pi = +el.dataset.p; if (!partsOf(n)[pi]) return;
+      confirmTwice(`tp${trackNames().indexOf(n)}:${pi}`, () => { relabel(n, () => partsOf(n).splice(pi, 1)); dbSave(); }); },
+    trkConfAdd: () => { const n = el.dataset.name, p = partsOf(n)[+el.dataset.p]; if (!p) return;
+      let k = p.conf.length + 1; while (p.conf.some(z => z.n === `${t("trkConf")} ${k}`)) k++;
+      relabel(n, () => p.conf.push({ n: `${t("trkConf")} ${k}`, d: 3 })); dbSave(); },
+    trkConfDel: () => { const n = el.dataset.name, pi = +el.dataset.p, j = +el.dataset.c, p = partsOf(n)[pi]; if (!p?.conf[j]) return;
+      confirmTwice(`tc${trackNames().indexOf(n)}:${pi}:${j}`, () => { relabel(n, () => p.conf.splice(j, 1)); dbSave(); }); },
     trkDel: () => { const n = el.dataset.name; if (TRACKS[n] || !trackNames().includes(n)) return;
       confirmTwice(`trk${trackNames().indexOf(n)}`, () => { delete TRACK_SET[n]; delete TRACK_DIFF[n]; dbSave(); }); },
     vote: () => judgeSet(id, "vote", el.dataset.v, +el.dataset.j),
