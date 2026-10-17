@@ -2052,6 +2052,7 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .rule-prev { border: 1px solid var(--line); border-radius: 10px; padding: 1rem; background: var(--panel-2); max-height: 34rem; overflow: auto; display: grid; gap: .6rem; align-content: start }
 @media (max-width: 1100px) { .rule-split { grid-template-columns: 1fr } .rule-prev { max-height: none } }
 @media (max-width: 900px) { .rule-ed2 { grid-template-columns: 1fr } .rt { position: static; max-height: none } }
+.ready-btn:disabled { cursor: default; opacity: .5 } .ready-btn.on:disabled { opacity: .8 }
 /* read-only admin views (judge, streamer): controls are shown but inert, except inside the judges island for judges */
 .adm-main.ro :is(input, select, textarea, .btn) { pointer-events: none; opacity: .55 }
 .adm-main.ro .rw :is(input, select, textarea, .btn), .adm-main.ro .rw .seg button, .adm-main.ro .rw .mini-grid button { pointer-events: auto; opacity: 1 }
@@ -2237,7 +2238,7 @@ const I18N = {
     stageTeamNote: "Очки команд за последний завершённый этап: два лучших пилота из топ-32 и бонус за квалификацию.",
     stPending: "Очки начислятся, когда этап получит статус «Завершён».", trkK: "Коэффициент очков",
     noAch: "Достижений пока нет.", noAchAdmin: "Достижений нет. Создайте первое — потом его можно выдать пилотам.", achAdminHint2: "Создавайте свои достижения и выдавайте их пилотам вручную.", achHidden: "Скрытое достижение", achHiddenHint: "Пока его не получили, в профиле видно только «???», и оно стоит в самом конце списка.", achHiddenD: "Скрытое достижение", achHolders: "Получили", achGiven: "Достижение выдано", mdBar: "Форматирование", mdH: "Заголовок", mdList: "Список", mdBold: "Жирный", mdWarn: "Предупреждение", mdTable: "Таблица", mdCol: "Столбец",
-    rulePreview: "Как увидят пилоты", pickSection: "Выберите раздел слева или добавьте новый.", regName: "Название регламента", roleJudge: "Судья", roleStreamer: "Стример", roleTech: "Технический помощник", roleNone: "Без роли",
+    rulePreview: "Как увидят пилоты", pickSection: "Выберите раздел слева или добавьте новый.", regName: "Название регламента", roleJudge: "Судья", roleMarshal: "Маршал", roleStreamer: "Стример", roleTech: "Технический помощник", roleNone: "Без роли",
     accessHint2: "Главный администратор — полный доступ к сайту. Администратор — вся админ-панель. Судья — только судейский остров. Стример — пульт трансляции и просмотр сезонов. Технический помощник — регламент. Роли выдаёт только главный администратор.",
     rolesOwnerOnly: "Менять роли может только главный администратор.", noPanelRole: "У вашей роли нет доступа к этому разделу.", maxPilotsCol: "Мест", seatsL: "Мест на этапе", teamEntriesAdm: "Заявки команд на этап", warnShort: "Предупреждения",
     autoDq: "3 предупреждения — выдан DQ с этапа", autoBan: "2 DQ — выдан бан", sancAuto: "авто", sancRule: "3 предупреждения = DQ с этапа, 2 DQ = бан: регистрация на этапы закрыта.",
@@ -2394,7 +2395,7 @@ const I18N = {
     stageTeamNote: "Team points for the latest finished round: two best top-32 drivers and the qualifying bonus.",
     stPending: "Points are counted once the round is marked Finished.", trkK: "Points factor",
     noAch: "No achievements yet.", noAchAdmin: "No achievements. Create the first one, then hand it to drivers.", achAdminHint2: "Create your own achievements and hand them to drivers.", achHidden: "Hidden achievement", achHiddenHint: "Until earned it shows only as “???” and sits at the end of the list.", achHiddenD: "Hidden achievement", achHolders: "Awarded to", achGiven: "Achievement given", mdBar: "Formatting", mdH: "Heading", mdList: "List", mdBold: "Bold", mdWarn: "Warning", mdTable: "Table", mdCol: "Column",
-    rulePreview: "What drivers will see", pickSection: "Pick a section on the left or add a new one.", regName: "Regulation name", roleJudge: "Judge", roleStreamer: "Streamer", roleTech: "Technical assistant", roleNone: "No role",
+    rulePreview: "What drivers will see", pickSection: "Pick a section on the left or add a new one.", regName: "Regulation name", roleJudge: "Judge", roleMarshal: "Marshal", roleStreamer: "Streamer", roleTech: "Technical assistant", roleNone: "No role",
     accessHint2: "Head admin — full access to the site. Admin — the whole admin panel. Judge — the judges’ island only. Streamer — the broadcast panel and read-only seasons. Technical assistant — the rules. Only the head admin hands out roles.",
     rolesOwnerOnly: "Only the head admin can change roles.", noPanelRole: "Your role has no access to this section.", maxPilotsCol: "Spots", seatsL: "Spots in this round", teamEntriesAdm: "Team entries for the round", warnShort: "Warnings",
     autoDq: "3 warnings — DQ from the round given", autoBan: "2 DQs — ban given", sancAuto: "auto", sancRule: "3 warnings = DQ from the round, 2 DQs = ban: round registration is closed.",
@@ -2590,9 +2591,9 @@ const dbSave = (rerender = true) => {
 // older saves kept a plain list of admins; its first entry was the head admin
 const ROLES = S.db?.roles || Object.fromEntries((S.db?.admins || []).map((n, i) => [n, i ? "admin" : "owner"]));
 if (S.user?.admin) { ROLES[S.user.name] ??= "owner"; delete S.user.admin; }
-const ROLE_LIST = ["admin", "judge", "streamer", "tech"];
+const ROLE_LIST = ["admin", "judge", "streamer", "marshal", "tech"];
 const PERMS = { owner: ["edit", "judge", "bc", "rules", "seasons", "roles"], admin: ["edit", "judge", "bc", "rules", "seasons"],
-  judge: ["judge", "seasons"], streamer: ["bc", "seasons"], tech: ["rules"] };
+  judge: ["judge", "seasons"], streamer: ["bc", "seasons"], marshal: ["seasons"], tech: ["rules"] };
 // team entries per stage: what the organisers set or approved (by stage id, then team id), the status of founders' requests, approved team names
 const TEAM_ENTRIES = S.db?.teamEntries || {}, REQ_STATUS = S.db?.reqStatus || {}, TEAM_NAMES = S.db?.teamNames || {}, TEAM_FOUNDERS = S.db?.teamFounders || {};
 const ACHIEVEMENTS = S.db?.achievements || [], AWARDS = S.db?.awards || {}; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc], kind, hidden]; admin edits them
@@ -2617,7 +2618,7 @@ const isAdminName = name => ["owner", "admin"].includes(roleOf(name));
 const isAdmin = () => can("edit");
 const isOwnerName = name => roleOf(name) === "owner";
 const isOwner = () => !!S.user && isOwnerName(S.user.name);
-const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", tech: "roleTech" }[r] || "pilot");
+const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", marshal: "roleMarshal", tech: "roleTech" }[r] || "pilot");
 // which permission an admin-panel edit needs, by the first part of its data-a / its data-act
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
@@ -4562,6 +4563,7 @@ function judgeSet(tourId, field, v, j) {
   save();
 }
 const READY = ["marshal", "judge", "streamer"], READY_MS = 5000;
+const myReady = k => { const r = S.user ? roleOf(S.user.name) : ""; return r === "owner" || r === "admin" || r === k; };
 // the grid's scores as one short key, the same on every machine: the grid stays folded while the key it was folded at is unchanged
 const gridKey = x => { const s = JSON.stringify([x.id, bcRows(x).map(r => [r.name, r.a, r.b])]); let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return String(h); };
 setInterval(() => {
@@ -4851,6 +4853,7 @@ function broadcast() {
   return `<a class="back" href="#admin">← ${t("adminPanel")}</a>
   <section class="r-hero"><div class="stack" style="gap:.8rem"><span class="label idx"><i class="live-dot" aria-hidden="true"></i>${t("stage")} ${x.stage} · ${esc(x.track)}</span><h1 class="r-title">${t("bcTitle")}</h1>
     <p class="note">${t("bcSourceHint")} <button class="linkbtn acc" data-act="toIsland" data-id="${x.id}">${t("toIsland")} →</button></p></div>${tourPill(x)}</section>
+  ${readyBox(x, st)}
   <div class="bc-top">
     ${psec(t("obsLinks"), `<p class="note" style="margin:0">${t("obsHelp")}</p>
       <label class="fieldlabel">${t("bgL")}${sel("bc:bg", ["transparent", "green"], st.bg, t("bgL"), "field")}</label>
@@ -4880,6 +4883,11 @@ const stepper = x => { const at = STATUSES.indexOf(x.status);
   return `<div class="stepper" role="group" aria-label="${t("stageStatus")}">${STATUSES.map((s, i) => `<button data-act="setStatus" data-id="${x.id}" data-v="${s}" class="${i < at ? "past" : ""} ${i === at ? "cur" : ""}" aria-pressed="${i === at}">${t(s)}</button>`).join("")}</div>
     <div class="row" style="justify-content:space-between"><button class="btn line sm" data-act="setStatus" data-id="${x.id}" data-v="${STATUSES[at - 1] ?? ""}" ${at <= 0 ? "disabled" : ""}>← ${t("prevStatus")}</button>
       <button class="btn sm" data-act="setStatus" data-id="${x.id}" data-v="${STATUSES[at + 1] ?? ""}" ${at >= STATUSES.length - 1 ? "disabled" : ""}>${STATUSES[at + 1] ? t(STATUSES[at + 1]) : t("done")} →</button></div>`; };
+// crew readiness: in the judges island and on the streamer's broadcast panel (marshal, judge and streamer each press theirs)
+const readyBox = (x, st) => `<section class="box panel ready-box ${READY.every(k => st.ready?.[k]) ? "all" : ""}"><div class="head"><h3>${t("readyTitle")}</h3><span class="note mono" id="ready-reset"></span></div>
+    <p class="note">${t("readyHint")}</p>
+    <div class="ready-btns">${READY.map(k => `<button class="ready-btn ${st.ready?.[k] ? "on" : ""}" data-act="ready" data-id="${x.id}" data-v="${k}" aria-pressed="${!!st.ready?.[k]}" ${myReady(k) ? "" : "disabled"}><span class="label">${t("readyL")}</span><b>${t("rd_" + k)}</b></button>`).join("")}</div></section>`;
+
 function judgeIsland(x) {
   const raw = bcState(), live = bcTour(raw)?.id === x.id;
   const st = live ? raw : { ...raw, onTrack: null, leader: null, chaser: null, label: "", votes: [null, null, null] };
@@ -4922,9 +4930,7 @@ function judgeIsland(x) {
         <button class="btn sm" data-act="brConfirm" data-id="${x.id}">${t("brConfirm")} ${esc(st[res])} →</button></div>` : ""}
     </section>
   </div>
-  <section class="box panel ready-box ${READY.every(k => st.ready?.[k]) ? "all" : ""}"><div class="head"><h3>${t("readyTitle")}</h3><span class="note mono" id="ready-reset"></span></div>
-    <p class="note">${t("readyHint")}</p>
-    <div class="ready-btns">${READY.map(k => `<button class="ready-btn ${st.ready?.[k] ? "on" : ""}" data-act="ready" data-id="${x.id}" data-v="${k}" aria-pressed="${!!st.ready?.[k]}"><span class="label">${t("readyL")}</span><b>${t("rd_" + k)}</b></button>`).join("")}</div></section>
+  ${readyBox(x, st)}
   <section class="stack"><h3>${t("protests")}${prots.some(q => q.status === "new") ? ` <span class="badge">${prots.filter(q => q.status === "new").length}</span>` : ""}</h3>
     ${prots.length ? prots.map(protestCard).join("") : `<div class="box panel empty"><p class="note">${t("noProtests")}</p></div>`}</section>`;
 }
@@ -5187,7 +5193,7 @@ document.addEventListener("click", e => {
       confirmTwice(`trk${trackNames().indexOf(n)}`, () => { delete TRACK_SET[n]; delete TRACK_DIFF[n]; dbSave(); }); },
     vote: () => judgeSet(id, "vote", el.dataset.v, +el.dataset.j),
     // the pressed button pops; when the third one lands, all three flash together
-    ready: () => { judgeSet(id, "ready", el.dataset.v); readyRemote(el.dataset.v, id); document.querySelector(`.ready-btn[data-v="${el.dataset.v}"]`)?.classList.add("tap");
+    ready: () => { if (!myReady(el.dataset.v)) return; judgeSet(id, "ready", el.dataset.v); readyRemote(el.dataset.v, id); document.querySelector(`.ready-btn[data-v="${el.dataset.v}"]`)?.classList.add("tap");
       if (bcState().readyAt) document.querySelector(".ready-box")?.classList.add("burst"); },
     onTrack: () => judgeSet(id, "onTrack", el.dataset.name),
     rLang: () => { rLang = el.dataset.v === "en" ? "en" : "ru"; rSel = [0, 0]; render(); },

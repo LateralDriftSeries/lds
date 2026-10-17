@@ -39,7 +39,7 @@ async function route(req, env, url) {
   }
   if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireRole(req, env, ["owner", "admin", "tech"]));
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
-  if (m === "POST" && p === "/api/ready") return postReady(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
+  if (m === "POST" && p === "/api/ready") return postReady(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer", "marshal"]));
   if (p === "/api/discord") {
     const { sid } = await requireRole(req, env, ["owner", "admin"]);
     if (m === "GET") return getDiscord(env);
@@ -128,7 +128,7 @@ async function requireOwner(req, env) {
   return sid;
 }
 // roles: owner (OWNER_STEAM_IDS), then what the head admin set in db.roleIds (older saves: db.adminIds = admins)
-const ROLES = ["admin", "judge", "streamer", "tech"];
+const ROLES = ["admin", "judge", "streamer", "marshal", "tech"];
 async function roleOf(env, sid, db) {
   if (isOwner(env, sid)) return "owner";
   db ??= await kvGet(env, "db");
@@ -490,9 +490,11 @@ function keepCrew(stored, next) {
   for (const k of CREW_KEYS) { if (stored?.bc && k in stored.bc) bc[k] = stored.bc[k]; else delete bc[k]; }
   return { ...next, bc };
 }
-async function postReady(req, env) {
+async function postReady(req, env, { role }) {
   const body = await readJson(req, 1_000), v = String(body.v || "");
   if (!CREW.includes(v) && v !== "reset") throw new HttpError(400, "bad crew role");
+  // each crew member presses only their own readiness; the head admin and admins may press any (the reset after all three is anyone's)
+  if (v !== "reset" && role !== "owner" && role !== "admin" && role !== v) throw new HttpError(403, "not your readiness");
   const live = (await kvGet(env, "live")) || {}, bc = { ...(live.bc || {}) };
   if (v === "reset") {
     if (body.at != null && bc.readyAt !== body.at) return json({ ok: true, bc }); // someone already reset or a new round started

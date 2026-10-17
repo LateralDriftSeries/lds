@@ -154,6 +154,11 @@ ok("users" in held && Date.now() - t0 < 6000, "long poll answers right after a c
 // crew readiness: one press at a time on the server, never undone by a whole live-state write
 const ready = (v, token, extra = {}) => call("/api/ready", { method: "POST", token, body: JSON.stringify({ v, ...extra }) });
 ok((await ready("judge", pilot)).status === 403, "a pilot cannot press readiness");
+// a crew member presses only their own readiness
+await setRole("marshal");
+ok((await ready("judge", pilot)).status === 403, "a marshal cannot press the judge's readiness");
+ok((await (await ready("marshal", pilot)).json()).bc.ready.marshal === true, "a marshal presses their own readiness");
+await ready("marshal", pilot); await setRole("");
 await ready("marshal", owner); await ready("judge", owner);
 await call("/api/live", { method: "PUT", token: owner, body: JSON.stringify({ bc: { onTrack: "Test Pilot", ready: {}, gridMini: "x" }, scores: {} }) });
 let rd = await (await ready("streamer", owner, { key: "k1" })).json();
