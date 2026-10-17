@@ -1064,6 +1064,7 @@ nav a:hover::after, nav a[aria-current]::after { transform: translateX(-50%) sca
 .cal-card.done { opacity: .5 } .cal-card.done:hover { opacity: .85 }
 .cal-n { font: 200 3.2rem/1 var(--f-display); letter-spacing: -.05em; color: var(--soft) } .cal-card.cur .cal-n { color: var(--text) }
 .cal-body { position: relative; z-index: 1; display: grid; gap: .35rem }
+.cal-card { text-align: center } .cal-card, .cal-body { justify-items: center } /* number, track, date and status centred in the card */
 .cal-body b { font: 500 1.05rem/1.2 var(--f-display); letter-spacing: -.02em }
 .cal-body .pill { justify-self: start }
 /* every card keeps a row for the status chip, so the titles line up whether a chip is shown or not */
@@ -1865,6 +1866,16 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .pd .tlogo { border-radius: 10px }
 .pd-txt { display: grid; gap: .2rem; min-width: 0; flex: 1 } .pd-txt .label { color: var(--c) } .pd-txt b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
 .pd-pts { font-size: 1.15rem; font-weight: 700; white-space: nowrap } .pd-pts small { font-size: .65rem; color: var(--muted); margin-left: .2rem; font-weight: 500 }
+/* home tab: texts two to a row, FAQ as folded rows (number, question, controls); a row opens to edit */
+.ht-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: .8rem 1rem } .ht-grid textarea, .faq-ed textarea { min-height: 64px }
+.faq-eds { display: grid; gap: .45rem }
+.faq-row { position: relative }
+.faq-ed { border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2) }
+.faq-ed > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: .8rem; padding: .7rem 7.5rem .7rem .9rem; min-width: 0 } .faq-ed > summary::-webkit-details-marker { display: none }
+.faq-ed > summary b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600 }
+.faq-ed > summary .ach-chev { position: absolute; right: .7rem; top: .55rem; width: 26px; height: 26px } .faq-ed[open] > summary .ach-chev { transform: rotate(180deg) }
+.faq-ed-body { display: grid; gap: .5rem; padding: 0 .9rem .9rem }
+.faq-row > .rt-ctl { position: absolute; top: .55rem; right: 2.6rem; opacity: 1 }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2242,7 +2253,8 @@ const I18N = {
     logSearch: "Поиск по журналу", logReload: "Обновить", logMore: "Показать ещё", logWhen: "Когда", logWho: "Кто", logWhat: "Что изменено", dcFSite: "Сайт", dcFStream: "Трансляция", dcPostReg: "Регистрация открыта", dcPostQual: "Регистрация закрыта", dcPostPairs: "Начало парных заездов", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Текст объявления", dcTextHint: "Пусто — стандартный текст. Название этапа, старт и ссылка на сайт добавляются сами, у парных заездов ещё ссылка на трансляцию.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Изображение", dcImgChange: "Сменить изображение", dcImgHint: "PNG, JPG или WebP до 5 МБ. Показывается под текстом объявления.", dcDemo: "В макете настройки Discord не сохраняются, они работают на сайте.",
-    setGeneral: "Общие", setSocials: "Соцсети", setTracks: "Трассы", maxStageDefL: "Мест на этап по умолчанию", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
+    setGeneral: "Общие", setHome: "Главная", faqAdmin: "Вопросы и ответы", faqAdd: "+ Вопрос", faqQ: "Вопрос", faqA: "Ответ", newFaq: "Новый вопрос", htHint: "Тексты главной страницы на текущем языке сайта (переключите RU / EN вверху, чтобы править другой). Пустое поле — текст по умолчанию.",
+    ht_champShort: "Надпись над названием", ht_tagline: "Слоган под названием", ht_statement: "О чемпионате — главная фраза", ht_statementDim: "О чемпионате — продолжение (серым)", ht_partnersTitle: "Заголовок раздела спонсоров", ht_faqText: "Текст рядом с вопросами и ответами", setSocials: "Соцсети", setTracks: "Трассы", maxStageDefL: "Мест на этап по умолчанию", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
     roleOwner: "Главный администратор", ownerOnly: "Номера и исключение пилотов — только у главного администратора.", kick: "Выгнать", kickSure: "Точно выгнать?", kicked: "Пилот исключён",
     addTestPilot: "+ Тестовый пилот", testTag: "тест", delStage: "Удалить этап", group: "Группа", groupLimits: "Группы этапа", groupsHint: "Сколько пилотов может быть в каждой группе. Группу пилоту назначают в таблице ниже.",
     groupFull: "Группа заполнена — увеличьте лимит или выберите другую.", protestOnlyRider: "Протест может подать только участник этапа.", myProtests: "Мои протесты", protestDup: "Протест на этого пилота уже на рассмотрении.",
@@ -2398,7 +2410,8 @@ const I18N = {
     logSearch: "Search the log", logReload: "Refresh", logMore: "Show more", logWhen: "When", logWho: "Who", logWhat: "What changed", dcFSite: "Site", dcFStream: "Stream", dcPostReg: "Registration open", dcPostQual: "Registration closed", dcPostPairs: "Pair battles start", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Post text", dcTextHint: "Empty — the standard text. Round name, start and site link are added automatically; the pairs post also links the stream.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Image", dcImgChange: "Change image", dcImgHint: "PNG, JPG or WebP up to 5 MB. Shown under the post text.", dcDemo: "Discord settings aren't saved in the mockup, they work on the site.",
-    setGeneral: "General", setSocials: "Socials", setTracks: "Tracks", maxStageDefL: "Default spots per round", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
+    setGeneral: "General", setHome: "Home", faqAdmin: "Questions & answers", faqAdd: "+ Question", faqQ: "Question", faqA: "Answer", newFaq: "New question", htHint: "Home page texts in the current site language (switch RU / EN at the top to edit the other). An empty field uses the default text.",
+    ht_champShort: "Line above the title", ht_tagline: "Tagline under the title", ht_statement: "About — main sentence", ht_statementDim: "About — continuation (grey)", ht_partnersTitle: "Sponsors section title", ht_faqText: "Text next to the FAQ", setSocials: "Socials", setTracks: "Tracks", maxStageDefL: "Default spots per round", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
     roleOwner: "Head admin", ownerOnly: "Numbers and removing drivers are for the head admin only.", kick: "Remove", kickSure: "Really remove?", kicked: "Driver removed",
     addTestPilot: "+ Test driver", testTag: "test", delStage: "Delete round", group: "Group", groupLimits: "Round groups", groupsHint: "How many drivers each group can take. Assign a driver's group in the table below.",
     groupFull: "The group is full — raise the limit or pick another group.", protestOnlyRider: "Only drivers entered in the round can file a protest.", myProtests: "My protests", protestDup: "A protest against this driver is already under review.",
@@ -2531,6 +2544,10 @@ const JUDGE_PARTS = [["critAngle", 35], ["critLine", 35], ["critStyle", 30]];
 const DEF_SETTINGS = { regOpen: true, maxTeam: 4, maxStage: 32, maxTeamsStage: 32, teamStageMax: 4, hpMin: 400, hpMax: 900, socials: Object.fromEntries(SOCIALS.map(([n, href]) => [n, href])) };
 const TEAMS = S.db?.teams || clone(DEF_TEAMS), PILOTS = HOSTED ? [] : S.db?.pilots || clone(DEF_PILOTS), TOURS = S.db?.tours?.[0]?.season ? S.db.tours : clone(DEF_TOURS); // older saves have no seasons, so they fall back to defaults
 const SEASONS = S.db?.seasons || clone(DEF_SEASONS), SPONSORS = S.db?.sponsors || clone(DEF_SPONSORS), PROTESTS = S.db?.protests || clone(DEF_PROTESTS);
+const HOME_TEXTS = ["champShort", "tagline", "statement", "statementDim", "partnersTitle", "faqText"];
+const ht = k => SETTINGS.texts?.[S.lang]?.[k] || t(k);
+const faqList = () => SETTINGS.faq?.[S.lang] || t("faq");
+const faqMine = () => (SETTINGS.faq = { ...SETTINGS.faq })[S.lang] ??= clone(t("faq")); // the first edit copies the built-in list
 const SETTINGS = { ...clone(DEF_SETTINGS), ...S.db?.settings }, SANCTIONS = S.db?.sanctions || {};
 const curSeason = () => (SEASONS.find(s => s.status === "live") || SEASONS.at(-1)).id;
 const seasonName = id => SEASONS.find(s => s.id === id)?.name ?? `${t("season")} ${id}`;
@@ -2605,7 +2622,7 @@ const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJ
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spMove: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spMove: "edit", faqAdd: "edit", faqMove: "edit", faqDel: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -2767,14 +2784,14 @@ function home() {
   const chat = SOCIALS.filter(([n]) => n === "Telegram" || n === "Discord");
   // poster hero: wide heavy title with a slit-scan motion trail, a serif "drift", an orange light leak, HUD marks and a stage ticket
   return `<section class="hero6">
-    <div class="h6-top"><span>${t("champShort")}</span></div>
+    <div class="h6-top"><span>${esc(ht("champShort"))}</span></div>
     <div class="h6-stage">
       <h1 class="h6-title" aria-label="Lateral Drift Series"><span class="w" data-t="Lateral">Lateral</span><em>drift</em><span class="w" data-t="Series">Series</span></h1>
       <i class="cross c1" aria-hidden="true"></i><i class="cross c2" aria-hidden="true"></i><i class="cross c3" aria-hidden="true"></i><i class="cross c4" aria-hidden="true"></i>
     </div>
     <div class="h6-bottom">
       <div class="stack" style="gap:1.2rem">
-        <p class="h6-tag">${t("tagline")}</p>
+        <p class="h6-tag">${esc(ht("tagline"))}</p>
         <div class="row" style="gap:.6rem"><a class="btn" href="#tournaments">${t("join")}</a><a class="btn line" href="#rules">${t("rules")}</a>${nx && ahead ? `<a class="btn text sm" href="${esc(calUrl(nx))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div>
         ${generalSponsor() ? `<div class="h6-gen"><span class="h6-gen-lbl">${t(SPONSORS.filter(z => z.role === "general").length > 1 ? "sponsorMany" : "sponsor")}</span><span class="h6-sps">${SPONSORS.filter(z => z.role === "general").map(z => { const href = safeUrl(z.url), tag = href !== "#" ? "a" : "span";
           return `<${tag} class="h6-sp"${tag === "a" ? ` href="${esc(href)}" target="_blank" rel="noopener"` : ""}><span class="h6-sp-logo">${spImg(z)}</span><strong>${esc(z.name)}</strong></${tag}>`; }).join("")}</span></div>` : ""}
@@ -2790,7 +2807,7 @@ function home() {
 
   <section class="intro4 reveal">
     <span class="label idx">01 — ${t("secAbout")}</span>
-    <p class="statement">${t("statement")} <span>${t("statementDim")}</span></p>
+    <p class="statement">${esc(ht("statement"))} <span>${esc(ht("statementDim"))}</span></p>
     <div class="kpis">${[[stages.length, "statStages"], [drivers, "statPilots"], [nTeams, "statTeams"], [stages.filter(x => x.status === "done").length, "statDone"]].map(([n, k]) => `<div class="kpi"><span class="label">${t(k)}</span><b data-count="${n}">${n}</b></div>`).join("")}</div>
   </section>
 
@@ -2812,16 +2829,16 @@ function home() {
   </section>
 
   ${SPONSORS.length ? `<section class="reveal stack sec">
-    <div class="sec-head"><span class="label idx">05 — ${t("partners")}</span><h2>${t("partnersTitle")}</h2></div>
+    <div class="sec-head"><span class="label idx">05 — ${t("partners")}</span><h2>${esc(ht("partnersTitle"))}</h2></div>
     ${SPONSORS.some(s => s.role === "general") ? `<div class="spons sp-gens">${SPONSORS.filter(s => s.role === "general").map(spCard).join("")}</div>` : ""}
     <div class="spons">${SPONSORS.filter(s => s.role !== "general").map(spCard).join("")}
       <a class="sp-card sp-you" href="${esc(safeUrl(SETTINGS.socials.Gmail))}"><span class="sp-logo">+</span><span class="label">${t("yourBrand")}</span><b>${t("becomePartner")}</b></a></div>
   </section>` : ""}
 
   <section class="reveal faq-sec">
-    <div class="stack"><span class="label idx">${SPONSORS.length ? "06" : "05"} — FAQ</span><h2>${t("faqTitle")}</h2><p class="note">${t("faqText")}</p>
+    <div class="stack"><span class="label idx">${SPONSORS.length ? "06" : "05"} — FAQ</span><h2>${t("faqTitle")}</h2><p class="note">${esc(ht("faqText"))}</p>
       <div class="row" style="gap:.5rem">${chat.map(([n]) => `<a class="btn line sm" href="${esc(safeUrl(SETTINGS.socials[n]))}" target="_blank" rel="noopener">${n} ↗</a>`).join("")}</div></div>
-    <div class="faq">${t("faq").map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("")}</div>
+    <div class="faq">${faqList().map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}</div>
   </section>`;
 }
 
@@ -4279,10 +4296,19 @@ function adminSettings() {
       ${HOSTED ? "" : `<div class="box panel"><p class="note">${t("adminNote")}</p><div><button class="btn text danger" data-act="resetDemo">${pending === "reset" ? t("resetSure") : t("resetDemo")}</button></div></div>`}`,
     socials: () => `<div class="box panel"><div class="set-grid">${SOCIALS.map(([n]) =>
       `<label class="fieldlabel">${n}<input class="field" data-a="social:${n}" value="${esc(SETTINGS.socials[n] || "")}" maxlength="120" placeholder="https:// / mailto:"></label>`).join("")}</div></div>`,
+    home: () => `<div class="box panel stack"><p class="note" style="margin:0">${t("htHint")}</p><div class="ht-grid">${HOME_TEXTS.map(k => `<label class="fieldlabel">${t("ht_" + k)}
+      ${k.startsWith("statement") || k === "faqText"
+        ? `<textarea class="field" rows="2" data-a="htext:${k}" maxlength="300" placeholder="${esc(t(k))}">${esc(SETTINGS.texts?.[S.lang]?.[k] || "")}</textarea>`
+        : `<input class="field" data-a="htext:${k}" maxlength="120" placeholder="${esc(t(k))}" value="${esc(SETTINGS.texts?.[S.lang]?.[k] || "")}">`}</label>`).join("")}</div></div>
+      <div class="box panel stack"><div class="head"><h3 style="margin:0">${t("faqAdmin")} <span class="muted mono">${faqList().length}</span></h3><button class="btn line sm" data-act="faqAdd">${t("faqAdd")}</button></div>
+      <div class="faq-eds">${faqList().map(([q, a], i, L) => `<div class="faq-row"><details class="br-box faq-ed" data-topen="faq-${i}" ${tOpenIs(`faq-${i}`) ? "open" : ""}><summary><span class="mono muted">${i + 1}</span><b>${esc(q) || "—"}</b><i class="ach-chev" aria-hidden="true"></i></summary>
+        <div class="faq-ed-body"><input class="field" data-a="faq:${i}:q" value="${esc(q)}" maxlength="150" aria-label="${t("faqQ")} ${i + 1}">
+        <textarea class="field" rows="3" data-a="faq:${i}:a" maxlength="800" aria-label="${t("faqA")} ${i + 1}" placeholder="${t("faqA")}">${esc(a)}</textarea></div></details>
+        <span class="rt-ctl"><button data-act="faqMove" data-id="${i}" data-v="-1" ${i === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button><button data-act="faqMove" data-id="${i}" data-v="1" ${i === L.length - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button><button class="danger" data-act="faqDel" data-id="${i}" aria-label="${t("del")}">${pending === `faq${i}` ? t("delSure") : "×"}</button></span></div>`).join("") || `<p class="note">${t("nothing")}</p>`}</div></div>`,
     tracks: adminTracks, sponsors: adminSponsors, ach: adminAch, discord: adminDiscord,
   }[setTab] || (() => "");
   return `<h2>${t("aSettings")}</h2>
-    <div class="tabs">${tab("general", "setGeneral")}${tab("socials", "setSocials")}${tab("tracks", "setTracks")}${tab("sponsors", "aSponsors")}${tab("ach", "achievements")}${tab("discord", "setDiscord")}</div>
+    <div class="tabs">${tab("general", "setGeneral")}${tab("home", "setHome")}${tab("socials", "setSocials")}${tab("tracks", "setTracks")}${tab("sponsors", "aSponsors")}${tab("ach", "achievements")}${tab("discord", "setDiscord")}</div>
     ${body()}`;
 }
 
@@ -4470,6 +4496,16 @@ function adminEdit([kind, id, f, k], v) {
     if (id === "maxStage") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) SETTINGS.maxStage = n; }
     if (id === "maxTeamsStage") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) SETTINGS.maxTeamsStage = n; }
     if (id === "teamStageMax") { const n = Math.round(Number(v)); if (n >= 1 && n <= 15) SETTINGS.teamStageMax = n; }
+    return dbSave();
+  }
+  if (kind === "faq") {
+    const it = faqMine()[+id]; if (!it) return;
+    it[f === "q" ? 0 : 1] = v.trim().slice(0, f === "q" ? 150 : 800);
+    return dbSave();
+  }
+  if (kind === "htext" && HOME_TEXTS.includes(id)) {
+    const v2 = v.trim().slice(0, 300), all = SETTINGS.texts = { ...SETTINGS.texts }, mine = all[S.lang] = { ...all[S.lang] };
+    if (v2 && v2 !== t(id)) mine[id] = v2; else delete mine[id];
     return dbSave();
   }
   if (kind === "social" && SETTINGS.socials[id] !== undefined) {
@@ -5103,7 +5139,7 @@ document.addEventListener("click", e => {
   if (!el) return;
   if (el.matches("tr") && e.target.closest("select, input, label")) return; // inline editors in a table row don't open the row
   if (ACT_PERM[el.dataset.act] && !can(ACT_PERM[el.dataset.act])) return;
-  if (!["delTeam", "resetDemo", "delSeason", "delSponsor", "dcHookDel", "trkConfDel", "trkPartDel", "trkDel", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "founderPass", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
+  if (!["faqDel", "delTeam", "resetDemo", "delSeason", "delSponsor", "dcHookDel", "trkConfDel", "trkPartDel", "trkDel", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "founderPass", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
   if (el.dataset.tab || el.dataset.season || el.dataset.qt || el.dataset.sub) admAnim = true;
   if (el.dataset.tab === "log") LOG = null; // opening the log reads it fresh
   if (el.dataset.tab) { aTab = el.dataset.tab; aSeason = 0; aTour = 0; adminMsg = ""; return render(); }
@@ -5209,6 +5245,9 @@ document.addEventListener("click", e => {
     logMore: () => logFetch(true),
     dcImgDel: () => { const k = el.dataset.v; if (DC?.[k]?.img) dcImgSend(k, null); },
     dcOpen: () => { const k = "dc-" + el.dataset.v; tOpen[k] = !tOpenIs(k); animKeep = ".dc-body"; render(); },
+    faqAdd: () => { const L = faqMine(); L.push([t("newFaq"), ""]); tOpen["faq-" + (L.length - 1)] = true; dbSave(); },
+    faqMove: () => { const L = faqMine(), j = id + +el.dataset.v; if (!L[id] || !L[j]) return; [L[id], L[j]] = [L[j], L[id]]; [tOpen["faq-" + id], tOpen["faq-" + j]] = [tOpen["faq-" + j], tOpen["faq-" + id]]; dbSave(); },
+    faqDel: () => confirmTwice(`faq${id}`, () => { faqMine().splice(id, 1); dbSave(); }),
     spMove: () => { const j = id + +el.dataset.v; if (!SPONSORS[id] || !SPONSORS[j]) return; [SPONSORS[id], SPONSORS[j]] = [SPONSORS[j], SPONSORS[id]]; dbSave(); },
     delSponsor: () => confirmTwice(`sp${id}`, () => { SPONSORS.splice(id, 1); dbSave(); }),
     // demo switch: turning it off also drops the role granted in the Access section
