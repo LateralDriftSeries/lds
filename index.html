@@ -2137,6 +2137,7 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .trk-pt { display: flex; gap: .7rem; align-items: baseline; font-weight: 600; min-width: 0 } .trk-pt .note { font-weight: 400 }
 .trk-pd { margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--line) }
 .trk-part-head { display: flex; gap: .6rem; align-items: center } .trk-part-in { max-width: 20rem; font-weight: 600 }
+.trk-names { display: grid; gap: .3rem; min-width: 0 } .trk-en { max-width: 14rem; font-size: .82rem; padding-block: .35rem; color: var(--soft) } .trk-part-head .trk-en { max-width: 12rem }
 @media (max-width: 600px) { .trk-add { flex-wrap: wrap } .trk-add .field { width: 100% } .trk-row { grid-template-columns: 1fr auto } .trk-row .trk-dl { display: none } .trk-part-head { flex-wrap: wrap } .trk-part-in { max-width: none } }
 .set-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1rem }
 .chip4.sanc { border-color: color-mix(in srgb, #e5a33a 50%, var(--line)); color: #e5a33a }
@@ -2234,8 +2235,8 @@ const I18N = {
     stageTeamEntries: "Команды этапа", stageTeamEntriesNote: "В командном зачёте участвуют только зарегистрированные команды, в порядке подачи заявок.", maxTeamsStageL: "Команд на этап", teamStageMaxL: "Пилотов в заявке команды", critAngle: "Угол", critLine: "Траектория", critStyle: "Стиль", sumL: "Сумма", sectionsN: "разд.", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
     spHint: "Спонсоры показываются на главной под лидерами сезона. Логотип: PNG, JPG или WebP до 5 МБ, он впишется в квадрат целиком.", bracketTitle: "Сетка топ-32", brPreview: "Предварительно — по текущей квалификации", bye: "Без соперника", brSetWin: "Отметить победителя",
     brRecorded: "Результат записан в сетку", brPairs: "Пары сетки", brReseed: "Пересобрать из квалификации", brEditHint: "Сетка заполняется сама из судейского острова. Здесь можно исправить ошибку: ✓ отмечает победителя пары, повторный клик снимает.",
-    stageFirst: "Лидер этапа", stageNote: "Очки последнего завершённого этапа: место в сетке топ-32, бонус за квалификацию и коэффициент конфига. Очки начисляются, когда этап получает статус «Завершён».",
-    stageTeamNote: "Очки команд за последний завершённый этап: два лучших пилота из топ-32 и бонус за квалификацию.",
+    stageFirst: "Лидер этапа", stageNote: "Сумма очков за все завершённые этапы активного сезона: место в сетке топ-32, бонус за квалификацию и коэффициент конфига. Очки этапа добавляются, когда он получает статус «Завершён».", stagesDone: "Завершено этапов",
+    stageTeamNote: "Сумма очков команд за все завершённые этапы активного сезона: на каждом этапе два лучших пилота из топ-32 и бонус за квалификацию.",
     stPending: "Очки начислятся, когда этап получит статус «Завершён».", trkK: "Коэффициент очков",
     noAch: "Достижений пока нет.", noAchAdmin: "Достижений нет. Создайте первое — потом его можно выдать пилотам.", achAdminHint2: "Создавайте свои достижения и выдавайте их пилотам вручную.", achHidden: "Скрытое достижение", achHiddenHint: "Пока его не получили, в профиле видно только «???», и оно стоит в самом конце списка.", achHiddenD: "Скрытое достижение", achHolders: "Получили", achGiven: "Достижение выдано", mdBar: "Форматирование", mdH: "Заголовок", mdList: "Список", mdBold: "Жирный", mdWarn: "Предупреждение", mdTable: "Таблица", mdCol: "Столбец",
     rulePreview: "Как увидят пилоты", pickSection: "Выберите раздел слева или добавьте новый.", regName: "Название регламента", roleJudge: "Судья", roleMarshal: "Маршал", roleStreamer: "Стример", roleTech: "Технический помощник", roleNone: "Без роли",
@@ -2254,7 +2255,7 @@ const I18N = {
     logSearch: "Поиск по журналу", logReload: "Обновить", logMore: "Показать ещё", logWhen: "Когда", logWho: "Кто", logWhat: "Что изменено", dcFSite: "Сайт", dcFStream: "Трансляция", dcPostReg: "Регистрация открыта", dcPostQual: "Регистрация закрыта", dcPostPairs: "Начало парных заездов", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Текст объявления", dcTextHint: "Пусто — стандартный текст. Название этапа, старт и ссылка на сайт добавляются сами, у парных заездов ещё ссылка на трансляцию.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Изображение", dcImgChange: "Сменить изображение", dcImgHint: "PNG, JPG или WebP до 5 МБ. Показывается под текстом объявления.", dcDemo: "В макете настройки Discord не сохраняются, они работают на сайте.",
-    setGeneral: "Общие", setHome: "Главная", faqAdmin: "Вопросы и ответы", faqAdd: "+ Вопрос", faqQ: "Вопрос", faqA: "Ответ", newFaq: "Новый вопрос", htHint: "Тексты главной страницы на текущем языке сайта (переключите RU / EN вверху, чтобы править другой). Пустое поле — текст по умолчанию.",
+    setGeneral: "Общие", setHome: "Главная", faqAdmin: "Вопросы и ответы", faqAdd: "+ Вопрос", faqQ: "Вопрос", faqA: "Ответ", newFaq: "Новый вопрос", htHint: "Тексты и вопросы главной страницы. Справа выберите язык, который правите: RU или EN. Пустое поле — текст по умолчанию.", htLangL: "Язык", trkEnHint: "Название на английском: подставляется автопереводом, можно поправить",
     ht_champShort: "Надпись над названием", ht_tagline: "Слоган под названием", ht_statement: "О чемпионате — главная фраза", ht_statementDim: "О чемпионате — продолжение (серым)", ht_partnersTitle: "Заголовок раздела спонсоров", ht_faqText: "Текст рядом с вопросами и ответами", setSocials: "Соцсети", setTracks: "Трассы", maxStageDefL: "Мест на этап по умолчанию", rulesLangL: "Язык регламента", rulesEnEmpty: "Английской версии нет: на английском сайт показывает русский регламент.", regTitle: "Регламент", addReg: "+ Регламент", newReg: "Новый регламент",
     roleOwner: "Главный администратор", ownerOnly: "Номера и исключение пилотов — только у главного администратора.", kick: "Выгнать", kickSure: "Точно выгнать?", kicked: "Пилот исключён",
     addTestPilot: "+ Тестовый пилот", testTag: "тест", delStage: "Удалить этап", group: "Группа", groupLimits: "Группы этапа", groupsHint: "Сколько пилотов может быть в каждой группе. Группу пилоту назначают в таблице ниже.",
@@ -2274,7 +2275,7 @@ const I18N = {
     aTracks: "Трассы", aTracksHint: "У трассы есть участки, у каждого участка свои конфиги со сложностью от 1 до 5. Сложность выбранного конфига задаёт множитель очков этапа.",
     trkNewPh: "Название новой трассы", trkAdd: "+ Трасса", trkDup: "Такая трасса уже есть", trkConf: "Конфиг", trkConfs: "конфигов", trkConfAdd: "+ Конфиг", trkPart: "Участок", trkParts: "участков", trkPartAdd: "+ Участок", trkPartDel: "Удалить участок", trkPartPh: "Название участка", trkMain: "Основной", trkDel: "Удалить трассу", diff1: "Лёгкая", diff2: "Простая", diff3: "Средняя", diff4: "Сложная", diff5: "Экстремальная",
     champShort: "Онлайн-чемпионат по дрифту",
-    stageFull: "Мест на этап больше нет", netErr: "Нет связи с сервером, изменение не сохранено", sessionEnded: "Сессия закончилась, войдите через Steam ещё раз", authFailed: "Не удалось войти через Steam", addAch: "+ Достижение", achIcon: "Иконка", achOwnIc: "Свой эмодзи", achOwnHint: "Скопируйте любой эмодзи (Ctrl + C) и вставьте сюда (Ctrl + V), он применится сразу. Список эмодзи: Win + . (точка) на Windows, Ctrl + Cmd + пробел на Mac.", achTitle: "Название", achDesc: "Условие", achAuto: "выдаётся само", achManual: "не выдаётся", achNewRu: "Новое достижение", achAdminHint: "Достижения в профиле пилота. Иконка — эмодзи. Если английский текст пустой, показывается русский.", needCar: "Чтобы зарегистрироваться, заполните в профиле машину, двигатель, КПП и мощность.", needCarHere: "Заполните машину, двигатель, КПП и мощность, чтобы зарегистрироваться.", hpMinL: "Мощность от, л.с.", hpMaxL: "Мощность до, л.с.", hpBad: "Мощность: от 50 до 3000 л.с., «от» меньше «до»", maxStageL: "Максимум участников на этап", top20: "Топ 20", achOn: "Получено", achOff: "Пока не получено", achievements: "Достижения", noMedals: "Займите место на подиуме этапа (1–3), чтобы получить медаль.", placeWord: "место",
+    stageFull: "Мест на этап больше нет", netErr: "Нет связи с сервером, изменение не сохранено", sessionEnded: "Сессия закончилась, войдите через Steam ещё раз", authFailed: "Не удалось войти через Steam", addAch: "+ Достижение", achIcon: "Иконка", achOwnIc: "Свой эмодзи", achOwnHint: "Скопируйте любой эмодзи (Ctrl + C) и вставьте сюда (Ctrl + V), он применится сразу. Список эмодзи: Win + . (точка) на Windows, Ctrl + Cmd + пробел на Mac.", achTitle: "Название", achDesc: "Условие", achAuto: "выдаётся само", achManual: "не выдаётся", achNewRu: "Новое достижение", achAdminHint: "Достижения в профиле пилота. Иконка — эмодзи. Если английский текст пустой, показывается русский.", needCar: "Чтобы зарегистрироваться, заполните в профиле машину, двигатель, КПП и мощность.", needCarHere: "Заполните машину, двигатель, КПП и мощность, чтобы зарегистрироваться.", hpMinL: "Мощность от, л.с.", hpMaxL: "Мощность до, л.с.", hpBad: "Мощность: от 50 до 3000 л.с., «от» меньше «до»", maxStageL: "Максимум участников на этап", top20: "Топ {n}", achOn: "Получено", achOff: "Пока не получено", achievements: "Достижения", noMedals: "Займите место на подиуме этапа (1–3), чтобы получить медаль.", placeWord: "место",
     aResults: "Итоги", fromQual: "По квалификации", podiumHint: "Подиум этапа. Если место не выбрано, после завершения этапа оно берётся из квалификации. Пилоты с 1–3 местом получают медаль в профиле.",
     regLater: "Регистрация откроется после завершения текущего этапа.", regSoon: "Регистрация откроется позже", needNumHere: "Сначала выберите стартовый номер ниже.", seasonLine: "Календарь <em>сезона</em>",
     teamsSeason: "Команды сезона", ctaTitle: "Готов выйти на трассу?",
@@ -2391,8 +2392,8 @@ const I18N = {
     stageTeamEntries: "Round teams", stageTeamEntriesNote: "Only entered teams take part in the team standings, in filing order.", maxTeamsStageL: "Teams per round", teamStageMaxL: "Drivers per team entry", critAngle: "Angle", critLine: "Line", critStyle: "Style", sumL: "Total", sectionsN: "sections", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
     spHint: "Sponsors show on the home page under the season leaders. Logo: PNG, JPG or WebP up to 5 MB, fitted whole into a square.", bracketTitle: "Top 32 bracket", brPreview: "Preview — from the current qualifying", bye: "Bye", brSetWin: "Mark the winner",
     brRecorded: "Result saved to the bracket", brPairs: "Bracket pairs", brReseed: "Rebuild from qualifying", brEditHint: "The bracket fills itself from the judges’ island. Fix mistakes here: ✓ marks a pair’s winner, a second click clears it.",
-    stageFirst: "Round leader", stageNote: "Points for the latest finished round: top-32 place, qualifying bonus and the config factor. Points count once a round is marked Finished.",
-    stageTeamNote: "Team points for the latest finished round: two best top-32 drivers and the qualifying bonus.",
+    stageFirst: "Round leader", stageNote: "Points from every finished round of the active season added up: top-32 place, qualifying bonus and the config factor. A round's points are added once it is marked Finished.", stagesDone: "Rounds finished",
+    stageTeamNote: "Team points from every finished round of the active season added up: per round, the two best top-32 drivers and the qualifying bonus.",
     stPending: "Points are counted once the round is marked Finished.", trkK: "Points factor",
     noAch: "No achievements yet.", noAchAdmin: "No achievements. Create the first one, then hand it to drivers.", achAdminHint2: "Create your own achievements and hand them to drivers.", achHidden: "Hidden achievement", achHiddenHint: "Until earned it shows only as “???” and sits at the end of the list.", achHiddenD: "Hidden achievement", achHolders: "Awarded to", achGiven: "Achievement given", mdBar: "Formatting", mdH: "Heading", mdList: "List", mdBold: "Bold", mdWarn: "Warning", mdTable: "Table", mdCol: "Column",
     rulePreview: "What drivers will see", pickSection: "Pick a section on the left or add a new one.", regName: "Regulation name", roleJudge: "Judge", roleMarshal: "Marshal", roleStreamer: "Streamer", roleTech: "Technical assistant", roleNone: "No role",
@@ -2411,7 +2412,7 @@ const I18N = {
     logSearch: "Search the log", logReload: "Refresh", logMore: "Show more", logWhen: "When", logWho: "Who", logWhat: "What changed", dcFSite: "Site", dcFStream: "Stream", dcPostReg: "Registration open", dcPostQual: "Registration closed", dcPostPairs: "Pair battles start", dcDefPairs: "Квалификация позади: стартуют парные заезды топ-32. Сетка и результаты обновляются на сайте вживую.", dcText: "Post text", dcTextHint: "Empty — the standard text. Round name, start and site link are added automatically; the pairs post also links the stream.",
     dcDefReg: "Записывайтесь на этап на сайте: нужен вход через Steam, стартовый номер и машина в профиле.", dcDefQual: "Регистрация на этап закрыта, впереди квалификация. Список участников и результаты — на сайте.",
     dcImg: "+ Image", dcImgChange: "Change image", dcImgHint: "PNG, JPG or WebP up to 5 MB. Shown under the post text.", dcDemo: "Discord settings aren't saved in the mockup, they work on the site.",
-    setGeneral: "General", setHome: "Home", faqAdmin: "Questions & answers", faqAdd: "+ Question", faqQ: "Question", faqA: "Answer", newFaq: "New question", htHint: "Home page texts in the current site language (switch RU / EN at the top to edit the other). An empty field uses the default text.",
+    setGeneral: "General", setHome: "Home", faqAdmin: "Questions & answers", faqAdd: "+ Question", faqQ: "Question", faqA: "Answer", newFaq: "New question", htHint: "Home page texts and FAQ. Pick the language you are editing on the right: RU or EN. An empty field uses the default text.", htLangL: "Language", trkEnHint: "English name: filled in by machine translation, edit it if needed",
     ht_champShort: "Line above the title", ht_tagline: "Tagline under the title", ht_statement: "About — main sentence", ht_statementDim: "About — continuation (grey)", ht_partnersTitle: "Sponsors section title", ht_faqText: "Text next to the FAQ", setSocials: "Socials", setTracks: "Tracks", maxStageDefL: "Default spots per round", rulesLangL: "Rules language", rulesEnEmpty: "No English version: the English site shows the Russian rules.", regTitle: "Regulation", addReg: "+ Regulation", newReg: "New regulation",
     roleOwner: "Head admin", ownerOnly: "Numbers and removing drivers are for the head admin only.", kick: "Remove", kickSure: "Really remove?", kicked: "Driver removed",
     addTestPilot: "+ Test driver", testTag: "test", delStage: "Delete round", group: "Group", groupLimits: "Round groups", groupsHint: "How many drivers each group can take. Assign a driver's group in the table below.",
@@ -2431,7 +2432,7 @@ const I18N = {
     aTracks: "Tracks", aTracksHint: "A track has sections, each with its own configs rated 1–5. The chosen config's difficulty sets the round's points factor.",
     trkNewPh: "New track name", trkAdd: "+ Track", trkDup: "That track already exists", trkConf: "Config", trkConfs: "configs", trkConfAdd: "+ Config", trkPart: "Section", trkParts: "sections", trkPartAdd: "+ Section", trkPartDel: "Delete section", trkPartPh: "Section name", trkMain: "Main", trkDel: "Delete track", diff1: "Easy", diff2: "Simple", diff3: "Medium", diff4: "Hard", diff5: "Extreme",
     champShort: "Online drift championship",
-    stageFull: "The round is full", netErr: "No connection to the server, change not saved", sessionEnded: "Session ended, sign in with Steam again", authFailed: "Steam sign-in failed", addAch: "+ Achievement", achIcon: "Icon", achOwnIc: "Your own emoji", achOwnHint: "Copy any emoji (Ctrl + C) and paste it here (Ctrl + V), it applies at once. Emoji picker: Win + . (period) on Windows, Ctrl + Cmd + Space on Mac.", achTitle: "Title", achDesc: "Condition", achAuto: "unlocks automatically", achManual: "not awarded", achNewRu: "Новое достижение", achAdminHint: "Achievements in the driver profile. The icon is an emoji. Empty English text falls back to Russian.", needCar: "Fill in car, engine, gearbox and power in your profile to register.", needCarHere: "Fill in car, engine, gearbox and power to register.", hpMinL: "Power from, hp", hpMaxL: "Power up to, hp", hpBad: "Power: 50–3000 hp, \"from\" below \"up to\"", maxStageL: "Max drivers per round", top20: "Top 20", achOn: "Unlocked", achOff: "Not unlocked yet", achievements: "Achievements", noMedals: "Finish on a round podium (1–3) to earn a medal.", placeWord: "place",
+    stageFull: "The round is full", netErr: "No connection to the server, change not saved", sessionEnded: "Session ended, sign in with Steam again", authFailed: "Steam sign-in failed", addAch: "+ Achievement", achIcon: "Icon", achOwnIc: "Your own emoji", achOwnHint: "Copy any emoji (Ctrl + C) and paste it here (Ctrl + V), it applies at once. Emoji picker: Win + . (period) on Windows, Ctrl + Cmd + Space on Mac.", achTitle: "Title", achDesc: "Condition", achAuto: "unlocks automatically", achManual: "not awarded", achNewRu: "Новое достижение", achAdminHint: "Achievements in the driver profile. The icon is an emoji. Empty English text falls back to Russian.", needCar: "Fill in car, engine, gearbox and power in your profile to register.", needCarHere: "Fill in car, engine, gearbox and power to register.", hpMinL: "Power from, hp", hpMaxL: "Power up to, hp", hpBad: "Power: 50–3000 hp, \"from\" below \"up to\"", maxStageL: "Max drivers per round", top20: "Top {n}", achOn: "Unlocked", achOff: "Not unlocked yet", achievements: "Achievements", noMedals: "Finish on a round podium (1–3) to earn a medal.", placeWord: "place",
     aResults: "Results", fromQual: "From qualifying", podiumHint: "Round podium. An empty place is taken from qualifying once the round is finished. Drivers placed 1–3 get a medal in their profile.",
     regLater: "Registration opens after the current round is finished.", regSoon: "Registration opens later", needNumHere: "Pick a racing number below first.", seasonLine: "Season <em>calendar</em>",
     teamsSeason: "Season teams", ctaTitle: "Ready to hit the track?",
@@ -2547,8 +2548,9 @@ const TEAMS = S.db?.teams || clone(DEF_TEAMS), PILOTS = HOSTED ? [] : S.db?.pilo
 const SEASONS = S.db?.seasons || clone(DEF_SEASONS), SPONSORS = S.db?.sponsors || clone(DEF_SPONSORS), PROTESTS = S.db?.protests || clone(DEF_PROTESTS);
 const HOME_TEXTS = ["champShort", "tagline", "statement", "statementDim", "partnersTitle", "faqText"];
 const ht = k => SETTINGS.texts?.[S.lang]?.[k] || t(k);
-const faqList = () => SETTINGS.faq?.[S.lang] || t("faq");
-const faqMine = () => (SETTINGS.faq = { ...SETTINGS.faq })[S.lang] ??= clone(t("faq")); // the first edit copies the built-in list
+let htLang = null; const hl = () => htLang || S.lang; // the language the Home tab edits (its own switch; the site's language until picked)
+const faqList = (l = S.lang) => SETTINGS.faq?.[l] || I18N[l].faq;
+const faqMine = () => (SETTINGS.faq = { ...SETTINGS.faq })[hl()] ??= clone(I18N[hl()].faq); // the first edit copies the built-in list
 const SETTINGS = { ...clone(DEF_SETTINGS), ...S.db?.settings }, SANCTIONS = S.db?.sanctions || {};
 const curSeason = () => (SEASONS.find(s => s.status === "live") || SEASONS.at(-1)).id;
 const seasonName = id => SEASONS.find(s => s.id === id)?.name ?? `${t("season")} ${id}`;
@@ -2623,7 +2625,7 @@ const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJ
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
 const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
-  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spMove: "edit", faqAdd: "edit", faqMove: "edit", faqDel: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
+  giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spMove: "edit", faqAdd: "edit", htLang: "edit", faqMove: "edit", faqDel: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
 // qualifying groups of a stage
 const GROUPS = ["A", "B", "C", "D"];
@@ -2751,7 +2753,7 @@ function countdown(at) {
 
 // home leaderboard: top 3 drivers or teams by season points, same numbers as the Rating page
 let lbTab = "pilots";
-const ptsOf = name => { const x = ratingTour(); return x ? stagePts(x, name) : 0; }, teamPts = tm => { const x = ratingTour(); return x ? teamStagePts(x, tm) : 0; };
+const ptsOf = name => ratingTours().reduce((s, x) => s + stagePts(x, name), 0), teamPts = tm => ratingTours().reduce((s, x) => s + teamStagePts(x, tm), 0);
 const CROWN = '<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18M4 15l-1-9 5 4 4-6 4 6 5-4-1 9z"/></svg>';
 function leaderboard() {
   const top = lbTab === "teams"
@@ -2867,6 +2869,20 @@ const partsOf = n => { const z = TRACK_SET[n]; if (!z) return [];
   if (z.conf) { if (z.conf.length) (z.parts ??= []).unshift({ n: "", conf: z.conf }); delete z.conf; }
   return z.parts ??= []; };
 const confLabel = (p, c) => p.n ? `${p.n} · ${c.n}` : c.n;
+// the English site shows a section's or config's English name (o.en) when there is one; the stage keeps the Russian label as its key
+const nm = o => S.lang === "en" && o.en ? o.en : o.n;
+const confShow = x => { if (S.lang !== "en") return x.conf; for (const p of partsOf(x.track)) for (const c of p.conf) if (confLabel(p, c) === x.conf) return p.n ? `${nm(p)} · ${nm(c)}` : nm(c); return x.conf; };
+// machine translation RU → EN (MyMemory, free, no key); only names typed in the track settings are sent
+const toEn = q => fetch(`https://api.mymemory.translated.net/get?langpair=ru|en&q=${encodeURIComponent(q)}`).then(r => r.json())
+  .then(j => j?.responseStatus === 200 ? String(j.responseData?.translatedText || "").trim().slice(0, 40) : "", () => "");
+const trkObj = (n, pi, j) => { const p = partsOf(n)[pi]; return j < 0 ? p : p?.conf[j]; }; // j < 0: the section itself
+// English name for one section/config: Latin names are copied as they are, Russian ones go to the translator; a newer rename wins
+const enFor = (n, pi, j, src) => (/[А-Яа-яЁё]/.test(src) ? toEn(src) : Promise.resolve(src)).then(en => {
+  const o = trkObj(n, pi, j); if (!en || !o || o.n !== src) return false; o.en = en; return true; });
+let enFilled = false; // existing names without an English one get translated once, when the tracks tab opens
+const fillEn = () => { if (enFilled || !can("edit")) return; enFilled = true;
+  const todo = trackNames().flatMap(n => partsOf(n).flatMap((p, pi) => [[n, pi, -1, p], ...p.conf.map((c, j) => [n, pi, j, c])])).filter(([, , , o]) => o.n && !o.en);
+  Promise.all(todo.map(([n, pi, j, o]) => enFor(n, pi, j, o.n))).then(r => { if (r.some(Boolean)) dbSave(); }); };
 const K_LIST = [1, 1.2, 1.5], kOfDiff = d => d >= 4 ? 1.5 : d === 3 ? 1.2 : 1, kOf = c => K_LIST.includes(c.k) ? c.k : kOfDiff(c.d);
 const kTxt = k => "×" + k.toFixed(1);
 const confOf = n => partsOf(n).flatMap(p => p.conf.map(c => ({ n: confLabel(p, c), d: c.d, k: kOf(c) })));
@@ -2887,8 +2903,9 @@ const adminTracks = () => `<div class="head"><div class="stack" style="gap:.3rem
         ${parts.map((p, pi) => `<details class="br-box trk-part" data-topen="tp-${esc(n)}-${pi}" ${tOpenIs(`tp-${n}-${pi}`) ? "open" : ""}>
           <summary class="psec-head"><span class="trk-pt">${p.n ? esc(p.n) : `<span class="muted">${t("trkPartPh")}</span>`}<span class="note">${t("trkConfs")}: ${p.conf.length}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
           <div class="trk-part-body"><div class="trk-part-head"><input class="field trk-part-in" data-a="tpart:${i}:${pi}" value="${esc(p.n)}" maxlength="40" placeholder="${t("trkPartPh")}" aria-label="${t("trkPartPh")}">
+            <input class="field trk-en" data-a="tparten:${i}:${pi}" value="${esc(p.en || "")}" maxlength="40" placeholder="EN" aria-label="EN · ${t("trkPartPh")}" title="${t("trkEnHint")}">
             <button class="btn text danger sm" data-act="trkPartDel" data-name="${esc(n)}" data-p="${pi}">${pending === `tp${i}:${pi}` ? t("delSure") : t("trkPartDel")}</button></div>
-          ${p.conf.map((z, j) => `<div class="trk-row"><input class="field" data-a="tconf:${i}:${pi}:${j}" value="${esc(z.n)}" maxlength="40" aria-label="${t("trkConf")}">${diffPick(n, `${pi}:${j}`, z.d)}
+          ${p.conf.map((z, j) => `<div class="trk-row"><span class="trk-names"><input class="field" data-a="tconf:${i}:${pi}:${j}" value="${esc(z.n)}" maxlength="40" aria-label="${t("trkConf")}"><input class="field trk-en" data-a="tconfen:${i}:${pi}:${j}" value="${esc(z.en || "")}" maxlength="40" placeholder="EN" aria-label="EN · ${t("trkConf")}" title="${t("trkEnHint")}"></span>${diffPick(n, `${pi}:${j}`, z.d)}
             <div class="k-pick" role="group" aria-label="${t("trkK")}">${K_LIST.map(k => `<button data-act="trkK" data-name="${esc(n)}" data-c="${pi}:${j}" data-v="${k}" aria-pressed="${kOf(z) === k}">${kTxt(k)}</button>`).join("")}</div>
             <span class="muted trk-dl">${z.d ? t("diff" + z.d) : "—"}</span><button class="btn text danger sm" data-act="trkConfDel" data-name="${esc(n)}" data-p="${pi}" data-c="${j}">${pending === `tc${i}:${pi}:${j}` ? t("delSure") : t("del")}</button></div>`).join("")}
           <div><button class="btn text sm" data-act="trkConfAdd" data-name="${esc(n)}" data-p="${pi}">${t("trkConfAdd")}</button></div></div></details>`).join("")}
@@ -2904,8 +2921,8 @@ function tracks() {
       <div class="track-body">
         <h3>${esc(n)}</h3>
         ${d[S.lang] ? `<p class="note">${esc(d[S.lang])}</p>` : ""}
-        ${partsOf(n).filter(p => p.conf.length).map((p, pi) => { const rows = `<dl class="specs">${p.conf.map(z => `<div class="diff-row"><dt>${esc(z.n)}<span>${z.d ? t("diff" + z.d) + " · " : ""}${kTxt(kOf(z))}</span></dt><dd><span class="diff" aria-label="${z.d}/5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= z.d ? "on" : ""}"></i>`).join("")}</span></dd></div>`).join("")}</dl>`;
-          return p.n ? `<details class="br-box trk-pd" data-topen="tpv-${esc(n)}-${pi}" ${tOpenIs(`tpv-${n}-${pi}`) ? "open" : ""}><summary class="psec-head"><span class="label acc">${esc(p.n)}</span><i class="ach-chev" aria-hidden="true"></i></summary>${rows}</details>` : rows; }).join("")}
+        ${partsOf(n).filter(p => p.conf.length).map((p, pi) => { const rows = `<dl class="specs">${p.conf.map(z => `<div class="diff-row"><dt>${esc(nm(z))}<span>${z.d ? t("diff" + z.d) + " · " : ""}${kTxt(kOf(z))}</span></dt><dd><span class="diff" aria-label="${z.d}/5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= z.d ? "on" : ""}"></i>`).join("")}</span></dd></div>`).join("")}</dl>`;
+          return p.n ? `<details class="br-box trk-pd" data-topen="tpv-${esc(n)}-${pi}" ${tOpenIs(`tpv-${n}-${pi}`) ? "open" : ""}><summary class="psec-head"><span class="label acc">${esc(nm(p))}</span><i class="ach-chev" aria-hidden="true"></i></summary>${rows}</details>` : rows; }).join("")}
       </div></article>`; }).join("")}</div>`;
 }
 
@@ -2944,7 +2961,7 @@ addEventListener("scroll", () => document.querySelector("header")?.classList.tog
 const tcard = (x, i, cur) => `<a class="tcard panel ${cur ? "current" : ""} ${x.season !== curSeason() ? "archived" : x.status === "done" ? "past" : ""}" href="#t-${x.id}" style="--i:${i}">
     <div class="row" style="justify-content:space-between">${x.season !== curSeason() ? `<span class="pill plain s-done">${t("archive")}</span>` : tourPill(x)}${cur ? `<span class="curtag">${t("currentStage")}</span>` : ""}</div>
     <span class="label">${t("stage")} ${x.stage} / ${seasonTours(x.season).length}</span>
-    <h3>${esc(x.track)}</h3>${x.conf ? `<span class="note">${esc(x.conf)}</span>` : ""}
+    <h3>${esc(x.track)}</h3>${x.conf ? `<span class="note">${esc(confShow(x))}</span>` : ""}
     <span class="mono muted">${esc(when(x))}</span>
     <span class="go"><span>${cur && x.status === "reg" ? t("reg") : t("details")}</span><i>→</i></span>
   </a>`;
@@ -3091,7 +3108,7 @@ function tournament(id) {
                         : `<button class="btn" data-act="reg" data-id="${id}">${t("register")}</button>`;
   }
   return `<a class="back" href="#tournaments">${t("back")}</a>
-  <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(when(x))}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}${x.conf ? `<span class="pill plain">${esc(x.conf)}</span>` : ""}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
+  <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(when(x))}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}${x.conf ? `<span class="pill plain">${esc(confShow(x))}</span>` : ""}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
   ${STATUSES.indexOf(x.status) >= STATUSES.indexOf("qualifying") && x.status !== "done" ? twitchBox() : ""}
   ${x.status === "done" ? podiumBox(x) : ""}
@@ -3137,17 +3154,17 @@ let query = "";
 // ---- rating: season points only (no leagues) — podium of three, then the full list with search; drivers or teams ----
 let rTab = "pilots";
 const pHref = name => `#p-${encodeURIComponent(name)}`;
-// the rating is the latest finished stage of the season: points are counted only when a stage is finished
-const ratingTour = () => seasonTours(curSeason()).filter(z => z.status === "done").at(-1);
-const rItems = () => { const x = ratingTour(), byPts = (a, b) => b.pts - a.pts || a.name.localeCompare(b.name);
+// the rating is the active season: points of all its finished stages added up (a stage counts once it is finished)
+const ratingTours = () => seasonTours(curSeason()).filter(z => z.status === "done");
+const rItems = () => { const byPts = (a, b) => b.pts - a.pts || a.name.localeCompare(b.name);
   return rTab === "teams"
-    ? allTeams().map(tm => ({ id: "t" + tm.id, href: `#tm-${tm.id}`, ava: logo(tm), name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: x ? teamStagePts(x, tm) : 0, mine: tm.id === S.team })).sort(byPts)
+    ? allTeams().map(tm => ({ id: "t" + tm.id, href: `#tm-${tm.id}`, ava: logo(tm), name: tm.name, sub: `${membersOf(tm).length}/${maxTeam()} ${t("members")}`, pts: teamPts(tm), mine: tm.id === S.team })).sort(byPts)
     : roster().filter(p => !p.test).map(p => ({ id: p.name, href: pHref(p.name), ava: pAva(p, "r-ava"), name: p.name,
-        sub: [teamById(p.team)?.name || t("freeAgent"), p.car].filter(Boolean).join(" · "), num: p.num, pts: x ? stagePts(x, p.name) : 0, mine: p.mine })).sort(byPts); };
+        sub: [teamById(p.team)?.name || t("freeAgent"), p.car].filter(Boolean).join(" · "), num: p.num, pts: ptsOf(p.name), mine: p.mine })).sort(byPts); };
 function rRows() {
   const all = rItems(), max = all[0]?.pts || 1, q = query.trim().toLowerCase();
   const list = all.map((r, k) => ({ ...r, place: k + 1 })).filter(r => !q || r.name.toLowerCase().includes(q) || String(r.num ?? "").startsWith(q));
-  return list.slice(0, 20).map((r, k) => `<li class="r-row ${r.mine ? "mine" : ""} ${r.place <= 3 ? `top p${r.place}` : ""}" style="--i:${k}"><a href="${r.href}">
+  return list.slice(0, rTab === "teams" ? 10 : 32).map((r, k) => `<li class="r-row ${r.mine ? "mine" : ""} ${r.place <= 3 ? `top p${r.place}` : ""}" style="--i:${k}"><a href="${r.href}">
       <span class="r-pos">${pad(r.place)}</span>${r.ava}
       <span class="r-name"><b>${esc(r.name)}${r.num != null ? `<span class="r-numv mono">#${r.num}</span>` : ""}</b><span class="note">${esc(r.sub)}</span></span>
       <span class="r-bar" aria-hidden="true"><i style="--w:${(r.pts / max).toFixed(3)}"></i></span>
@@ -3156,17 +3173,17 @@ function rRows() {
 function rating() {
   const top = rItems().slice(0, 3);
   const pod = (r, k) => r ? `<a class="r-pod p${k + 1}" href="${r.href}"><span class="r-place">${pad(k + 1)}</span>${r.ava}
-      <span class="label ${k === 0 ? "acc" : ""}">${t(["stageFirst", "lbSecond", "lbThird"][k])}</span><b>${esc(r.name)}</b><span class="note">${esc(r.sub)}</span>
+      <span class="label ${k === 0 ? "acc" : ""}">${t(["lbFirst", "lbSecond", "lbThird"][k])}</span><b>${esc(r.name)}</b><span class="note">${esc(r.sub)}</span>
       <span class="r-pts"><span class="label">${t("totalPts")}</span><b>${r.pts}</b></span></a>` : "";
   return `<section class="r-hero">
     <div class="stack" style="gap:.8rem"><h1 class="r-title">${t("rating")}</h1>
-      ${ratingTour() ? `<span class="label acc">${t("stage")} ${ratingTour().stage} · ${esc(ratingTour().track)}</span>` : ""}
+      <span class="label acc">${esc(seasonName(curSeason()))} · ${t("stagesDone")}: ${ratingTours().length} / ${seasonTours(curSeason()).length}</span>
       <p class="note">${t(rTab === "teams" ? "stageTeamNote" : "stageNote")}</p></div>
     <div class="seg2" role="tablist">${["pilots", "teams"].map(k => `<button role="tab" data-act="rTab" data-v="${k}" aria-selected="${rTab === k}">${t(k === "pilots" ? "tabPilots" : "tabTeams")}</button>`).join("")}</div>
   </section>
   <div class="r-podium">${[1, 0, 2].map(k => pod(top[k], k)).join("")}</div>
   <section class="stack" style="gap:1rem">
-    <div class="r-tools"><span class="label">${t("top20")}</span>
+    <div class="r-tools"><span class="label">${t("top20").replace("{n}", rTab === "teams" ? 10 : 32)}</span>
       <input class="search" id="search" type="search" placeholder="${t("search")}" value="${esc(query)}" aria-label="${t("search")}"></div>
     <ol class="r-list" id="rlist">${rRows()}</ol>
   </section>`;
@@ -4297,12 +4314,13 @@ function adminSettings() {
       ${HOSTED ? "" : `<div class="box panel"><p class="note">${t("adminNote")}</p><div><button class="btn text danger" data-act="resetDemo">${pending === "reset" ? t("resetSure") : t("resetDemo")}</button></div></div>`}`,
     socials: () => `<div class="box panel"><div class="set-grid">${SOCIALS.map(([n]) =>
       `<label class="fieldlabel">${n}<input class="field" data-a="social:${n}" value="${esc(SETTINGS.socials[n] || "")}" maxlength="120" placeholder="https:// / mailto:"></label>`).join("")}</div></div>`,
-    home: () => `<div class="box panel stack"><p class="note" style="margin:0">${t("htHint")}</p><div class="ht-grid">${HOME_TEXTS.map(k => `<label class="fieldlabel">${t("ht_" + k)}
+    home: () => `<div class="box panel stack"><div class="head"><p class="note" style="margin:0">${t("htHint")}</p>
+      <div class="seg2" role="tablist" aria-label="${t("htLangL")}">${["ru", "en"].map(l => `<button role="tab" data-act="htLang" data-v="${l}" aria-selected="${hl() === l}">${l.toUpperCase()}</button>`).join("")}</div></div><div class="ht-grid">${HOME_TEXTS.map(k => `<label class="fieldlabel">${t("ht_" + k)}
       ${k.startsWith("statement") || k === "faqText"
-        ? `<textarea class="field" rows="2" data-a="htext:${k}" maxlength="300" placeholder="${esc(t(k))}">${esc(SETTINGS.texts?.[S.lang]?.[k] || "")}</textarea>`
-        : `<input class="field" data-a="htext:${k}" maxlength="120" placeholder="${esc(t(k))}" value="${esc(SETTINGS.texts?.[S.lang]?.[k] || "")}">`}</label>`).join("")}</div></div>
-      <div class="box panel stack"><div class="head"><h3 style="margin:0">${t("faqAdmin")} <span class="muted mono">${faqList().length}</span></h3><button class="btn line sm" data-act="faqAdd">${t("faqAdd")}</button></div>
-      <div class="faq-eds">${faqList().map(([q, a], i, L) => `<div class="faq-row"><details class="br-box faq-ed" data-topen="faq-${i}" ${tOpenIs(`faq-${i}`) ? "open" : ""}><summary><span class="mono muted">${i + 1}</span><b>${esc(q) || "—"}</b><i class="ach-chev" aria-hidden="true"></i></summary>
+        ? `<textarea class="field" rows="2" data-a="htext:${k}" maxlength="300" placeholder="${esc(I18N[hl()][k])}">${esc(SETTINGS.texts?.[hl()]?.[k] || "")}</textarea>`
+        : `<input class="field" data-a="htext:${k}" maxlength="120" placeholder="${esc(I18N[hl()][k])}" value="${esc(SETTINGS.texts?.[hl()]?.[k] || "")}">`}</label>`).join("")}</div></div>
+      <div class="box panel stack"><div class="head"><h3 style="margin:0">${t("faqAdmin")} · ${hl().toUpperCase()} <span class="muted mono">${faqList(hl()).length}</span></h3><button class="btn line sm" data-act="faqAdd">${t("faqAdd")}</button></div>
+      <div class="faq-eds">${faqList(hl()).map(([q, a], i, L) => `<div class="faq-row"><details class="br-box faq-ed" data-topen="faq-${i}" ${tOpenIs(`faq-${i}`) ? "open" : ""}><summary><span class="mono muted">${i + 1}</span><b>${esc(q) || "—"}</b><i class="ach-chev" aria-hidden="true"></i></summary>
         <div class="faq-ed-body"><input class="field" data-a="faq:${i}:q" value="${esc(q)}" maxlength="150" aria-label="${t("faqQ")} ${i + 1}">
         <textarea class="field" rows="3" data-a="faq:${i}:a" maxlength="800" aria-label="${t("faqA")} ${i + 1}" placeholder="${t("faqA")}">${esc(a)}</textarea></div></details>
         <span class="rt-ctl"><button data-act="faqMove" data-id="${i}" data-v="-1" ${i === 0 ? "disabled" : ""} aria-label="${t("moveUp")}">↑</button><button data-act="faqMove" data-id="${i}" data-v="1" ${i === L.length - 1 ? "disabled" : ""} aria-label="${t("moveDown")}">↓</button><button class="danger" data-act="faqDel" data-id="${i}" aria-label="${t("del")}">${pending === `faq${i}` ? t("delSure") : "×"}</button></span></div>`).join("") || `<p class="note">${t("nothing")}</p>`}</div></div>`,
@@ -4358,6 +4376,13 @@ function adminEdit([kind, id, f, k], v) {
     const n = trackNames()[+id], p = partsOf(n)[+f], z = kind === "tconf" ? p?.conf[+k] : p, list = kind === "tconf" ? p?.conf : partsOf(n), name = v.trim().slice(0, 40);
     if (!z || (!name && kind === "tconf") || list.some(c => c !== z && c.n === name)) return render();
     relabel(n, () => { z.n = name; });
+    if (name) enFor(n, +f, kind === "tconf" ? +k : -1, name).then(ok => { if (ok) dbSave(); }); else delete z.en;
+    return dbSave();
+  }
+  if (kind === "tconfen" || kind === "tparten") { // the English name by hand (the translation can miss drift slang)
+    const n = trackNames()[+id], p = partsOf(n)[+f], z = kind === "tconfen" ? p?.conf[+k] : p, en = v.trim().slice(0, 40);
+    if (!z) return render();
+    if (en) z.en = en; else delete z.en;
     return dbSave();
   }
   if (kind === "tour") {
@@ -4505,8 +4530,8 @@ function adminEdit([kind, id, f, k], v) {
     return dbSave();
   }
   if (kind === "htext" && HOME_TEXTS.includes(id)) {
-    const v2 = v.trim().slice(0, 300), all = SETTINGS.texts = { ...SETTINGS.texts }, mine = all[S.lang] = { ...all[S.lang] };
-    if (v2 && v2 !== t(id)) mine[id] = v2; else delete mine[id];
+    const v2 = v.trim().slice(0, 300), all = SETTINGS.texts = { ...SETTINGS.texts }, mine = all[hl()] = { ...all[hl()] };
+    if (v2 && v2 !== I18N[hl()][id]) mine[id] = v2; else delete mine[id];
     return dbSave();
   }
   if (kind === "social" && SETTINGS.socials[id] !== undefined) {
@@ -5164,7 +5189,7 @@ document.addEventListener("click", e => {
   ({
     login, logout, resetDemo,
     delTeam: () => delTeam(id),
-    setTab: () => { setTab = el.dataset.v; admAnim = true; render(); },
+    setTab: () => { setTab = el.dataset.v; admAnim = true; render(); if (setTab === "tracks") fillEn(); },
     lbTab: () => { lbTab = el.dataset.v === "teams" ? "teams" : "pilots"; document.querySelectorAll('[data-act="lbTab"]').forEach(b => b.setAttribute("aria-selected", b.dataset.v === lbTab)); document.getElementById("lb").innerHTML = leaderboard(); },
     delLogo: () => { const ref = myTeamRef(); if (!ref) return; delete ref.img; saveTeam(); },
     rTab: () => { rTab = el.dataset.v === "teams" ? "teams" : "pilots"; render(); },
@@ -5181,12 +5206,12 @@ document.addEventListener("click", e => {
     trkPartAdd: () => { const n = el.dataset.name; if (!trackNames().includes(n)) return;
       TRACK_SET[n] ??= {}; const ps = partsOf(n);
       let k = ps.length + 1; while (ps.some(p => p.n === `${t("trkPart")} ${k}`)) k++;
-      ps.push({ n: `${t("trkPart")} ${k}`, conf: [] }); tOpen["trk-" + n] = tOpen[`tp-${n}-${ps.length - 1}`] = true; dbSave(); },
+      ps.push({ n: `${t("trkPart")} ${k}`, en: `${I18N.en.trkPart} ${k}`, conf: [] }); tOpen["trk-" + n] = tOpen[`tp-${n}-${ps.length - 1}`] = true; dbSave(); },
     trkPartDel: () => { const n = el.dataset.name, pi = +el.dataset.p; if (!partsOf(n)[pi]) return;
       confirmTwice(`tp${trackNames().indexOf(n)}:${pi}`, () => { relabel(n, () => partsOf(n).splice(pi, 1)); dbSave(); }); },
     trkConfAdd: () => { const n = el.dataset.name, p = partsOf(n)[+el.dataset.p]; if (!p) return;
       let k = p.conf.length + 1; while (p.conf.some(z => z.n === `${t("trkConf")} ${k}`)) k++;
-      relabel(n, () => p.conf.push({ n: `${t("trkConf")} ${k}`, d: 3 })); dbSave(); },
+      relabel(n, () => p.conf.push({ n: `${t("trkConf")} ${k}`, en: `${I18N.en.trkConf} ${k}`, d: 3 })); dbSave(); },
     trkConfDel: () => { const n = el.dataset.name, pi = +el.dataset.p, j = +el.dataset.c, p = partsOf(n)[pi]; if (!p?.conf[j]) return;
       confirmTwice(`tc${trackNames().indexOf(n)}:${pi}:${j}`, () => { relabel(n, () => p.conf.splice(j, 1)); dbSave(); }); },
     trkDel: () => { const n = el.dataset.name; if (TRACKS[n] || !trackNames().includes(n)) return;
@@ -5251,7 +5276,8 @@ document.addEventListener("click", e => {
     logMore: () => logFetch(true),
     dcImgDel: () => { const k = el.dataset.v; if (DC?.[k]?.img) dcImgSend(k, null); },
     dcOpen: () => { const k = "dc-" + el.dataset.v; tOpen[k] = !tOpenIs(k); animKeep = ".dc-body"; render(); },
-    faqAdd: () => { const L = faqMine(); L.push([t("newFaq"), ""]); tOpen["faq-" + (L.length - 1)] = true; dbSave(); },
+    htLang: () => { if (["ru", "en"].includes(el.dataset.v)) htLang = el.dataset.v; admAnim = true; render(); },
+    faqAdd: () => { const L = faqMine(); L.push([I18N[hl()].newFaq, ""]); tOpen["faq-" + (L.length - 1)] = true; dbSave(); },
     faqMove: () => { const L = faqMine(), j = id + +el.dataset.v; if (!L[id] || !L[j]) return; [L[id], L[j]] = [L[j], L[id]]; [tOpen["faq-" + id], tOpen["faq-" + j]] = [tOpen["faq-" + j], tOpen["faq-" + id]]; dbSave(); },
     faqDel: () => confirmTwice(`faq${id}`, () => { faqMine().splice(id, 1); dbSave(); }),
     spMove: () => { const j = id + +el.dataset.v; if (!SPONSORS[id] || !SPONSORS[j]) return; [SPONSORS[id], SPONSORS[j]] = [SPONSORS[j], SPONSORS[id]]; dbSave(); },
