@@ -192,6 +192,7 @@ async function steamProfile(env, sid) {
 
 // ---------- data ----------
 // what a pilot may set on their own profile; name and avatar always come from Steam
+const NUM_SYM = /^[\p{So}\p{Extended_Pictographic}]\uFE0F?$/u; // one symbol as a racing number, e.g. ☯
 const PROFILE_KEYS = ["team", "num", "car", "about", "regs", "regAt", "declined"]; // a team itself lives in the teams table
 const publicUser = (u, env) => ({ steamId: u.steamId, name: u.name, avatar: u.avatar, team: u.team ?? null, num: u.num ?? null, car: u.car ?? null,
   about: u.about ?? null, regs: u.regs ?? [], regAt: u.regAt ?? {},
@@ -225,7 +226,7 @@ async function putMe(req, env, sid) {
   // joining a team: an open team with room, or a closed one that invited this pilot; otherwise the pilot stays where they were
   if ((u.team ?? null) !== prevTeam && u.team != null && !(await canJoin(env, u, Number(u.team)))) u.team = prevTeam;
   // shortcut: field shapes are trusted (number range, team id); validate per field once real abuse shows up
-  if (u.num != null && !(Number.isInteger(u.num) && (u.num >= 1 || u.num === prevNum) && u.num <= 999)) u.num = null; // 0 only from the head admin
+  if (u.num != null && u.num !== prevNum && !(Number.isInteger(u.num) && u.num >= 1 && u.num <= 999)) u.num = null; // 0 only from the head admin
   if (typeof u.about === "object" && u.about) u.about = { ru: String(u.about.ru || "").slice(0, 60) };
   if (prevTeam != null && (u.team ?? null) !== prevTeam) await dropRep(env, prevTeam, u.name);
   await setUser(env, sid, u);
@@ -545,8 +546,8 @@ async function ownerUser(req, env, ownerSid) {
     }
     await logIt(env, ownerSid, [`Пилот исключён: ${u.name}`]);
   } else {
-    const num = body.num;
-    if (!(Number.isInteger(num) && num >= 0 && num <= 999)) throw new HttpError(400, "bad number"); // 0 is the head admin's to give
+    const num = typeof body.num === "string" ? body.num.replace(/️/g, "") : body.num; // ☯ and ☯️ are one number
+    if (!(Number.isInteger(num) && num >= 0 && num <= 999) && !(typeof num === "string" && NUM_SYM.test(num))) throw new HttpError(400, "bad number"); // 0 and symbols (☯) are the head admin's to give
     const rows = await env.DB.prepare("SELECT sid, data FROM users").all();
     if (rows.results.some(r => r.sid !== sid && JSON.parse(r.data).num === num)) throw new HttpError(409, "number taken");
     await logIt(env, ownerSid, [`Номер ${u.name}: ${u.num ?? "—"} → ${num}`]);
