@@ -1915,7 +1915,7 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield }
 .tm-status.staff::before { background: var(--accent) }
 .pl-right .staff-role { position: static; font-size: .62rem; white-space: nowrap }
 .cap.rep { background: var(--panel-2); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent) }
-.members li .cap, .pl-card b .cap { margin-left: .4rem; vertical-align: middle }
+.members li .cap, .pl-card b .cap { margin: 0 .45rem 0 0; vertical-align: middle } /* the founder / rep mark sits before the nick */
 .tm-roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.2rem; align-items: stretch }
 .tm-role { display: grid; gap: .6rem; align-content: start; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--bg) 40%, transparent) }
 .tm-role-h { display: flex; align-items: center; gap: .5rem; font-weight: 700 } .tm-role-h .cap { margin: 0 }
@@ -3190,7 +3190,7 @@ function rating() {
 }
 
 const memberRows = tm => `<ul class="members">${membersOf(tm).map((p, i) =>
-  `<li><span class="n">${p.num ?? "—"}</span>${esc(p.name)}${founderTag(tm, p)}</li>`).join("")}</ul>`;
+  `<li><span class="n">${p.num ?? "—"}</span>${founderTag(tm, p)}${esc(p.name)}</li>`).join("")}</ul>`;
 const descBlock = tm => isFounder(tm) || isRep(tm)
   ? `<label class="fieldlabel" for="teamdesc">${t("teamDesc")}<textarea id="teamdesc" maxlength="300" placeholder="${t("descPh")}">${esc(tm.desc || "")}</textarea>
      <span class="counter" id="desccount">${(tm.desc || "").length} / 300</span></label><p class="note">${t(isFounder(tm) ? "ownerHint" : "repDescHint")}</p>`
@@ -3248,7 +3248,7 @@ function teamPage(id) {
   ${(list => list.length ? `<details class="psec panel ach-box" open><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achTally(list, teamAchGot(tm))}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achGrid(list, teamAchGot(tm))}</details>` : "")(ACHIEVEMENTS.filter(a => achKind(a) === "team"))}
   <section class="stack sec"><div class="sec-head"><span class="label idx">01 — ${t("rosterL")}</span><h2>${t("rosterTitle")}</h2></div>
     ${ms.length ? `<div class="pl-grid">${ms.map((p, i) => `<a class="pl-card" href="${pHref(p.name)}" style="--i:${i}">${pAva(p, "pl-ava")}
-      <span class="stack" style="gap:.2rem;min-width:0"><b>${esc(p.name)} ${founderTag(tm, p)}</b><span class="note">${esc(p.car || "—")}</span></span>
+      <span class="stack" style="gap:.2rem;min-width:0"><b>${founderTag(tm, p)}${esc(p.name)}</b><span class="note">${esc(p.car || "—")}</span></span>
       <span class="pl-right"><span class="pl-num">${p.num != null ? "#" + p.num : ""}</span><span class="note">${ptsOf(p.name)} ${t("pointsShort")}</span></span></a>`).join("")}</div>` : `<p class="note">${t("noMembers")}</p>`}
   </section>`;
 }
