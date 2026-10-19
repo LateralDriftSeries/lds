@@ -1876,6 +1876,10 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .faq-ed > summary .ach-chev { position: absolute; right: .7rem; top: .55rem; width: 26px; height: 26px } .faq-ed[open] > summary .ach-chev { transform: rotate(180deg) }
 .faq-ed-body { display: grid; gap: .5rem; padding: 0 .9rem .9rem }
 .faq-row > .rt-ctl { position: absolute; top: .55rem; right: 2.6rem; opacity: 1 }
+/* no connection to the league server: a bar at the bottom until the data arrives */
+.netbar { position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 60; display: flex; align-items: center; gap: .9rem; width: max-content; max-width: calc(100% - 2rem);
+  padding: .7rem .8rem .7rem 1.1rem; border: 1px solid var(--accent); border-radius: 14px; background: var(--panel); box-shadow: 0 12px 40px -12px #000; font-size: .85rem; animation: rise .4s both }
+@media (max-width: 600px) { .netbar { flex-wrap: wrap; justify-content: center; text-align: center } }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2275,7 +2279,7 @@ const I18N = {
     aTracks: "Трассы", aTracksHint: "У трассы есть участки, у каждого участка свои конфиги со сложностью от 1 до 5. Сложность выбранного конфига задаёт множитель очков этапа.",
     trkNewPh: "Название новой трассы", trkAdd: "+ Трасса", trkDup: "Такая трасса уже есть", trkConf: "Конфиг", trkConfs: "конфигов", trkConfAdd: "+ Конфиг", trkPart: "Участок", trkParts: "участков", trkPartAdd: "+ Участок", trkPartDel: "Удалить участок", trkPartPh: "Название участка", trkMain: "Основной", trkDel: "Удалить трассу", diff1: "Лёгкая", diff2: "Простая", diff3: "Средняя", diff4: "Сложная", diff5: "Экстремальная",
     champShort: "Онлайн-чемпионат по дрифту",
-    stageFull: "Мест на этап больше нет", netErr: "Нет связи с сервером, изменение не сохранено", sessionEnded: "Сессия закончилась, войдите через Steam ещё раз", authFailed: "Не удалось войти через Steam", addAch: "+ Достижение", achIcon: "Иконка", achOwnIc: "Свой эмодзи", achOwnHint: "Скопируйте любой эмодзи (Ctrl + C) и вставьте сюда (Ctrl + V), он применится сразу. Список эмодзи: Win + . (точка) на Windows, Ctrl + Cmd + пробел на Mac.", achTitle: "Название", achDesc: "Условие", achAuto: "выдаётся само", achManual: "не выдаётся", achNewRu: "Новое достижение", achAdminHint: "Достижения в профиле пилота. Иконка — эмодзи. Если английский текст пустой, показывается русский.", needCar: "Чтобы зарегистрироваться, заполните в профиле машину, двигатель, КПП и мощность.", needCarHere: "Заполните машину, двигатель, КПП и мощность, чтобы зарегистрироваться.", hpMinL: "Мощность от, л.с.", hpMaxL: "Мощность до, л.с.", hpBad: "Мощность: от 50 до 3000 л.с., «от» меньше «до»", maxStageL: "Максимум участников на этап", top20: "Топ {n}", achOn: "Получено", achOff: "Пока не получено", achievements: "Достижения", noMedals: "Займите место на подиуме этапа (1–3), чтобы получить медаль.", placeWord: "место",
+    stageFull: "Мест на этап больше нет", netDown: "Нет связи с сервером лиги — пилоты, команды и этапы могут быть показаны не полностью. Пробуем подключиться снова…", netRetry: "Обновить", netErr: "Нет связи с сервером, изменение не сохранено", sessionEnded: "Сессия закончилась, войдите через Steam ещё раз", authFailed: "Не удалось войти через Steam", addAch: "+ Достижение", achIcon: "Иконка", achOwnIc: "Свой эмодзи", achOwnHint: "Скопируйте любой эмодзи (Ctrl + C) и вставьте сюда (Ctrl + V), он применится сразу. Список эмодзи: Win + . (точка) на Windows, Ctrl + Cmd + пробел на Mac.", achTitle: "Название", achDesc: "Условие", achAuto: "выдаётся само", achManual: "не выдаётся", achNewRu: "Новое достижение", achAdminHint: "Достижения в профиле пилота. Иконка — эмодзи. Если английский текст пустой, показывается русский.", needCar: "Чтобы зарегистрироваться, заполните в профиле машину, двигатель, КПП и мощность.", needCarHere: "Заполните машину, двигатель, КПП и мощность, чтобы зарегистрироваться.", hpMinL: "Мощность от, л.с.", hpMaxL: "Мощность до, л.с.", hpBad: "Мощность: от 50 до 3000 л.с., «от» меньше «до»", maxStageL: "Максимум участников на этап", top20: "Топ {n}", achOn: "Получено", achOff: "Пока не получено", achievements: "Достижения", noMedals: "Займите место на подиуме этапа (1–3), чтобы получить медаль.", placeWord: "место",
     aResults: "Итоги", fromQual: "По квалификации", podiumHint: "Подиум этапа. Если место не выбрано, после завершения этапа оно берётся из квалификации. Пилоты с 1–3 местом получают медаль в профиле.",
     regLater: "Регистрация откроется после завершения текущего этапа.", regSoon: "Регистрация откроется позже", needNumHere: "Сначала выберите стартовый номер ниже.", seasonLine: "Календарь <em>сезона</em>",
     teamsSeason: "Команды сезона", ctaTitle: "Готов выйти на трассу?",
@@ -2432,7 +2436,7 @@ const I18N = {
     aTracks: "Tracks", aTracksHint: "A track has sections, each with its own configs rated 1–5. The chosen config's difficulty sets the round's points factor.",
     trkNewPh: "New track name", trkAdd: "+ Track", trkDup: "That track already exists", trkConf: "Config", trkConfs: "configs", trkConfAdd: "+ Config", trkPart: "Section", trkParts: "sections", trkPartAdd: "+ Section", trkPartDel: "Delete section", trkPartPh: "Section name", trkMain: "Main", trkDel: "Delete track", diff1: "Easy", diff2: "Simple", diff3: "Medium", diff4: "Hard", diff5: "Extreme",
     champShort: "Online drift championship",
-    stageFull: "The round is full", netErr: "No connection to the server, change not saved", sessionEnded: "Session ended, sign in with Steam again", authFailed: "Steam sign-in failed", addAch: "+ Achievement", achIcon: "Icon", achOwnIc: "Your own emoji", achOwnHint: "Copy any emoji (Ctrl + C) and paste it here (Ctrl + V), it applies at once. Emoji picker: Win + . (period) on Windows, Ctrl + Cmd + Space on Mac.", achTitle: "Title", achDesc: "Condition", achAuto: "unlocks automatically", achManual: "not awarded", achNewRu: "Новое достижение", achAdminHint: "Achievements in the driver profile. The icon is an emoji. Empty English text falls back to Russian.", needCar: "Fill in car, engine, gearbox and power in your profile to register.", needCarHere: "Fill in car, engine, gearbox and power to register.", hpMinL: "Power from, hp", hpMaxL: "Power up to, hp", hpBad: "Power: 50–3000 hp, \"from\" below \"up to\"", maxStageL: "Max drivers per round", top20: "Top {n}", achOn: "Unlocked", achOff: "Not unlocked yet", achievements: "Achievements", noMedals: "Finish on a round podium (1–3) to earn a medal.", placeWord: "place",
+    stageFull: "The round is full", netDown: "Can't reach the league server — drivers, teams and rounds may be incomplete. Retrying…", netRetry: "Reload", netErr: "No connection to the server, change not saved", sessionEnded: "Session ended, sign in with Steam again", authFailed: "Steam sign-in failed", addAch: "+ Achievement", achIcon: "Icon", achOwnIc: "Your own emoji", achOwnHint: "Copy any emoji (Ctrl + C) and paste it here (Ctrl + V), it applies at once. Emoji picker: Win + . (period) on Windows, Ctrl + Cmd + Space on Mac.", achTitle: "Title", achDesc: "Condition", achAuto: "unlocks automatically", achManual: "not awarded", achNewRu: "Новое достижение", achAdminHint: "Achievements in the driver profile. The icon is an emoji. Empty English text falls back to Russian.", needCar: "Fill in car, engine, gearbox and power in your profile to register.", needCarHere: "Fill in car, engine, gearbox and power to register.", hpMinL: "Power from, hp", hpMaxL: "Power up to, hp", hpBad: "Power: 50–3000 hp, \"from\" below \"up to\"", maxStageL: "Max drivers per round", top20: "Top {n}", achOn: "Unlocked", achOff: "Not unlocked yet", achievements: "Achievements", noMedals: "Finish on a round podium (1–3) to earn a medal.", placeWord: "place",
     aResults: "Results", fromQual: "From qualifying", podiumHint: "Round podium. An empty place is taken from qualifying once the round is finished. Drivers placed 1–3 get a medal in their profile.",
     regLater: "Registration opens after the current round is finished.", regSoon: "Registration opens later", needNumHere: "Pick a racing number below first.", seasonLine: "Season <em>calendar</em>",
     teamsSeason: "Season teams", ctaTitle: "Ready to hit the track?",
@@ -5023,7 +5027,7 @@ let livePending = false;
 // hosted site: the API is the source of truth; this browser polls it (faster on the live pages) and pushes its own edits
 let apiV = null, sentMe = "", sentDb = "", sentLive = "", pushTimer = 0, pushing = false;
 async function api(path, opt = {}) {
-  const r = await fetch(API + path, { ...opt, headers: { "content-type": "application/json", ...(token ? { authorization: "Bearer " + token } : {}) } });
+  const r = await fetch(API + path, { signal: AbortSignal.timeout?.(path.includes("wait=") ? 40000 : 15000), ...opt, headers: { "content-type": "application/json", ...(token ? { authorization: "Bearer " + token } : {}) } });
   if (r.status === 401 && token && path === "/api/me") { logout(); toast(t("sessionEnded")); }
   if (!r.ok) throw new Error(String(r.status));
   return r.json();
@@ -5071,7 +5075,15 @@ function applyRemote(st) {
 }
 // long poll: the server holds the request until something changes (up to 25 s), so changes show up within about a second;
 // a hidden tab just checks every 30 s and catches up the moment it is shown again
-let pollTimer = 0, pollBusy = false, heldState = null;
+let pollTimer = 0, pollBusy = false, heldState = null, pollFails = 0, synced = false;
+function netBar(on) {
+  let el = document.getElementById("netbar");
+  if (!on) return el?.remove();
+  if (el) return;
+  el = document.createElement("div"); el.id = "netbar"; el.className = "netbar"; el.setAttribute("role", "status");
+  el.innerHTML = `<span>${t("netDown")}</span><button class="btn line sm" type="button" onclick="location.reload()">${t("netRetry")}</button>`;
+  document.body.append(el);
+}
 async function poll() {
   clearTimeout(pollTimer);
   if (pollBusy) return;
@@ -5079,7 +5091,8 @@ async function poll() {
   const h = location.hash, live = h.startsWith("#obs-") || h === "#broadcast";
   let retry = 0;
   try {
-    const st = await api("/api/state" + (apiV != null ? `?v=${apiV}${document.hidden ? "" : "&wait=25"}` : ""));
+    const st = await api("/api/state" + (apiV != null ? `?v=${apiV}${document.hidden || pollFails >= 2 ? "" : "&wait=25"}` : ""));
+    pollFails = 0; synced = true; netBar(false);
     if (pushing) retry = 500; // our own edit is still on its way: ask again once it has landed
     else if ("users" in st) {
       apiV = st.v;
@@ -5087,7 +5100,7 @@ async function poll() {
       if (!live && document.activeElement?.matches?.("input, textarea, select")) heldState = st;
       else { heldState = null; applyRemote(st); render(); }
     }
-  } catch { retry = 5000; }
+  } catch { retry = 5000; if (++pollFails >= 2 || !synced) netBar(true); }
   pollBusy = false;
   pollTimer = setTimeout(poll, retry || (document.hidden ? 30000 : 150));
 }
@@ -5103,6 +5116,7 @@ if (HOSTED) {
   if (location.hash === "#auth=failed") { history.replaceState(null, "", location.pathname + "#home"); setTimeout(() => toast(t("authFailed")), 300); }
   if (!token) S.user = null;
   (async () => { if (token) { try { applyMe(await api("/api/me")); render(); } catch {} } poll(); })();
+  setTimeout(() => { if (!synced) netBar(true); }, 5000); // the league data hasn't arrived: say so rather than show an empty league
 }
 // any open tab follows changes from other tabs; skipped while someone is typing in this one
 function pullState() {
