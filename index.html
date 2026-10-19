@@ -3092,8 +3092,8 @@ function tournament(id) {
   const isReg = S.regs.includes(id), runs = x.status !== "reg" && x.status !== "soon";
   const rows = stageRows(x).map(([p, i]) => {
     const a = scoreOf(x, p, i, 0), b = scoreOf(x, p, i, 1);
-    return { ...p, a, b, best: Math.max(a ?? -1, b ?? -1) };
-  }).sort((p, q) => q.best - p.best || p.num - q.num);
+    return { ...p, i, a, b, best: Math.max(a ?? -1, b ?? -1) };
+  }).sort((p, q) => q.best - p.best || regKey(x, p, p.i) - regKey(x, q, q.i)); // equal (or no) scores: who registered first
   const cell = v => v == null ? "—" : v.toFixed(1), inBr = new Set(qualOrder(x).slice(0, 32)); // the top 32 with both runs make the bracket
   let action = x.status === "soon" ? `<p class="note">${t("regSoon")}</p>` : "";
   if (x.status === "reg") {
@@ -4781,7 +4781,7 @@ const STOPPED = ["soon", "reg", "done"];
 const regKey = (x, p, i) => p.mine ? S.regAt?.[x.id] ?? Infinity : HOSTED ? p.regAt?.[x.id] ?? Infinity : i;
 const regRows = x => stageRows(x).sort(([p, i], [q, j]) => regKey(x, p, i) - regKey(x, q, j));
 const bcRows = x => stageRows(x).map(([p, i]) => { const a = scoreOf(x, p, i, 0), b = scoreOf(x, p, i, 1); return { ...p, i, a, b, best: Math.max(a ?? -1, b ?? -1) }; })
-  .sort((p, q) => q.best - p.best || (p.num ?? 999) - (q.num ?? 999));
+  .sort((p, q) => q.best - p.best || regKey(x, p, p.i) - regKey(x, q, q.i)); // equal (or no) scores: who registered first
 const fmt = v => v == null || v < 0 ? "—" : v.toFixed(1);
 const JUDGES = ["judgeAngle", "judgeLine", "judgeStyle"];
 // 2 of 3 judges decide; a split or a majority for OMT means One More Time; any missing vote = still pending
