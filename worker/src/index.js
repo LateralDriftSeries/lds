@@ -118,7 +118,10 @@ async function readJson(req, max) {
 async function kvGet(env, k) { const r = await env.DB.prepare("SELECT v FROM kv WHERE k = ?").bind(k).first(); return r ? JSON.parse(r.v) : null; }
 async function kvSet(env, k, v) { await env.DB.prepare("INSERT INTO kv (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v").bind(k, JSON.stringify(v)).run(); }
 async function bump(env) { await env.DB.prepare("INSERT INTO kv (k, v) VALUES ('version', '1') ON CONFLICT(k) DO UPDATE SET v = CAST(v AS INTEGER) + 1").run(); }
-async function getUser(env, sid) { const r = await env.DB.prepare("SELECT data FROM users WHERE sid = ?").bind(sid).first(); return r ? JSON.parse(r.data) : null; }
+// Steam names may carry CarX rich text (<color=#…>, <b>…): the name is kept and shown without it, the same for everyone
+const plainName = s => String(s ?? "").replace(/<\/?[a-z]+(=[^>]*)?>/gi, "").trim();
+const readUser = data => { const u = JSON.parse(data); if (u?.name) u.name = plainName(u.name) || u.name; return u; };
+async function getUser(env, sid) { const r = await env.DB.prepare("SELECT data FROM users WHERE sid = ?").bind(sid).first(); return r ? readUser(r.data) : null; }
 async function setUser(env, sid, data) {
   await env.DB.prepare("INSERT INTO users (sid, data, updated) VALUES (?, ?, ?) ON CONFLICT(sid) DO UPDATE SET data = excluded.data, updated = excluded.updated")
     .bind(sid, JSON.stringify(data), Date.now()).run();
@@ -188,7 +191,7 @@ async function steamProfile(env, sid) {
   try {
     const r = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${env.STEAM_API_KEY}&steamids=${sid}`);
     const p = (await r.json())?.response?.players?.[0];
-    return p ? { name: String(p.personaname || fallback.name).slice(0, 32), avatar: String(p.avatarfull || "") } : fallback;
+    return p ? { name: (plainName(p.personaname) || fallback.name).slice(0, 32), avatar: String(p.avatarfull || "") } : fallback;
   } catch { return fallback; }
 }
 
@@ -207,7 +210,7 @@ async function getState(env, url) {
   while (since === String(v) && Date.now() < end) { await new Promise(r => setTimeout(r, 1000)); v = (await kvGet(env, "version")) ?? 0; }
   if (since === String(v)) return json({ v }); // nothing changed: cheap answer
   const [db, live, rows] = await Promise.all([kvGet(env, "db"), kvGet(env, "live"), env.DB.prepare("SELECT data FROM users").all()]);
-  const users = rows.results.map(r => JSON.parse(r.data));
+  const users = rows.results.map(r => readUser(r.data));
   return json({ v, db, live, users: users.map(u => publicUser(u, env)), teams: await allTeamsMigrated(env, users) });
 }
 
@@ -243,7 +246,7 @@ async function canJoin(env, u, id) {
   if (tm.founder === u.steamId) return true;
   if (tm.closed && !(tm.invites || []).includes(u.name)) return false;
   const max = db?.settings?.maxTeam ?? 4;
-  const members = (await env.DB.prepare("SELECT data FROM users").all()).results.map(r => JSON.parse(r.data)).filter(x => x.team === id && x.steamId !== u.steamId);
+  const members = (await env.DB.prepare("SELECT data FROM users").all()).results.map(r => readUser(r.data)).filter(x => x.team === id && x.steamId !== u.steamId);
   return members.length < max;
 }
 
@@ -573,10 +576,10 @@ async function ownerUser(req, env, ownerSid) {
     await logIt(env, ownerSid, [`Пилот исключён: ${u.name}`]);
   } else {
     const num = typeof body.num === "string" ? body.num.replace(/️/g, "") : body.num; // ☯ and ☯️ are one number
-    if (!(Number.isInteger(num) && num >= 0 && num <= 999) && !(typeof num === "string" && NUM_SYM.test(num))) throw new HttpError(400, "bad number"); // 0 and symbols (☯) are the head admin's to give
+    if (num !== null && !(Number.isInteger(num) && num >= 0 && num <= 999) && !(typeof num === "string" && NUM_SYM.test(num))) throw new HttpError(400, "bad number"); // null takes the number away // 0 and symbols (☯) are the head admin's to give
     const rows = await env.DB.prepare("SELECT sid, data FROM users").all();
-    if (rows.results.some(r => r.sid !== sid && JSON.parse(r.data).num === num)) throw new HttpError(409, "number taken");
-    await logIt(env, ownerSid, [`Номер ${u.name}: ${u.num ?? "—"} → ${num}`]);
+    if (num !== null && rows.results.some(r => r.sid !== sid && JSON.parse(r.data).num === num)) throw new HttpError(409, "number taken");
+    await logIt(env, ownerSid, [`Номер ${u.name}: ${u.num ?? "—"} → ${num ?? "—"}`]);
     u.num = num;
     await setUser(env, sid, u);
   }

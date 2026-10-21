@@ -2319,7 +2319,7 @@ const I18N = {
     numReg: "Стартовый номер", numHint: "Выберите номер в сетке или введите свой (до 999) и нажмите «Занять».", numLocked: "Номер закреплён за вами до конца сезона. Сменить его может только главный администратор.",
     numSure: "Подтвердить №{n}", numSureHint: "Номер закрепится за вами на весь сезон, сменить его сами вы не сможете. Нажмите ещё раз, чтобы подтвердить.",
     liveStream: "Трансляция", openTwitch: "Открыть на Twitch",
-    own: "Свой номер", take: "Занять", confirmNum: "Подтвердить номер", cancelPick: "Отмена", confirmQ: "Закрепить за вами номер", numTaken: "Номер занят", numBad: "Введите число от 1 до 999", numBadSym: "Введите число от 0 до 999 или один символ",
+    own: "Свой номер", take: "Занять", confirmNum: "Подтвердить номер", cancelPick: "Отмена", confirmQ: "Закрепить за вами номер", numTaken: "Номер занят", numBad: "Введите число от 1 до 999", numClearHint: "Очистите поле, чтобы убрать номер: пилот сможет выбрать новый", numBadSym: "Введите число от 0 до 999 или один символ",
     loginFirst: "Войдите через Steam, чтобы открыть профиль.",
     rulesTitle: "Регламент", pilotRules: "Регламент пилотов", rulesEyebrow: "Lateral Drift Series · Версия 1.1", rulesLang: "", teamRules: "Регламент команд",
     copyright: "© 2026 Lateral Drift Series · CarX Drift Racing Online 2",
@@ -2476,7 +2476,7 @@ const I18N = {
     numReg: "Racing number", numHint: "Pick a number in the grid or type your own (up to 999) and press Claim.", numLocked: "The number is yours until the end of the season. Only the head admin can change it.",
     numSure: "Confirm #{n}", numSureHint: "The number stays yours for the whole season and you won't be able to change it. Press again to confirm.",
     liveStream: "Live stream", openTwitch: "Open on Twitch",
-    own: "Custom number", take: "Claim", confirmNum: "Confirm number", cancelPick: "Cancel", confirmQ: "Claim racing number", numTaken: "Number is taken", numBad: "Enter a number from 1 to 999", numBadSym: "Enter a number from 0 to 999 or one symbol",
+    own: "Custom number", take: "Claim", confirmNum: "Confirm number", cancelPick: "Cancel", confirmQ: "Claim racing number", numTaken: "Number is taken", numBad: "Enter a number from 1 to 999", numClearHint: "Clear the field to take the number away: the driver can then pick a new one", numBadSym: "Enter a number from 0 to 999 or one symbol",
     loginFirst: "Sign in with Steam to open your profile.",
     rulesTitle: "Rules", pilotRules: "Drivers’ rules", rulesEyebrow: "Lateral Drift Series · Version 1.1", rulesLang: "The official rules are published in Russian.", teamRules: "Team rules",
     copyright: "© 2026 Lateral Drift Series · CarX Drift Racing Online 2",
@@ -3832,7 +3832,8 @@ const founderOf = tm => {
 };
 const isFounder = tm => !!tm && !!S.user && founderOf(tm)?.name === S.user.name;
 const isRep = tm => !!tm && !!S.user && !tm.staff && repName(tm) === S.user.name;
-const teamEntry = (x, tm) => { const o = TEAM_ENTRIES[x.id]?.[tm.id]; return o ? (o.removed ? null : o) : founderOf(tm)?.regs?.[x.id] || null; };
+const teamEntry = (x, tm) => { const o = TEAM_ENTRIES[x.id]?.[tm.id], e = o ? (o.removed ? null : o) : founderOf(tm)?.regs?.[x.id] || null;
+  return e && { ...e, pilots: (e.pilots || []).map(p => ({ ...p, name: nickTxt(p.name) || p.name })) }; }; // entries filed before names lost their game colour tags still match the pilot
 const stageEntries = x => allTeams().map(tm => ({ tm, e: teamEntry(x, tm) })).filter(r => r.e?.pilots?.length).sort((a, b) => a.e.at - b.e.at)
   .map((r, i) => ({ ...r, ok: i < stageTeamsMax(x) }));
 // a pilot can be entered for one team per stage
@@ -4164,7 +4165,7 @@ function adminPilots() {
       const key = p.mine ? "me" : i, kickKey = `kick-${p.name}`;
       const extra = p.test ? `<button class="btn text danger sm" data-act="delTest" data-name="${esc(p.name)}">${pending === kickKey ? t("delSure") : t("del")}</button>`
         : own && !p.mine ? `<button class="btn text danger sm" data-act="kick" data-name="${esc(p.name)}">${pending === kickKey ? t("kickSure") : t("kick")}</button>` : "";
-      return `<tr class="${p.mine ? "mine" : ""}"><td class="pl-num">${own || p.test ? `<input class="ai" type="text" inputmode="numeric" maxlength="3" data-a="pilot:${key}:num" value="${p.num ?? ""}" aria-label="${t("numCol")} ${esc(p.name)}">` : `<span class="n">${p.num ?? "—"}</span>`}</td>
+      return `<tr class="${p.mine ? "mine" : ""}"><td class="pl-num">${own || p.test ? `<input class="ai" type="text" inputmode="numeric" maxlength="3" data-a="pilot:${key}:num" value="${p.num ?? ""}" placeholder="—" title="${t("numClearHint")}" aria-label="${t("numCol")} ${esc(p.name)}">` : `<span class="n">${p.num ?? "—"}</span>`}</td>
         <td><div class="row" style="gap:0;flex-wrap:nowrap">${pAva(p, "t-ava")}<div>${esc(p.name)}${p.test ? ` <span class="label">${t("testTag")}</span>` : ""}<div class="note">${teamById(p.team) ? esc(teamById(p.team).name) : "—"}</div></div></div></td>
         <td style="white-space:normal"><div class="row" style="gap:.35rem">${sanctionsOf(p.name).map((s, j) => `<span class="chip-s ${s.type}">${sanctionLabel(s)}<button data-act="delSanction" data-name="${esc(p.name)}" data-id="${j}" aria-label="${t("del")}">×</button></span>`).join("") || '<span class="muted">—</span>'}</div></td>
         <td><div class="row" style="flex-wrap:nowrap;gap:.35rem"><select class="ai" id="sanc-${i}" aria-label="${t("sanctions")} ${esc(p.name)}">${["warn", "dq", "ban"].map(s => `<option value="${s}">${t(s)}</option>`).join("")}</select>
@@ -4486,6 +4487,8 @@ function adminEdit([kind, id, f, k], v) {
     }
     if (f === "num") {
       const sym = v.trim().replace(/️/g, ""), n = /^\d+$/.test(sym) ? Number(sym) : isOwner() && NUM_SYM.test(sym) ? sym : NaN; // a number 0..999; one symbol (☯) only from the head admin, ☯ and ☯️ are the same number
+      if (!sym) { if (HOSTED && (idx === -1 || (p && !p.test))) { ownerCall({ sid: idx === -1 ? S.user.steamId : p.steamId, num: null }); return render(); } // an emptied field takes the number away
+        if (p) p.num = null; else S.num = null; return dbSave(); }
       const used = new Set([...PILOTS.filter((_, i) => i !== idx).map(q => q.num), ...(idx !== -1 && S.num != null ? [S.num] : [])]);
       if (typeof n !== "string" && (!Number.isInteger(n) || n < 0 || n > 999)) { adminMsg = t(isOwner() ? "numBadSym" : "numBad"); return render(); } // 0: only the head admin hands it out
       if (idx === -1 && HOSTED) { ownerCall({ sid: S.user.steamId, num: n }); return render(); } // a claimed number is locked for the pilot, so the change goes through the head-admin call
