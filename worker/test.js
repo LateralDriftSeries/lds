@@ -95,6 +95,16 @@ ok((await team("/api/team", { id: TID, desc: "by rep", closed: true, invites: ["
 tmNow = await teamNow();
 ok(tmNow.desc === "by rep" && !tmNow.closed && !tmNow.invites.length, "representative changed the description only");
 await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: null }) });
+// numbers are unique: a number another pilot holds is refused
+const thirdNum = await (await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ num: 55 }) })).json();
+ok(thirdNum.num === null, "a number another pilot holds can't be claimed");
+// rules pictures: uploaded by rule editors, served to anyone by id
+const png = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="), c => c.charCodeAt(0));
+const rimg = tok => fetch(API + "/api/rules/img", { method: "POST", headers: { origin: SITE, "content-type": "image/png", authorization: "Bearer " + tok }, body: png });
+ok((await rimg(pilot)).status === 403, "a pilot can't upload rules pictures");
+const rid = (await (await rimg(owner)).json()).id, got = await fetch(API + "/api/img/" + rid);
+ok(/^[a-f0-9]{12}$/.test(rid) && got.ok && got.headers.get("content-type") === "image/png" && (await got.arrayBuffer()).byteLength === png.length, "a rules picture is stored and served by its id");
+ok((await fetch(API + "/api/img/../users")).status === 404, "a bad picture id is refused");
 await call("/api/me", { method: "PUT", token: third, body: JSON.stringify({ team: TID }) });
 ok(await teamOf(THIRD) === TID && !(await teamNow()).rep, "leaving drops the representative mark; rejoining starts plain");
 ok((await team("/api/team", { id: TID, founder: THIRD }, pilot, "PUT")).ok && (await teamNow()).founder === THIRD, "founder role handed over");

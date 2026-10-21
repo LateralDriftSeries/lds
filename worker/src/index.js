@@ -45,6 +45,8 @@ async function route(req, env, url) {
     if (m === "GET") return getDiscord(env);
     if (m === "PUT") return putDiscord(req, env, sid);
   }
+  if (m === "POST" && p === "/api/rules/img") return putRuleImg(req, env, await requireRole(req, env, ["owner", "admin", "tech"]));
+  if (m === "GET" && p.startsWith("/api/img/")) return ruleImg(env, p.slice(9));
   if (p.startsWith("/api/discord/img/")) {
     const st = p.slice(17);
     if (m === "GET") return discordImg(env, st);
@@ -227,11 +229,13 @@ async function putMe(req, env, sid) {
   if ((u.team ?? null) !== prevTeam && u.team != null && !(await canJoin(env, u, Number(u.team)))) u.team = prevTeam;
   // shortcut: field shapes are trusted (number range, team id); validate per field once real abuse shows up
   if (u.num != null && u.num !== prevNum && !(Number.isInteger(u.num) && u.num >= 1 && u.num <= 999)) u.num = null; // 0 only from the head admin
+  if (u.num != null && u.num !== prevNum) { const rows = await env.DB.prepare("SELECT sid, data FROM users").all();
+    if (rows.results.some(r => r.sid !== sid && JSON.parse(r.data).num === u.num)) u.num = null; } // already someone's number: refused
   if (typeof u.about === "object" && u.about) u.about = { ru: String(u.about.ru || "").slice(0, 60) };
   if (prevTeam != null && (u.team ?? null) !== prevTeam) await dropRep(env, prevTeam, u.name);
   await setUser(env, sid, u);
   await bump(env);
-  return json({ ok: true, team: u.team ?? null }); // the team actually kept, so the page can show a refused join
+  return json({ ok: true, team: u.team ?? null, num: u.num ?? null }); // what was actually kept, so the page can show a refused join or number
 }
 async function canJoin(env, u, id) {
   const db = await kvGet(env, "db"), tm = (await getTeam(env, id)) || (db?.teams || []).find(x => x.id === id);
@@ -448,6 +452,26 @@ async function putDiscord(req, env, sid) {
   await kvSet(env, "discord", c);
   await logIt(env, sid, log);
   return getDiscord(env);
+}
+// rules pictures: each upload gets its own id (files row "rl:<id>"); the rules text refers to it as "!img <id>"
+// shortcut: pictures removed from the text stay stored; add a cleanup once the files table grows noticeably
+async function putRuleImg(req, env, { sid }) {
+  const type = (req.headers.get("content-type") || "").split(";")[0].trim();
+  if (!/^image\/(jpeg|png|webp)$/.test(type)) throw new HttpError(400, "png, jpeg or webp only");
+  if (+(req.headers.get("content-length") || 0) > IMG_MAX) throw new HttpError(413, "image too large");
+  const data = await req.arrayBuffer();
+  if (!data.byteLength || data.byteLength > IMG_MAX) throw new HttpError(413, "image too large");
+  const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+  await env.DB.prepare(FILES_SQL).run();
+  await env.DB.prepare("INSERT INTO files (k, type, data) VALUES (?, ?, ?)").bind("rl:" + id, type, data).run();
+  await logIt(env, sid, ["Регламент: загружено изображение"]);
+  return json({ id });
+}
+async function ruleImg(env, id) {
+  if (!/^[a-f0-9]{12}$/.test(id)) throw new HttpError(404, "no image");
+  const r = await env.DB.prepare("SELECT type, data FROM files WHERE k = ?").bind("rl:" + id).first().catch(() => null);
+  if (!r) throw new HttpError(404, "no image");
+  return new Response(new Uint8Array(r.data), { headers: { "content-type": r.type, "cache-control": "public, max-age=31536000, immutable" } }); // an id never changes its picture
 }
 async function discordImg(env, status) {
   const r = await env.DB.prepare("SELECT type, data FROM files WHERE k = ?").bind("dc:" + status).first().catch(() => null); // no table yet: no picture

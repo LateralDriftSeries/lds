@@ -155,7 +155,7 @@ main { flex: 1 0 auto; width: 100%; padding-block: 3rem 5rem; display: grid; gap
 @keyframes blink { 50% { opacity: .2 } }
 .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1rem }
 .back { color: var(--muted); text-decoration: none; font-size: .9rem }
-.tablebox { overflow-x: auto; background: var(--panel) }
+.tablebox { overflow-x: auto; background: var(--panel); max-width: 100%; min-width: 0 }
 table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums }
 th { text-align: left; font: 600 .7rem var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: .9rem 1rem }
 td { padding: .75rem 1rem; border-top: 1px solid var(--line); white-space: nowrap }
@@ -266,7 +266,7 @@ textarea { min-height: 96px }
 .specs input:hover, .specs input:focus { border-bottom-color: var(--line); outline: none }
 .pcard-big .out { position: relative; z-index: 1; align-self: flex-end }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.2rem }
-.box { padding: 1.6rem; display: grid; gap: 1.1rem; align-content: start; min-width: 0 }
+.box { padding: 1.6rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; align-content: start; min-width: 0 } /* one column no wider than the box: a wide table scrolls inside it */
 .box h3 { font-size: 1.25rem }
 .box.empty { border-style: dashed; min-height: 160px }
 .stagecard { border: 1px solid var(--accent); border-radius: 10px; padding: 1.3rem; display: grid; gap: 1.2rem }
@@ -1868,8 +1868,8 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .pd-pts { font-size: 1.15rem; font-weight: 700; white-space: nowrap } .pd-pts small { font-size: .65rem; color: var(--muted); margin-left: .2rem; font-weight: 500 }
 /* home tab: texts two to a row, FAQ as folded rows (number, question, controls); a row opens to edit */
 .ht-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: .8rem 1rem } .ht-grid textarea, .faq-ed textarea { min-height: 64px }
-.faq-eds { display: grid; gap: .45rem }
-.faq-row { position: relative }
+.faq-eds { display: grid; grid-template-columns: minmax(0, 1fr); gap: .45rem }
+.faq-row { position: relative; min-width: 0 }
 .faq-ed { border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2) }
 .faq-ed > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: .8rem; padding: .7rem 7.5rem .7rem .9rem; min-width: 0 } .faq-ed > summary::-webkit-details-marker { display: none }
 .faq-ed > summary b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600 }
@@ -1880,6 +1880,11 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .netbar { position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 60; display: flex; align-items: center; gap: .9rem; width: max-content; max-width: calc(100% - 2rem);
   padding: .7rem .8rem .7rem 1.1rem; border: 1px solid var(--accent); border-radius: 14px; background: var(--panel); box-shadow: 0 12px 40px -12px #000; font-size: .85rem; animation: rise .4s both }
 @media (max-width: 600px) { .netbar { flex-wrap: wrap; justify-content: center; text-align: center } }
+/* rules pictures: one line = one row; several share the row equally and wrap on narrow screens */
+.rimg-row { display: flex; flex-wrap: wrap; gap: .6rem; margin: .9rem 0 }
+.rimg-row img { flex: 1 1 160px; min-width: 0; max-width: 100%; max-height: 460px; object-fit: contain; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2) }
+.rimg-row img:only-child { flex: 0 1 auto }
+.md-file { cursor: pointer }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2049,8 +2054,8 @@ tr.in-br + tr.out-br td { border-top: 1px dashed var(--accent) }
 .rt-add { justify-self: start; margin-left: 1.2rem; background: none; border: 0; color: var(--accent); cursor: pointer; font: 600 .8rem var(--f-body); padding: .2rem .3rem }
 .rule-pane { display: grid; gap: .9rem }
 .md-bar { display: flex; flex-wrap: wrap; gap: .35rem }
-.md-bar button { background: var(--panel-2); border: 1px solid var(--line); color: var(--soft); border-radius: 8px; padding: .35rem .7rem; font: 600 .78rem var(--f-body); cursor: pointer }
-.md-bar button:hover { border-color: var(--accent); color: var(--text) }
+.md-bar button, .md-bar .md-file { background: var(--panel-2); border: 1px solid var(--line); color: var(--soft); border-radius: 8px; padding: .35rem .7rem; font: 600 .78rem var(--f-body); cursor: pointer }
+.md-bar button:hover, .md-bar .md-file:hover { border-color: var(--accent); color: var(--text) }
 .rule-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; align-items: stretch }
 .rule-split .rule-text { min-height: 28rem; resize: vertical; font: 400 .85rem/1.55 ui-monospace, Consolas, monospace }
 .rule-prev { border: 1px solid var(--line); border-radius: 10px; padding: 1rem; background: var(--panel-2); max-height: 34rem; overflow: auto; display: grid; gap: .6rem; align-content: start }
@@ -2285,7 +2290,7 @@ const I18N = {
     teamsSeason: "Команды сезона", ctaTitle: "Готов выйти на трассу?",
     pickFromList: "Нажмите на пилота в списке ниже, чтобы вывести его на трассу и выставить баллы.", gridIdleNote: "Когда маршал, судья и стример нажали «Готовность» в судейском острове, сетка в эфире сворачивается до первых 3 пилотов и раскрывается, когда выставлены баллы за попытку (сначала за первую, потом за вторую).", gridHiddenNow: "Сейчас в эфире свёрнута до топ-3: состав готов", readyTitle: "Готовность состава", readyHint: "Только для работы состава, в эфир не выводится. Когда готовы все трое, кнопки сбросятся через 5 секунд.", readyL: "Готовность", rd_marshal: "Маршал", rd_judge: "Судья", rd_streamer: "Стример", noDescShort: "Без описания", aRules: "Регламент", sportRules: "Спортивный регламент", rulesVersion: "Версия регламента",
     rulesReset: "Вернуть исходный регламент", addSection: "+ Раздел", addItem: "+ Пункт", sectionN: "Раздел", itemTitle: "Заголовок пункта", newSection: "Новый раздел", newItem: "Новый пункт",
-    moveUp: "Выше", moveDown: "Ниже", rulesHelp: "Текст сохраняется, когда вы выходите из поля. Разметка: «## подзаголовок», «- пункт списка», «**жирный**», «! предупреждение», строки «| ячейка | ячейка |» — таблица (первая строка — заголовки), пустая строка — новый абзац.", resetIn: "Сброс через", sec: "с", upcoming: "Следующий этап", pilotProfile: "Профиль пилота",
+    moveUp: "Выше", moveDown: "Ниже", mdImg: "Изображение", mdImgHint: "Загрузить картинку (PNG, JPG, WebP). Если курсор стоит на строке с картинками, новая встанет в тот же ряд", mdUp: "Строка ↑", mdDown: "Строка ↓", rulesHelp: "Текст сохраняется, когда вы выходите из поля. Строка «!img код код…» — картинки в один ряд (вставляются кнопкой «Изображение»), «Строка ↑ / ↓» двигает строку с курсором. Разметка: «## подзаголовок», «- пункт списка», «**жирный**», «! предупреждение», строки «| ячейка | ячейка |» — таблица (первая строка — заголовки), пустая строка — новый абзац.", resetIn: "Сброс через", sec: "с", upcoming: "Следующий этап", pilotProfile: "Профиль пилота",
     noBio: "Расскажите о себе в блоке «О себе» — это увидят другие пилоты.", hpLong: "Мощность, л.с.", hpRule: "По регламенту (п. 3.2) мощность двигателя, л.с.:",
     aboutMe: "О себе", aboutRu: "О себе (RU)", aboutEn: "О себе (EN, необязательно)", aboutPh: "Пара слов о себе: как давно в дрифте, любимая трасса...",
     aboutRules: "Запрещены мат и оскорбления, материалы 18+, сцены насилия, экстремистская, нацистская и политическая символика, дискриминация и чужая реклама. За нарушение — пожизненный бан на всех турнирах LDS без предупреждения.", stageStatus: "Статус этапа", prevStatus: "Назад", aJudge: "Судейский остров", qualJudge: "Квалификация — оценка заезда", battleJudge: "Парный заезд — решение судей", nextPilot: "Следующий пилот",
@@ -2442,7 +2447,7 @@ const I18N = {
     teamsSeason: "Season teams", ctaTitle: "Ready to hit the track?",
     pickFromList: "Click a driver in the list below to put them on track and enter scores.", gridIdleNote: "Once the marshal, judge and streamer press Ready in the judges island, the on-air grid folds down to the top 3 drivers and opens again when a run is scored (first run, then second).", gridHiddenNow: "Folded to the top 3 now: the crew is ready", readyTitle: "Crew readiness", readyHint: "For the crew only, never on air. When all three are ready the buttons clear after 5 seconds.", readyL: "Ready", rd_marshal: "Marshal", rd_judge: "Judge", rd_streamer: "Streamer", noDescShort: "No description", aRules: "Rules", sportRules: "Sports rules", rulesVersion: "Rules version",
     rulesReset: "Restore original rules", addSection: "+ Section", addItem: "+ Item", sectionN: "Section", itemTitle: "Item title", newSection: "New section", newItem: "New item",
-    moveUp: "Up", moveDown: "Down", rulesHelp: "Text saves when you leave the field. Markup: “## heading”, “- list item”, “**bold**”, “! warning”, lines “| cell | cell |” make a table (first row is the header), a blank line starts a new paragraph.", resetIn: "Resets in", sec: "s", upcoming: "Upcoming round", pilotProfile: "Driver profile",
+    moveUp: "Up", moveDown: "Down", mdImg: "Picture", mdImgHint: "Upload a picture (PNG, JPG, WebP). With the caret on a line of pictures, the new one joins that row", mdUp: "Line ↑", mdDown: "Line ↓", rulesHelp: "Text saves when you leave the field. A line “!img id id…” is a row of pictures (added with the Picture button); “Line ↑ / ↓” moves the caret's line. Markup: “## heading”, “- list item”, “**bold**”, “! warning”, lines “| cell | cell |” make a table (first row is the header), a blank line starts a new paragraph.", resetIn: "Resets in", sec: "s", upcoming: "Upcoming round", pilotProfile: "Driver profile",
     noBio: "Tell other drivers about yourself in the About me block.", hpLong: "Power, hp", hpRule: "Sports rules 3.2: engine power, hp:",
     aboutMe: "About me", aboutRu: "About me (RU)", aboutEn: "About me (EN, optional)", aboutPh: "A few words: how long you have been drifting, favourite track...",
     aboutRules: "No swearing or insults, 18+ content, violence, extremist, Nazi or political symbols, discrimination or third-party ads. Breaking this means a lifetime ban from all LDS events without warning.", stageStatus: "Round status", prevStatus: "Back", aJudge: "Judges’ island", qualJudge: "Qualifying — score the run", battleJudge: "Tandem — judges’ decision", nextPilot: "Next driver",
@@ -2589,7 +2594,7 @@ if (S.dataVer !== DATA_VER) {
 }
 // admin edits mutate the objects above; this stores them with the rest of the state
 const dbSave = (rerender = true) => {
-  S.db = { teams: TEAMS, pilots: PILOTS, tours: TOURS, seasons: SEASONS, sponsors: SPONSORS, protests: PROTESTS, settings: SETTINGS, sanctions: SANCTIONS, rules: rulesDoc, roles: ROLES, trackDiff: TRACK_DIFF, trackSet: TRACK_SET, achievements: ACHIEVEMENTS, awards: AWARDS, teamEntries: TEAM_ENTRIES, reqStatus: REQ_STATUS, teamNames: TEAM_NAMES, teamFounders: TEAM_FOUNDERS };
+  S.db = { ruleImgs: HOSTED ? undefined : RULE_IMGS, teams: TEAMS, pilots: PILOTS, tours: TOURS, seasons: SEASONS, sponsors: SPONSORS, protests: PROTESTS, settings: SETTINGS, sanctions: SANCTIONS, rules: rulesDoc, roles: ROLES, trackDiff: TRACK_DIFF, trackSet: TRACK_SET, achievements: ACHIEVEMENTS, awards: AWARDS, teamEntries: TEAM_ENTRIES, reqStatus: REQ_STATUS, teamNames: TEAM_NAMES, teamFounders: TEAM_FOUNDERS };
   rerender ? save() : persist();
 };
 // shortcut: roles live with the rest of the demo data in this browser; a real site checks roles on the server
@@ -2603,6 +2608,7 @@ const PERMS = { owner: ["edit", "judge", "bc", "rules", "seasons", "roles"], adm
 // team entries per stage: what the organisers set or approved (by stage id, then team id), the status of founders' requests, approved team names
 const TEAM_ENTRIES = S.db?.teamEntries || {}, REQ_STATUS = S.db?.reqStatus || {}, TEAM_NAMES = S.db?.teamNames || {}, TEAM_FOUNDERS = S.db?.teamFounders || {};
 const ACHIEVEMENTS = S.db?.achievements || [], AWARDS = S.db?.awards || {}; // [icon, id, [ruTitle, ruDesc], [enTitle, enDesc], kind, hidden]; admin edits them
+const RULE_IMGS = S.db?.ruleImgs || {}; // demo only: rules pictures as data URLs (the hosted site stores them on the server)
 const TRACK_DIFF = S.db?.trackDiff || {}; // admin overrides of track difficulty, by track name
 const TRACK_SET = S.db?.trackSet || {}; // by track name: { own: added in the settings, parts: [{ n: section title, conf: [{ n: name, d: difficulty }] }] }
 const TRACK_RENAMED = { "Ebisu Minami": "Ebisu" }; // old name → new: stages and track settings follow the rename
@@ -3119,7 +3125,7 @@ function tournament(id) {
   <details class="box panel br-box" data-topen="br-${x.id}" ${tOpenIs(`br-${x.id}`, liveRound(x) >= 0) ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) || x.status === "done" ? "" : `<span class="note br-note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
   ${stageEntries(x).length ? `<section class="stack"><div><h3>${t("stageTeamEntries")} · ${stageEntries(x).filter(r => r.ok).length}/${stageTeamsMax(x)}</h3><p class="note">${t("stageTeamEntriesNote")}</p></div>
     <div class="treg-list">${stageEntries(x).map((r, i) => `<div class="treg-item ${r.ok ? "" : "over"}"><span class="mono muted">${i + 1}</span>${logo(r.tm)}<span class="stack" style="gap:.15rem;min-width:0"><b>${esc(r.tm.name)}</b>
-      <span class="note">${r.e.pilots.map(p => esc(p.nick)).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div></section>` : ""}
+      <span class="note">${r.e.pilots.map(p => esc(nickTxt(p.nick))).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div></section>` : ""}
   ${`<details class="box panel br-box" data-topen="qual-${x.id}" ${tOpenIs(`qual-${x.id}`) ? "open" : ""}><summary class="psec-head"><h3>${t("qual")}</h3><span class="row" style="gap:1rem"><span class="note">${rows.length}</span><i class="ach-chev" aria-hidden="true"></i></span></summary>
   <div class="tablebox"><table>
     <thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("group")}</th><th>${t("try1")}</th><th>${t("try2")}</th><th>${t("best")}</th></tr></thead>
@@ -3587,7 +3593,10 @@ const TEAM_RULES_EN = [
 const migrateRules = d => !d ? null : d.ru ? d : { version: d.version || "1.1",
   ru: [{ title: I18N.ru.pilotRules, items: d.sections || [] }, { title: I18N.ru.teamRules, items: d.team || [] }], en: defaultRulesDoc().en };
 let rulesDoc = null; // set after defaultRulesDoc is defined
+const nickTxt = s => String(s ?? "").replace(/<\/?[a-z]+(=[^>]*)?>/gi, "").trim(); // CarX rich-text tags in nicknames
 const inlineMd = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+// a rules picture: on the hosted site the server stores it; in the demo it lives in the saved data as a data URL
+const ruleImgSrc = id => RULE_IMGS[id] || `${API}/api/img/${id}`;
 function textToHtml(text) {
   const out = [], lines = String(text || "").split(/\r?\n/);
   let list = [], table = [], para = [];
@@ -3609,7 +3618,8 @@ function textToHtml(text) {
     if (l.startsWith("- ")) { if (para.length || table.length) flush(); list.push(l.slice(2)); continue; }
     if (l.startsWith("|")) { if (para.length || list.length) flush(); table.push(l); continue; }
     flush();
-    if (l.startsWith("## ")) out.push(`<h4>${inlineMd(l.slice(3))}</h4>`);
+    if (/^!img(\s+[\w-]{1,40})+$/.test(l)) out.push(`<div class="rimg-row">${l.split(/\s+/).slice(1).map(id => `<img src="${esc(ruleImgSrc(id))}" alt="" loading="lazy">`).join("")}</div>`);
+    else if (l.startsWith("## ")) out.push(`<h4>${inlineMd(l.slice(3))}</h4>`);
     else if (l.startsWith("! ")) out.push(`<div class="warn">${inlineMd(l.slice(2))}</div>`);
     else para.push(l);
   }
@@ -3679,7 +3689,9 @@ function adminRules() {
         <p class="note">${t("pickSection")}</p><div><button class="btn line sm" data-act="ruleAdd" data-id="${di}">${t("addSection")}</button></div></div>`
     : `<div class="box panel rule-pane"><span class="label">${esc(doc.title)}</span>
         <label class="fieldlabel">${t("sectionN")}<input class="field" data-a="rule:${di}:${k}:title" value="${esc(it.title)}" maxlength="80"></label>
-        <div class="md-bar" role="toolbar" aria-label="${t("mdBar")}">${md("h", "mdH")}${md("li", "mdList")}${md("b", "mdBold")}${md("warn", "mdWarn")}${md("table", "mdTable")}</div>
+        <div class="md-bar" role="toolbar" aria-label="${t("mdBar")}">${md("h", "mdH")}${md("li", "mdList")}${md("b", "mdBold")}${md("warn", "mdWarn")}${md("table", "mdTable")}
+          <label class="md-file" title="${t("mdImgHint")}">${t("mdImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-rimg hidden></label>
+          ${md("up", "mdUp")}${md("down", "mdDown")}</div>
         <div class="rule-split">
           <textarea class="field rule-text" id="rule-ta" data-a="rule:${di}:${k}:text" aria-label="${esc(it.title)}">${esc(it.text)}</textarea>
           <div class="rule-prev"><span class="label">${t("rulePreview")}</span><div class="prose" id="rule-prev">${textToHtml(it.text)}</div></div></div>
@@ -3854,8 +3866,8 @@ function teamRegBox(tm) {
   if (open && (e || taken < stageTeamsMax(x))) body = `${e ? `<p class="note ok-note">✓ ${t(mine?.ok ? "teamRegDone" : "entryOver")}</p>` : ""}${entryForm("teamregform", x, tm, e)}
     ${e ? `<div><button class="btn text sm danger" data-act="teamUnreg" data-id="${x.id}">${t("teamUnreg")}</button></div>` : ""}`;
   else if (open) body = `<p class="note err">${t("teamRegFull")}</p>`;
-  else if (e) body = `<div class="treg-fixed"><span class="label">${t("entryFixed")}</span><b>${esc(tm.name)}</b><span class="note">${t("founderNick")}: ${esc(e.founderNick)}</span>
-      <div class="row" style="gap:.35rem">${e.pilots.map(p => `<span class="chip4">${esc(p.nick)}</span>`).join("")}</div>${mine?.ok ? "" : `<p class="note err">${t("entryOver")}</p>`}</div>
+  else if (e) body = `<div class="treg-fixed"><span class="label">${t("entryFixed")}</span><b>${esc(tm.name)}</b><span class="note">${t("founderNick")}: ${esc(nickTxt(e.founderNick))}</span>
+      <div class="row" style="gap:.35rem">${e.pilots.map(p => `<span class="chip4">${esc(nickTxt(p.nick))}</span>`).join("")}</div>${mine?.ok ? "" : `<p class="note err">${t("entryOver")}</p>`}</div>
     <form class="stack treg-form2" id="rosterreq" data-tour="${x.id}"><span class="label">${t("rosterReq")}</span>
       <label class="fieldlabel">${t("reqReason")}<input class="field" name="reason" maxlength="200" required></label>
       <div class="treg-row"><label class="fieldlabel">${t("reqOut")}<select class="field" name="out"><option value="">—</option>${e.pilots.map(p => `<option>${esc(p.nick)}</option>`).join("")}</select></label>
@@ -4124,7 +4136,7 @@ function adminTour(x) {
     body += `<section class="stack" style="gap:.8rem"><h3>${t("teamEntriesAdm")}</h3><p class="note" style="margin:0">${t("teamRegAdminHint")} <b>${list.filter(r => r.ok).length} / ${stageTeamsMax(x)}</b></p>
     <div class="tablebox panel"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("founderNick")}</th><th>${t("entryPilots")}</th><th>${t("filedAt")}</th><th></th></tr></thead><tbody>${
       list.map((r, i) => `<tr class="${r.ok ? "" : "out-br"}"><td class="mono muted">${i + 1}</td><td><div class="row" style="gap:.5rem;flex-wrap:nowrap">${logo(r.tm)}<b>${esc(r.tm.name)}</b></div>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</td>
-        <td>${esc(r.e.founderNick)}</td><td style="white-space:normal">${r.e.pilots.map(p => esc(p.nick)).join(", ")}</td><td class="mono muted">${when(r.e.at)}</td>
+        <td>${esc(nickTxt(r.e.founderNick))}</td><td style="white-space:normal">${r.e.pilots.map(p => esc(nickTxt(p.nick))).join(", ")}</td><td class="mono muted">${when(r.e.at)}</td>
         <td><div class="row" style="gap:.3rem;flex-wrap:nowrap"><button class="btn line sm" data-act="teamEdit" data-id="${r.tm.id}">${t("teamEdit")}</button>
           <button class="btn text sm danger" data-act="teamRemove" data-id="${r.tm.id}" data-v="${x.id}">${pending === `te${x.id}-${r.tm.id}` ? t("delSure") : t("del")}</button></div></td></tr>`).join("")
       || `<tr><td colspan="6" class="muted">${t("noEntries")}</td></tr>`}</tbody></table></div>
@@ -5040,7 +5052,8 @@ function pushRemote() {
   pushTimer = setTimeout(async () => {
     const jobs = [], put = (path, body, then) => jobs.push(api(path, { method: "PUT", body }).then(then).catch(() => { toast(t("netErr")); return "fail"; }));
     // the server keeps a team change only if the team takes this pilot (open with room, or invited): follow its answer
-    const m = meBody(); if (m !== sentMe) { sentMe = m; put("/api/me", m, r => { if (r && "team" in r && (r.team ?? null) !== (S.team ?? null)) { S.team = r.team; sentMe = meBody(); toast(t("joinRefused")); render(); } }); }
+    const m = meBody(); if (m !== sentMe) { sentMe = m; put("/api/me", m, r => { if (r && "team" in r && (r.team ?? null) !== (S.team ?? null)) { S.team = r.team; sentMe = meBody(); toast(t("joinRefused")); render(); }
+      if (r && "num" in r && (r.num ?? null) !== (S.num ?? null)) { S.num = r.num ?? null; sentMe = meBody(); toast(t("numTaken")); render(); } }); }
     // the server checks every write against the writer's role
     if (can("edit") || can("rules")) { const d = dbBody(); if (d && d !== sentDb) { sentDb = d; put("/api/db", `{"db":${d}}`); } }
     if (can("judge") || can("bc")) { const l = liveBody(); if (l !== sentLive) { sentLive = l; put("/api/live", l); } }
@@ -5242,6 +5255,10 @@ document.addEventListener("click", e => {
     mdIns: () => { const ta = document.getElementById("rule-ta"); if (!ta) return;
       const v = el.dataset.v, a = ta.selectionStart, b = ta.selectionEnd, line = ta.value.lastIndexOf("\n", a - 1) + 1;
       if (v === "b") ta.setRangeText(`**${ta.value.slice(a, b) || t("mdBold")}**`, a, b, "end");
+      else if (v === "up" || v === "down") { // move the caret's line (a text line or a row of pictures) one place up or down
+        const L = ta.value.split("\n"), i = ta.value.slice(0, a).split("\n").length - 1, j = v === "up" ? i - 1 : i + 1;
+        if (j < 0 || j >= L.length) return; [L[i], L[j]] = [L[j], L[i]]; ta.value = L.join("\n");
+        const at = L.slice(0, j).join("\n").length + (j ? 1 : 0); ta.setSelectionRange(at, at); }
       else if (v === "table") ta.setRangeText(`\n| ${t("mdCol")} 1 | ${t("mdCol")} 2 |\n| … | … |\n`, a, b, "end");
       else ta.setRangeText({ h: "## ", li: "- ", warn: "! " }[v] || "", line, line, "end");
       ta.focus(); ta.dispatchEvent(new Event("input", { bubbles: true })); ta.dispatchEvent(new Event("change", { bubbles: true })); },
@@ -5361,11 +5378,11 @@ document.addEventListener("submit", e => {
     const f = e.target, x = TOURS.find(z => z.id === +f.dataset.tour), tm = teamById(+f.dataset.team), fd = new FormData(f), byAdmin = f.id === "tentryform";
     const msg = m => { const el = document.getElementById(`${f.id}-msg`); if (el) el.textContent = m; };
     if (!x || !tm) return;
-    const names = fd.getAll("p"), founderNick = String(fd.get("founder") || "").trim().slice(0, 32);
+    const names = fd.getAll("p"), founderNick = nickTxt(fd.get("founder")).slice(0, 32);
     if (!founderNick) return msg(t("entryNeedFounder"));
     if (!names.length) return msg(t("entryNeedPilots"));
     if (names.length > SETTINGS.teamStageMax) return msg(`${t("entryTooMany")} ${SETTINGS.teamStageMax}`);
-    const pilots = names.map(n => ({ name: n, nick: String(fd.get(`nick:${n}`) || "").trim().slice(0, 32) || n }));
+    const pilots = names.map(n => ({ name: n, nick: nickTxt(fd.get(`nick:${n}`)).slice(0, 32) || n }));
     const dup = inOtherEntry(x, tm, names);
     if (dup.length) return msg(`${t("entryDup")}: ${dup.join(", ")}`);
     if (byAdmin) { if (!isAdmin()) return; (TEAM_ENTRIES[x.id] ??= {})[tm.id] = { at: teamEntry(x, tm)?.at ?? Date.now(), founderNick, pilots }; aEditTeam = 0; toast(t("saved")); return dbSave(); }
@@ -5449,6 +5466,16 @@ document.addEventListener("change", e => {
     DC[k] = { ...DC[k], ...(f === "on" ? { off: !v } : f === "ping" ? { ping: v } : f === "color" ? { color: v } : { [f]: v.slice(0, { text: 1500, title: 100, link: 40 }[f] || 40) }) }; return dcSave(); }
   if (e.target.dataset.dcimg && isAdmin() && DC) { const k = e.target.dataset.dcimg, f = e.target.files?.[0];
     return f && readBanner(f, blob => dcImgSend(k, blob), big => toast(t(big ? "dcImgBig" : "logoBad"))); }
+  if (e.target.matches?.("[data-rimg]") && can("rules")) { const f = e.target.files?.[0], ta = document.getElementById("rule-ta"); e.target.value = "";
+    const put = id => { if (!ta) return; const a = ta.selectionStart, ls = ta.value.lastIndexOf("\n", a - 1) + 1, le = (ta.value.indexOf("\n", a) + 1 || ta.value.length + 1) - 1, line = ta.value.slice(ls, le);
+      if (/^!img(\s+[\w-]{1,40})+$/.test(line.trim())) ta.setRangeText(`${line.trimEnd()} ${id}`, ls, le, "end");
+      else ta.setRangeText(`${a > 0 && ta.value[a - 1] !== "\n" ? "\n" : ""}!img ${id}\n`, a, a, "end");
+      ta.focus(); ta.dispatchEvent(new Event("input", { bubbles: true })); ta.dispatchEvent(new Event("change", { bubbles: true })); };
+    return f && readBanner(f, blob => {
+      if (!HOSTED) { const r = new FileReader(); r.onload = () => { const id = "d" + Date.now().toString(36); RULE_IMGS[id] = r.result; put(id); }; return r.readAsDataURL(blob); }
+      fetch(`${API}/api/rules/img`, { method: "POST", headers: { authorization: "Bearer " + token, "content-type": blob.type }, body: blob })
+        .then(r => r.ok ? r.json() : Promise.reject(new Error(String(r.status)))).then(r => put(r.id), e => toast(t(e.message === "413" ? "dcImgBig" : "netErr")));
+    }, big => toast(t(big ? "dcImgBig" : "logoBad"))); }
   if (e.target.dataset.splogo && isAdmin()) { const s = SPONSORS[+e.target.dataset.splogo], f = e.target.files?.[0];
     return s && f && readLogo(f, data => { s.img = data; dbSave(); toast(t("saved")); }, () => toast(t("logoBad")), true); }
   const k = e.target.dataset.car, a = e.target.dataset.a;
