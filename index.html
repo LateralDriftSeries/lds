@@ -3076,6 +3076,9 @@ function brRecord(tourId, p1, p2, winner) {
   brSet(x, `${m.r}-${m.m}`, winner);
   toast(t("brRecorded"));
 }
+// groups come from the bracket once it freezes (the stage enters its top 32): each quarter of the 32 slots (4 pairs) is a group A–D;
+// they stay as given until the final, apart from changes made by hand in the stage's pilot list
+const groupsFromBracket = x => Object.fromEntries((brOf(x)?.slots || []).flatMap((n, k) => n ? [[n, GROUPS[k >> 3]]] : []));
 function brSet(x, key, winner) {
   S.brackets = { ...S.brackets, [x.id]: { slots: slotsOf(x), w: { ...brOf(x)?.w } } };
   if (winner) S.brackets[x.id].w[key] = winner; else delete S.brackets[x.id].w[key];
@@ -4407,7 +4410,7 @@ function adminEdit([kind, id, f, k], v) {
   }
   if (kind === "tour") {
     const x = TOURS.find(z => z.id === +id);
-    if (f === "status") { if (BR_ROUNDS.includes(v) && !brOf(x)) brSet(x); if (STATUSES.includes(v)) x.status = v;
+    if (f === "status") { if (BR_ROUNDS.includes(v) && !brOf(x)) { brSet(x); x.groups = groupsFromBracket(x); } if (STATUSES.includes(v)) x.status = v;
       if (v === "done") (S.podiums ??= {})[x.id] = podiumOf(x); } // the bracket freezes from the qualifying as entered, before the status moves on
     else if (f === "max") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) x.max = n; else return render(); }
     else if (f === "maxTeams") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) x.maxTeams = n; else return render(); }
