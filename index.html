@@ -1887,6 +1887,7 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .md-file { cursor: pointer }
 .swap-row { gap: .6rem; flex-wrap: wrap } .swap-row .field { flex: 1 1 11rem; width: auto }
 .dc-send { flex: none; padding-inline: .7rem }
+.stage-times { gap: .5rem; flex-wrap: wrap; margin-top: .3rem } .stage-times .chip4 { gap: .4rem }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2181,7 +2182,7 @@ const I18N = {
     soon: "Скоро", reg: "Регистрация", qualifying: "Квалификация", top32: "Топ 32", top16: "Топ 16", top8: "Топ 8", top4: "Топ 4", final: "Финал", done: "Завершён", stage: "Этап", details: "Подробнее",
     archive: "Архив", season: "Сезон", currentStage: "Текущий этап", stStand: "Зачёт этапа", stStandNote: "Очки этапа, как в рейтинге: пилоты и заявленные команды.", stPersonal: "Личный зачёт", stTeam: "Командный зачёт",
     stageTeams: "Командный зачёт этапа", stageTeamsNote: "Сумма двух лучших квалификационных оценок пилотов команды.",
-    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)",
+    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
     pilotsHint: "Снимите галочку, чтобы убрать пилота из этапа: он пропадёт из сетки квалификации.", inStage: "Участвует",
     teamsHint: "Снимите галочку, если команда не подала командную регистрацию на этап — она не попадёт в командный зачёт этапа.", teamScore: "Командный зачёт", onStage: "Пилотов на этапе",
     adminPanel: "Админка", aSeasons: "Сезоны и этапы", aSanctions: "Пилоты и санкции", aSponsors: "Спонсоры", aProtests: "Протесты", aSettings: "Настройки", broadcastBtn: "Пульт трансляции ↗",
@@ -2338,7 +2339,7 @@ const I18N = {
     soon: "Soon", reg: "Registration", qualifying: "Qualifying", top32: "Top 32", top16: "Top 16", top8: "Top 8", top4: "Top 4", final: "Final", done: "Finished", stage: "Round", details: "Details",
     archive: "Archive", season: "Season", currentStage: "Current round", stStand: "Round standings", stStandNote: "Round points as in the rating: drivers and entered teams.", stPersonal: "Drivers", stTeam: "Teams",
     stageTeams: "Round team standings", stageTeamsNote: "Sum of the team's two best qualifying scores.",
-    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)",
+    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
     pilotsHint: "Untick a driver to remove them from the round: they disappear from the qualifying grid.", inStage: "Entered",
     teamsHint: "Untick a team that did not file a team entry for the round, so it stays out of the round's team standings.", teamScore: "Team standings", onStage: "Drivers in round",
     adminPanel: "Admin", aSeasons: "Seasons & rounds", aSanctions: "Drivers & sanctions", aSponsors: "Sponsors", aProtests: "Protests", aSettings: "Settings", broadcastBtn: "Broadcast control ↗",
@@ -3134,7 +3135,8 @@ function tournament(id) {
                         : `<button class="btn" data-act="reg" data-id="${id}">${t("register")}</button>`;
   }
   return `<a class="back" href="#tournaments">${t("back")}</a>
-  <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(when(x))}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}${x.conf ? `<span class="pill plain">${esc(confShow(x))}</span>` : ""}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div></div>
+  <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(when(x))}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}${x.conf ? `<span class="pill plain">${esc(confShow(x))}</span>` : ""}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div>
+    ${[["qStart", "qualL"], ["tStart", "top32L"]].some(([k]) => x[k]) ? `<div class="row stage-times">${[["qStart", "qualL"], ["tStart", "top32L"]].filter(([k]) => x[k]).map(([k, l]) => `<span class="chip4"><span class="label">${t(l)}</span> <span class="mono">${esc(x[k].replace(/\s+/, " · "))} ${t("msk")}</span></span>`).join("")}</div>` : ""}</div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
   ${STATUSES.indexOf(x.status) >= STATUSES.indexOf("qualifying") && x.status !== "done" ? twitchBox() : ""}
   ${x.status === "done" ? podiumBox(x) : ""}
@@ -4134,7 +4136,9 @@ function adminTour(x) {
       ${confOf(x.track).length ? `<label class="fieldlabel">${t("trkConf")}<select class="field" data-a="tour:${x.id}:conf"><option value="">${t("trkMain")}</option>${partsOf(x.track).map(p => { const o = p.conf.map(c =>
         `<option value="${esc(confLabel(p, c))}" ${confLabel(p, c) === x.conf ? "selected" : ""}>${esc(c.n)}</option>`).join("");
         return p.n ? `<optgroup label="${esc(p.n)}">${o}</optgroup>` : o; }).join("")}</select></label>` : ""}</div>
-      <label class="fieldlabel">${t("startAt")} · ${t("msk")}<input class="field" type="datetime-local" data-a="tour:${x.id}:start" value="${startOf({ start: x.start })?.slice(0, 16) || ""}"></label>
+      <div class="cols" style="gap:1rem">${[["start", "startAt"], ["qStart", "qStartAt"], ["tStart", "tStartAt"]].map(([k, l]) =>
+        `<label class="fieldlabel">${t(l)} · ${t("msk")}<input class="field" type="datetime-local" data-a="tour:${x.id}:${k}" value="${startOf({ start: x[k] })?.slice(0, 16) || ""}"></label>`).join("")}</div>
+      <p class="note" style="margin:0">${t("timesHint")}</p>
       <div class="cols" style="gap:1rem"><label class="fieldlabel">${t("seatsL")}<input class="field" type="number" min="2" max="256" data-a="tour:${x.id}:max" value="${stageMax(x)}"></label>
       <label class="fieldlabel">${t("maxTeamsStageL")}<input class="field" type="number" min="1" max="64" data-a="tour:${x.id}:maxTeams" value="${stageTeamsMax(x)}"></label></div>
 </div></div>`;
@@ -4433,9 +4437,10 @@ function adminEdit([kind, id, f, k], v) {
       if (v === "done") (S.podiums ??= {})[x.id] = podiumOf(x); } // the bracket freezes from the qualifying as entered, before the status moves on
     else if (f === "max") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) x.max = n; else return render(); }
     else if (f === "maxTeams") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) x.maxTeams = n; else return render(); }
-    else if (f === "start") { // the picker gives "YYYY-MM-DDTHH:MM"; stored as "DD.MM.YYYY HH:MM" (Moscow), the dates text follows it
-      const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v); if (!m) return render();
-      x.start = `${m[3]}.${m[2]}.${m[1]} ${m[4]}:${m[5]}`; x.dates = `${m[3]}.${m[2]}.${m[1]}`; x.at = startOf(x); }
+    else if (["start", "qStart", "tStart"].includes(f)) { // the picker gives "YYYY-MM-DDTHH:MM"; stored as "DD.MM.YYYY HH:MM" (Moscow); an emptied field clears it
+      if (!v) { delete x[f]; if (f === "start") { x.dates = ""; delete x.at; } }
+      else { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v); if (!m) return render();
+        x[f] = `${m[3]}.${m[2]}.${m[1]} ${m[4]}:${m[5]}`; if (f === "start") { x.dates = `${m[3]}.${m[2]}.${m[1]}`; x.at = startOf(x); } } }
     else if (f === "track") { if (!v || v.length > 40) return render(); x.track = v; if (!confOf(v).some(z => z.n === x.conf)) delete x.conf; }
     else if (f === "conf") { if (v) { if (!confOf(x.track).some(z => z.n === v)) return render(); x.conf = v; } else delete x.conf; }
     else x[f] = v.trim().slice(0, 40) || x[f];

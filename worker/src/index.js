@@ -420,6 +420,8 @@ async function postDiscord(env, db, id, status, hook, cfg, origin, podium) {
   const fields = [["reg", "qualifying", "remind"].includes(status) && (/\d/.test(x.start || "") ? { name: "Старт", value: String(x.start).slice(0, 100) + " МСК", inline: true } : x.dates && { name: "Даты", value: String(x.dates).slice(0, 100), inline: true }),
     ...(status === "done" ? [...(Array.isArray(pod.p) ? pod.p.slice(0, 3) : []).map((z, i) => cell(z) && { name: ["🥇 1 место", "🥈 2 место", "🥉 3 место"][i], value: cell(z), inline: true }),
       cell(pod.t) && { name: "🏁 Лучшая команда", value: cell(pod.t), inline: false }] : []),
+    status === "qualifying" && /\d/.test(x.qStart || "") && { name: "Квалификация", value: String(x.qStart).slice(0, 100) + " МСК", inline: true },
+    status === "top32" && /\d/.test(x.tStart || "") && { name: "Старт топ-32", value: String(x.tStart).slice(0, 100) + " МСК", inline: true },
     { name: "Сайт", value: site, inline: false },
     ["top32", "remind"].includes(status) && twitch && { name: "Трансляция", value: `https://www.twitch.tv/${twitch}`, inline: false }].filter(Boolean);
   const color = /^#[0-9a-f]{6}$/i.test(own?.color || "") ? parseInt(own.color.slice(1), 16) : a.color;
@@ -625,7 +627,7 @@ function stageLabel(db, id) {
   return x ? `${s ? s + " · " : ""}этап ${x.stage} (${x.track})` : `этап #${id}`;
 }
 // a stage's status is logged from the live state (it is mirrored in db.tours)
-const TOUR_F = { start: "старт", track: "трасса", conf: "конфиг", max: "мест", maxTeams: "команд" };
+const TOUR_F = { start: "старт", qStart: "квалификация", tStart: "топ-32", track: "трасса", conf: "конфиг", max: "мест", maxTeams: "команд" };
 const DB_SECTIONS = { teams: "команды", sponsors: "спонсоры", protests: "протесты", sanctions: "санкции", rules: "регламент", trackDiff: "трассы", trackSet: "трассы",
   achievements: "список достижений", teamEntries: "заявки команд на этапы", reqStatus: "запросы на состав", teamNames: "названия команд", teamFounders: "основатели команд", testPilots: "тестовые пилоты" };
 async function dbChanges(env, a = {}, b = {}) {

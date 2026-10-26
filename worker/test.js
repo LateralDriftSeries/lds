@@ -256,6 +256,12 @@ ok((await call("/api/discord/send", { method: "POST", token: owner, body: JSON.s
 const sent = await call("/api/discord/send", { method: "POST", token: owner, body: JSON.stringify({ status: "reg", tour: 902 }) });
 await new Promise(z => setTimeout(z, 300));
 ok(sent.ok && hooks.length === nSend + 1 && hooks.at(-1).embeds[0].title.includes("Reused Id"), "the head admin sends a post by hand");
+// the qualifying and top-32 posts carry their own start times
+await call("/api/db", { method: "PUT", token: owner, body: JSON.stringify({ db: { tours: [{ id: 902, season: 9, stage: 3, track: "Reused Id", status: "reg", qStart: "01.11.2026 18:00", tStart: "02.11.2026 19:30" }], seasons: [{ id: 9, name: "S9" }] } }) });
+await call("/api/discord/send", { method: "POST", token: owner, body: JSON.stringify({ status: "qualifying", tour: 902 }) });
+await call("/api/discord/send", { method: "POST", token: owner, body: JSON.stringify({ status: "top32", tour: 902 }) });
+await new Promise(z => setTimeout(z, 300));
+ok(hooks.at(-2).embeds[0].fields.some(z => z.name === "Квалификация" && z.value === "01.11.2026 18:00 МСК") && hooks.at(-1).embeds[0].fields.some(z => z.name === "Старт топ-32" && z.value === "02.11.2026 19:30 МСК"), "qualifying and top-32 posts show their start times");
 hookSrv.close();
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");
