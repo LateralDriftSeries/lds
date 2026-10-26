@@ -249,6 +249,13 @@ ok(hooks.length === n0 + 1 && hooks.at(-1).embeds[0].title.includes("Старт 
 const log = await (await call("/api/log", { token: owner })).json();
 ok(log.items.some(i => /статус Топ-32 → Завершён/.test(i.what) && i.who === "Test Owner") && log.items.some(i => i.what.startsWith("Discord:")) && log.items.some(i => i.what.startsWith("Номер ")), "the log records who changed what");
 ok((await call("/api/log", { token: pilot })).status === 403, "pilots can't read the log");
+// a post sent by hand: admins only, goes out even after the automatic one
+const nSend = hooks.length;
+ok((await call("/api/discord/send", { method: "POST", token: pilot, body: JSON.stringify({ status: "reg", tour: 902 }) })).status === 403, "a pilot can't send posts by hand");
+ok((await call("/api/discord/send", { method: "POST", token: owner, body: JSON.stringify({ status: "nope", tour: 902 }) })).status === 400, "an unknown post is refused");
+const sent = await call("/api/discord/send", { method: "POST", token: owner, body: JSON.stringify({ status: "reg", tour: 902 }) });
+await new Promise(z => setTimeout(z, 300));
+ok(sent.ok && hooks.length === nSend + 1 && hooks.at(-1).embeds[0].title.includes("Reused Id"), "the head admin sends a post by hand");
 hookSrv.close();
 // CORS only for the site
 ok((await call("/api/state")).headers.get("access-control-allow-origin") === SITE, "CORS for the site");

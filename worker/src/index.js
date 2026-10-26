@@ -40,6 +40,7 @@ async function route(req, env, url) {
   if (m === "PUT" && p === "/api/db") return putDb(req, env, await requireRole(req, env, ["owner", "admin", "tech"]));
   if (m === "PUT" && p === "/api/live") return putLive(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer"]));
   if (m === "POST" && p === "/api/ready") return postReady(req, env, await requireRole(req, env, ["owner", "admin", "judge", "streamer", "marshal"]));
+  if (m === "POST" && p === "/api/discord/send") return sendDiscord(req, env, await requireRole(req, env, ["owner", "admin"]));
   if (p === "/api/discord") {
     const { sid } = await requireRole(req, env, ["owner", "admin"]);
     if (m === "GET") return getDiscord(env);
@@ -380,6 +381,18 @@ async function announce(env, before, after, origin, podiums = {}) {
   await kvSet(env, "announced", seen);
   await Promise.allSettled(posts.filter(([, s]) => cfg?.[s]?.off !== true).map(([k, s]) => postDiscord(env, db, k, s, hook, cfg, origin, podiums[k])));
 }
+// a post sent by hand from the admin: any post, any stage, now; it doesn't count as the automatic one (that still goes out once)
+async function sendDiscord(req, env, { sid }) {
+  const body = await readJson(req, 1_000), status = String(body.status || ""), id = String(body.tour ?? "");
+  if (!ANNOUNCE[status]) throw new HttpError(400, "no such post");
+  const [db, live, cfg] = await Promise.all([kvGet(env, "db"), kvGet(env, "live"), kvGet(env, "discord")]), hook = cfg?.hook || env.DISCORD_WEBHOOK;
+  if (!hook) throw new HttpError(409, "no webhook");
+  if (!(db?.tours || []).some(z => String(z.id) === id)) throw new HttpError(404, "no such stage");
+  const r = await postDiscord(env, db, id, status, hook, cfg, new URL(req.url).origin, live?.podiums?.[id]).catch(() => null);
+  if (!r?.ok) throw new HttpError(502, "discord refused");
+  await logIt(env, sid, [`Discord: «${cfg?.[status]?.title || ANNOUNCE[status].title}» отправлено вручную (${stageLabel(db, Number(id))})`]);
+  return json({ ok: true });
+}
 // the start is "DD.MM.YYYY HH:MM" Moscow time (UTC+3)
 const startMs = s => { const m = /(\d{2})\.(\d{2})\.(\d{4})\s+(\d{1,2}):(\d{2})/.exec(s || ""); return m ? Date.UTC(+m[3], +m[2] - 1, +m[1], +m[4] - 3, +m[5]) : 0; };
 // one reminder per stage and start time, between 60 and 30 minutes before it (a start set closer than that gets none)
@@ -414,7 +427,7 @@ async function postDiscord(env, db, id, status, hook, cfg, origin, podium) {
     ...(own?.img === true ? { image: { url: `${origin}/api/discord/img/${status}?v=${own.at || 0}` } } : {}), fields, footer: { text: `Lateral Drift Series${season ? " · " + season : ""}` }, timestamp: new Date().toISOString() };
   // a ping only when the admin switched it on for this post; otherwise none, so a track or season name can never ping anyone
   const ping = own?.ping === true;
-  await fetch(hook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: cfg?.name || "LDS", ...(ping ? { content: "@everyone" } : {}), embeds: [embed], allowed_mentions: { parse: ping ? ["everyone"] : [] } }) });
+  return fetch(hook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: cfg?.name || "LDS", ...(ping ? { content: "@everyone" } : {}), embeds: [embed], allowed_mentions: { parse: ping ? ["everyone"] : [] } }) });
 }
 
 const HOOK_RE = /^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/api\/webhooks\/\d+\/[\w-]+$/;
