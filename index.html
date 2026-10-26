@@ -1885,6 +1885,7 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .rimg-row img { flex: 1 1 160px; min-width: 0; max-width: 100%; max-height: 460px; object-fit: contain; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2) }
 .rimg-row img:only-child { flex: 0 1 auto }
 .md-file { cursor: pointer }
+.swap-row { gap: .6rem; flex-wrap: wrap } .swap-row .field { flex: 1 1 11rem; width: auto }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2243,7 +2244,7 @@ const I18N = {
     rosterReqs: "Запросы на изменение состава", nameReqs: "Запросы на смену названия", noReqs: "Запросов нет.", reqApprove: "Одобрить", reqReject: "Отклонить", reqNoEntry: "У команды нет заявки на этот этап.",
     stageTeamEntries: "Команды этапа", stageTeamEntriesNote: "В командном зачёте участвуют только зарегистрированные команды, в порядке подачи заявок.", maxTeamsStageL: "Команд на этап", teamStageMaxL: "Пилотов в заявке команды", critAngle: "Угол", critLine: "Траектория", critStyle: "Стиль", sumL: "Сумма", sectionsN: "разд.", byeConfirm: "Подтвердить проход", brConfirm: "Подтвердить: дальше проходит", brWaiting: "Судьи решили. Подтвердите, чтобы пилот прошёл по сетке.", beat: "победил", thirdPlace: "Матч за 3 место", grpR1: "Полуфиналы", grpR2: "Финал", playoff: "Плей-офф", grpAdvance: "2 лучших — в плей-офф", yourBrand: "Ваш бренд", becomePartner: "Стать партнёром", spCaption: "Подпись", spLogoAdd: "+ Логотип", spLogoChange: "Сменить логотип",
     spHint: "Спонсоры показываются на главной под лидерами сезона. Логотип: PNG, JPG или WebP до 5 МБ, он впишется в квадрат целиком.", bracketTitle: "Сетка топ-32", brPreview: "Предварительно — по текущей квалификации", bye: "Без соперника", brSetWin: "Отметить победителя",
-    brRecorded: "Результат записан в сетку", brPairs: "Пары сетки", brReseed: "Пересобрать из квалификации", grpFromBr: "Раздать группы по сетке", grpFromBrSure: "Заменить группы?", grpFromBrHint: "Группы A–D по четвертям сетки топ-32 (по 4 пары). Группы, выданные вручную, заменятся", brEditHint: "Сетка заполняется сама из судейского острова. Здесь можно исправить ошибку: ✓ отмечает победителя пары, повторный клик снимает.",
+    brRecorded: "Результат записан в сетку", brPairs: "Пары сетки", brReseed: "Пересобрать из квалификации", grpFromBr: "Раздать группы по сетке", swapTitle: "Поменять пилотов местами", swapHint: "Пилоты обмениваются на этом этапе всем: оценками обеих попыток, местом в сетке топ-32 и победами в парах, группой. У завершённого этапа пересчитываются подиум и очки рейтинга.", swapGo: "Поменять местами", swapSure: "Точно поменять?", swapPick: "Выберите двух разных пилотов", grpFromBrSure: "Заменить группы?", grpFromBrHint: "Группы A–D по четвертям сетки топ-32 (по 4 пары). Группы, выданные вручную, заменятся", brEditHint: "Сетка заполняется сама из судейского острова. Здесь можно исправить ошибку: ✓ отмечает победителя пары, повторный клик снимает.",
     stageFirst: "Лидер этапа", stageNote: "Сумма очков за все завершённые этапы активного сезона: место в сетке топ-32, бонус за квалификацию и коэффициент конфига. Очки этапа добавляются, когда он получает статус «Завершён».", stagesDone: "Завершено этапов",
     stageTeamNote: "Сумма очков команд за все завершённые этапы активного сезона: на каждом этапе два лучших пилота из топ-32 и бонус за квалификацию.",
     stPending: "Очки начислятся, когда этап получит статус «Завершён».", trkK: "Коэффициент очков",
@@ -2400,7 +2401,7 @@ const I18N = {
     rosterReqs: "Line-up change requests", nameReqs: "Name change requests", noReqs: "No requests.", reqApprove: "Approve", reqReject: "Reject", reqNoEntry: "The team has no entry for this round.",
     stageTeamEntries: "Round teams", stageTeamEntriesNote: "Only entered teams take part in the team standings, in filing order.", maxTeamsStageL: "Teams per round", teamStageMaxL: "Drivers per team entry", critAngle: "Angle", critLine: "Line", critStyle: "Style", sumL: "Total", sectionsN: "sections", byeConfirm: "Confirm advance", brConfirm: "Confirm: advancing —", brWaiting: "The judges have decided. Confirm to move the driver on in the bracket.", beat: "beat", thirdPlace: "3rd place match", grpR1: "Semifinals", grpR2: "Final", playoff: "Play-off", grpAdvance: "Top 2 go to the play-off", yourBrand: "Your brand", becomePartner: "Become a partner", spCaption: "Caption", spLogoAdd: "+ Logo", spLogoChange: "Change logo",
     spHint: "Sponsors show on the home page under the season leaders. Logo: PNG, JPG or WebP up to 5 MB, fitted whole into a square.", bracketTitle: "Top 32 bracket", brPreview: "Preview — from the current qualifying", bye: "Bye", brSetWin: "Mark the winner",
-    brRecorded: "Result saved to the bracket", brPairs: "Bracket pairs", brReseed: "Rebuild from qualifying", grpFromBr: "Groups from the bracket", grpFromBrSure: "Replace the groups?", grpFromBrHint: "Groups A–D from the quarters of the top-32 bracket (4 pairs each). Groups set by hand get replaced", brEditHint: "The bracket fills itself from the judges’ island. Fix mistakes here: ✓ marks a pair’s winner, a second click clears it.",
+    brRecorded: "Result saved to the bracket", brPairs: "Bracket pairs", brReseed: "Rebuild from qualifying", grpFromBr: "Groups from the bracket", swapTitle: "Swap two drivers", swapHint: "The two drivers swap everything in this round: both runs, the top-32 bracket slot and the pairs won, the group. A finished round's podium and rating points are redone.", swapGo: "Swap", swapSure: "Swap for sure?", swapPick: "Pick two different drivers", grpFromBrSure: "Replace the groups?", grpFromBrHint: "Groups A–D from the quarters of the top-32 bracket (4 pairs each). Groups set by hand get replaced", brEditHint: "The bracket fills itself from the judges’ island. Fix mistakes here: ✓ marks a pair’s winner, a second click clears it.",
     stageFirst: "Round leader", stageNote: "Points from every finished round of the active season added up: top-32 place, qualifying bonus and the config factor. A round's points are added once it is marked Finished.", stagesDone: "Rounds finished",
     stageTeamNote: "Team points from every finished round of the active season added up: per round, the two best top-32 drivers and the qualifying bonus.",
     stPending: "Points are counted once the round is marked Finished.", trkK: "Points factor",
@@ -2633,7 +2634,7 @@ const isOwner = () => !!S.user && isOwnerName(S.user.name);
 const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", marshal: "roleMarshal", tech: "roleTech" }[r] || "pilot");
 // which permission an admin-panel edit needs, by the first part of its data-a / its data-act
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
-const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", grpFromBr: "edit", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
+const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", grpFromBr: "edit", swapPilots: "edit", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
   giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spMove: "edit", faqAdd: "edit", htLang: "edit", faqMove: "edit", faqDel: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
@@ -3079,6 +3080,17 @@ function brRecord(tourId, p1, p2, winner) {
 // groups come from the bracket once it freezes (the stage enters its top 32): each quarter of the 32 slots (4 pairs) is a group A–D;
 // they stay as given until the final, apart from changes made by hand in the stage's pilot list
 const groupsFromBracket = x => Object.fromEntries((brOf(x)?.slots || slotsOf(x)).flatMap((n, k) => n ? [[n, GROUPS[k >> 3]]] : []));
+// one pilot takes the other's place in a stage: both runs (judges' parts too), the bracket slot and every pair won, the group; a finished stage's podium is redone
+let swapSel = { a: "", b: "" };
+function swapPilots(x, a, b) {
+  const sw = n => n === a ? b : n === b ? a : n, ka = `${x.id}:${a}`, kb = `${x.id}:${b}`, sa = S.scores[ka], sb = S.scores[kb];
+  if (sb) S.scores[ka] = sb; else delete S.scores[ka];
+  if (sa) S.scores[kb] = sa; else delete S.scores[kb];
+  const br = brOf(x);
+  if (br) S.brackets = { ...S.brackets, [x.id]: { ...br, ...(br.slots ? { slots: br.slots.map(sw) } : {}), w: Object.fromEntries(Object.entries(br.w || {}).map(([k, v]) => [k, sw(v)])) } };
+  if (x.groups) { const ga = x.groups[a], gb = x.groups[b]; x.groups = { ...x.groups }; if (gb) x.groups[a] = gb; else delete x.groups[a]; if (ga) x.groups[b] = ga; else delete x.groups[b]; }
+  if (x.status === "done") (S.podiums ??= {})[x.id] = podiumOf(x);
+}
 function brSet(x, key, winner) {
   S.brackets = { ...S.brackets, [x.id]: { slots: slotsOf(x), w: { ...brOf(x)?.w } } };
   if (winner) S.brackets[x.id].w[key] = winner; else delete S.brackets[x.id].w[key];
@@ -4127,7 +4139,11 @@ function adminTour(x) {
 </div></div>`;
   if (aSub === "qual") {
     const inp = (p, i, k) => { const v = scoreOf(x, p, i, k); return `<input class="ai" type="number" min="0" max="100" step="0.1" data-a="score:${x.id}:${k}:${i}" value="${v ?? ""}" aria-label="${esc(p.name)} ${k + 1}">`; };
-    body = `<p class="note">${t("qualHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("try1")}</th><th>${t("try2")}</th></tr></thead><tbody>${
+    const opts = k => `<option value="">—</option>${stageRows(x).map(([p]) => p.name).sort((m, n) => m.localeCompare(n)).map(n => `<option ${swapSel[k] === n ? "selected" : ""}>${esc(n)}</option>`).join("")}`;
+    body = `${can("edit") ? `<div class="box panel"><div class="stack" style="gap:.3rem"><h3>${t("swapTitle")}</h3><p class="note" style="margin:0">${t("swapHint")}</p></div>
+      <div class="row swap-row"><select class="field" data-swap="a" aria-label="${t("pilot")} 1">${opts("a")}</select><span aria-hidden="true">⇄</span><select class="field" data-swap="b" aria-label="${t("pilot")} 2">${opts("b")}</select>
+        <button class="btn line sm" data-act="swapPilots" data-id="${x.id}">${pending === `sw${x.id}` ? t("swapSure") : t("swapGo")}</button></div></div>` : ""}
+    <p class="note">${t("qualHint")}</p><div class="tablebox panel"><table><thead><tr><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("try1")}</th><th>${t("try2")}</th></tr></thead><tbody>${
       stageRows(x).map(([p, i]) => `<tr><td class="n">${p.num ?? "—"}</td><td>${esc(p.name)}</td><td>${inp(p, i, 0)}</td><td>${inp(p, i, 1)}</td></tr>`).join("")}</tbody></table></div>`;
   }
   if (aSub === "pilots") { const inRows = new Set(stageRows(x).map(([p]) => p.name)), gm = gmaxOf(x);
@@ -5210,7 +5226,7 @@ document.addEventListener("click", e => {
   if (!el) return;
   if (el.matches("tr") && e.target.closest("select, input, label")) return; // inline editors in a table row don't open the row
   if (ACT_PERM[el.dataset.act] && !can(ACT_PERM[el.dataset.act])) return;
-  if (!["grpFromBr", "faqDel", "delTeam", "resetDemo", "delSeason", "delSponsor", "dcHookDel", "trkConfDel", "trkPartDel", "trkDel", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "founderPass", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
+  if (!["swapPilots", "grpFromBr", "faqDel", "delTeam", "resetDemo", "delSeason", "delSponsor", "dcHookDel", "trkConfDel", "trkPartDel", "trkDel", "delAch", "clearScores", "ruleDel", "docDel", "rulesReset", "delStage", "kick", "delTest", "brReseed", "teamRemove", "founderPass", "grantAdmin", "revokeAdmin"].includes(el.dataset.act)) pending = null;
   if (el.dataset.tab || el.dataset.season || el.dataset.qt || el.dataset.sub) admAnim = true;
   if (el.dataset.tab === "log") LOG = null; // opening the log reads it fresh
   if (el.dataset.tab) { aTab = el.dataset.tab; aSeason = 0; aTour = 0; adminMsg = ""; return render(); }
@@ -5292,6 +5308,9 @@ document.addEventListener("click", e => {
     brConfirm: () => { const b = bcState(), res = judgeResult(b.votes); if (b.tour !== id || (res !== "leader" && res !== "chaser")) return;
       brRecord(id, b.leader, b.chaser, b[res]); S.bc = { ...b, decidedAt: Date.now() }; save(); }, // the decision stays on air, then the votes clear
     brWin: () => { const x = TOURS.find(z => z.id === id); if (!x) return; brSet(x, el.dataset.v, brOf(x)?.w?.[el.dataset.v] === el.dataset.name ? null : el.dataset.name); save(); toast(t("saved")); },
+    swapPilots: () => { const x = TOURS.find(z => z.id === id), { a, b } = swapSel; if (!x) return;
+      if (!a || !b || a === b) { adminMsg = t("swapPick"); return render(); }
+      confirmTwice(`sw${id}`, () => { swapPilots(x, a, b); swapSel = { a: "", b: "" }; toast(t("saved")); dbSave(); }); },
     grpFromBr: () => { const x = TOURS.find(z => z.id === id); if (!x) return; confirmTwice(`gb${id}`, () => { x.groups = groupsFromBracket(x); toast(t("saved")); dbSave(); }); },
     brReseed: () => { const x = TOURS.find(z => z.id === id); if (!x) return; confirmTwice(`br${id}`, () => { S.brackets = { ...S.brackets, [id]: { w: {} } }; S.brackets[id].slots = slotsOf(x); save(); }); },
     toIsland: () => { const x = TOURS.find(z => z.id === id); if (!x) return; aTab = "seasons"; aSeason = x.season; aTour = id; aSub = "judge"; location.hash = "#admin"; },
@@ -5480,6 +5499,7 @@ document.addEventListener("change", e => {
     DC[k] = { ...DC[k], ...(f === "on" ? { off: !v } : f === "ping" ? { ping: v } : f === "color" ? { color: v } : { [f]: v.slice(0, { text: 1500, title: 100, link: 40 }[f] || 40) }) }; return dcSave(); }
   if (e.target.dataset.dcimg && isAdmin() && DC) { const k = e.target.dataset.dcimg, f = e.target.files?.[0];
     return f && readBanner(f, blob => dcImgSend(k, blob), big => toast(t(big ? "dcImgBig" : "logoBad"))); }
+  if (e.target.dataset.swap) { swapSel[e.target.dataset.swap] = e.target.value; return; }
   if (e.target.matches?.("[data-rimg]") && can("rules")) { const f = e.target.files?.[0], ta = document.getElementById("rule-ta"); e.target.value = "";
     const put = id => { if (!ta) return; const a = ta.selectionStart, ls = ta.value.lastIndexOf("\n", a - 1) + 1, le = (ta.value.indexOf("\n", a) + 1 || ta.value.length + 1) - 1, line = ta.value.slice(ls, le);
       if (/^!img(\s+[\w-]{1,40})+$/.test(line.trim())) ta.setRangeText(`${line.trimEnd()} ${id}`, ls, le, "end");
