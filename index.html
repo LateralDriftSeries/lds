@@ -616,7 +616,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
   --r: 6px; --ease: cubic-bezier(.2, .8, .2, 1);
 }
 body { font: 400 16px/1.65 var(--f-body); letter-spacing: -.003em; background: var(--bg) }
-.wrap { max-width: 1200px; padding-inline: 24px }
+.wrap { max-width: none; padding-inline: clamp(24px, 3vw, 64px) }
 @media (max-width: 640px) { .wrap { padding-inline: 16px } }
 h1, h2 { font-family: var(--f-display); font-weight: 500; letter-spacing: -.035em; line-height: 1.04 }
 h2 { font-size: clamp(1.7rem, 3.2vw, 2.5rem) }
@@ -1888,6 +1888,13 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .swap-row { gap: .6rem; flex-wrap: wrap } .swap-row .field { flex: 1 1 11rem; width: auto }
 .dc-send { flex: none; padding-inline: .7rem }
 .stage-times { gap: .5rem; flex-wrap: wrap; margin-top: .3rem } .stage-times .chip4 { gap: .4rem }
+/* stage page: track map and briefing video at the top, side by side on wide screens */
+.stage-media { display: grid; gap: 1rem; margin-bottom: 1.4rem } .stage-media.two { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+.sm-box { margin: 0; display: grid; gap: .6rem; align-content: start; padding: 1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel) }
+.sm-box img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; border-radius: 10px; background: #0b0b0d }
+.sm-video { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000 } .sm-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0 }
+.sm-thumb { width: 72px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line) }
+@media (max-width: 760px) { .stage-media.two { grid-template-columns: minmax(0, 1fr) } }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2182,7 +2189,7 @@ const I18N = {
     soon: "Скоро", reg: "Регистрация", qualifying: "Квалификация", top32: "Топ 32", top16: "Топ 16", top8: "Топ 8", top4: "Топ 4", final: "Финал", done: "Завершён", stage: "Этап", details: "Подробнее",
     archive: "Архив", season: "Сезон", currentStage: "Текущий этап", stStand: "Зачёт этапа", stStandNote: "Очки этапа, как в рейтинге: пилоты и заявленные команды.", stPersonal: "Личный зачёт", stTeam: "Командный зачёт",
     stageTeams: "Командный зачёт этапа", stageTeamsNote: "Сумма двух лучших квалификационных оценок пилотов команды.",
-    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
+    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", trackMap: "Схема трассы", briefVideo: "Видео брифинга", briefOpen: "Смотреть брифинг", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
     pilotsHint: "Снимите галочку, чтобы убрать пилота из этапа: он пропадёт из сетки квалификации.", inStage: "Участвует",
     teamsHint: "Снимите галочку, если команда не подала командную регистрацию на этап — она не попадёт в командный зачёт этапа.", teamScore: "Командный зачёт", onStage: "Пилотов на этапе",
     adminPanel: "Админка", aSeasons: "Сезоны и этапы", aSanctions: "Пилоты и санкции", aSponsors: "Спонсоры", aProtests: "Протесты", aSettings: "Настройки", broadcastBtn: "Пульт трансляции ↗",
@@ -2339,7 +2346,7 @@ const I18N = {
     soon: "Soon", reg: "Registration", qualifying: "Qualifying", top32: "Top 32", top16: "Top 16", top8: "Top 8", top4: "Top 4", final: "Final", done: "Finished", stage: "Round", details: "Details",
     archive: "Archive", season: "Season", currentStage: "Current round", stStand: "Round standings", stStandNote: "Round points as in the rating: drivers and entered teams.", stPersonal: "Drivers", stTeam: "Teams",
     stageTeams: "Round team standings", stageTeamsNote: "Sum of the team's two best qualifying scores.",
-    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
+    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", trackMap: "Track map", briefVideo: "Briefing video", briefOpen: "Watch the briefing", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
     pilotsHint: "Untick a driver to remove them from the round: they disappear from the qualifying grid.", inStage: "Entered",
     teamsHint: "Untick a team that did not file a team entry for the round, so it stays out of the round's team standings.", teamScore: "Team standings", onStage: "Drivers in round",
     adminPanel: "Admin", aSeasons: "Seasons & rounds", aSanctions: "Drivers & sanctions", aSponsors: "Sponsors", aProtests: "Protests", aSettings: "Settings", broadcastBtn: "Broadcast control ↗",
@@ -2636,7 +2643,7 @@ const isOwner = () => !!S.user && isOwnerName(S.user.name);
 const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", marshal: "roleMarshal", tech: "roleTech" }[r] || "pilot");
 // which permission an admin-panel edit needs, by the first part of its data-a / its data-act
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
-const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", grpFromBr: "edit", swapPilots: "edit", dcSend: "edit", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
+const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", grpFromBr: "edit", swapPilots: "edit", dcSend: "edit", stImgDel: "edit", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
   giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spMove: "edit", faqAdd: "edit", htLang: "edit", faqMove: "edit", faqDel: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
@@ -3135,6 +3142,7 @@ function tournament(id) {
                         : `<button class="btn" data-act="reg" data-id="${id}">${t("register")}</button>`;
   }
   return `<a class="back" href="#tournaments">${t("back")}</a>
+  ${stageMedia(x)}
   <div class="head"><div class="stack"><span class="label">${x.season !== curSeason() ? `${t("archive")} · ${esc(seasonName(x.season))} · ` : ""}${t("stage")} ${x.stage} / ${seasonTours(x.season).length} · <span class="mono">${esc(when(x))}</span></span><h1 class="r-title">${esc(x.track)}</h1><div class="row" style="gap:.8rem">${tourPill(x)}${x.conf ? `<span class="pill plain">${esc(confShow(x))}</span>` : ""}<a class="btn text sm" href="#tracks">${t("trackInfo")} ↗</a></div>
     ${[["qStart", "qualL"], ["tStart", "top32L"]].some(([k]) => x[k]) ? `<div class="row stage-times">${[["qStart", "qualL"], ["tStart", "top32L"]].filter(([k]) => x[k]).map(([k, l]) => `<span class="chip4"><span class="label">${t(l)}</span> <span class="mono">${esc(x[k].replace(/\s+/, " · "))} ${t("msk")}</span></span>`).join("")}</div>` : ""}</div>
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
@@ -4139,6 +4147,10 @@ function adminTour(x) {
       <div class="cols" style="gap:1rem">${[["start", "startAt"], ["qStart", "qStartAt"], ["tStart", "tStartAt"]].map(([k, l]) =>
         `<label class="fieldlabel">${t(l)} · ${t("msk")}<input class="field" type="datetime-local" data-a="tour:${x.id}:${k}" value="${startOf({ start: x[k] })?.slice(0, 16) || ""}"></label>`).join("")}</div>
       <p class="note" style="margin:0">${t("timesHint")}</p>
+      <div class="cols" style="gap:1rem"><div class="fieldlabel">${t("trackMap")}<div class="row" style="gap:.6rem">${x.trackImg ? `<img class="sm-thumb" src="${esc(ruleImgSrc(x.trackImg))}" alt="">` : ""}
+          <label class="btn line sm">${t(x.trackImg ? "spLogoChange" : "mdImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-stimg="${x.id}" hidden></label>
+          ${x.trackImg ? `<button class="btn text sm danger" data-act="stImgDel" data-id="${x.id}">${t("removeLogo")}</button>` : ""}</div></div>
+        <label class="fieldlabel">${t("briefVideo")}<input class="field" data-a="tour:${x.id}:brief" value="${esc(x.brief || "")}" maxlength="200" placeholder="https://youtu.be/… · https://twitch.tv/videos/…"></label></div>
       <div class="cols" style="gap:1rem"><label class="fieldlabel">${t("seatsL")}<input class="field" type="number" min="2" max="256" data-a="tour:${x.id}:max" value="${stageMax(x)}"></label>
       <label class="fieldlabel">${t("maxTeamsStageL")}<input class="field" type="number" min="1" max="64" data-a="tour:${x.id}:maxTeams" value="${stageTeamsMax(x)}"></label></div>
 </div></div>`;
@@ -4437,6 +4449,7 @@ function adminEdit([kind, id, f, k], v) {
       if (v === "done") (S.podiums ??= {})[x.id] = podiumOf(x); } // the bracket freezes from the qualifying as entered, before the status moves on
     else if (f === "max") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) x.max = n; else return render(); }
     else if (f === "maxTeams") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) x.maxTeams = n; else return render(); }
+    else if (f === "brief") { const u = v.trim().slice(0, 200); if (u && !/^https?:\/\//i.test(u)) { adminMsg = t("urlBad"); return render(); } if (u) x.brief = u; else delete x.brief; }
     else if (["start", "qStart", "tStart"].includes(f)) { // the picker gives "YYYY-MM-DDTHH:MM"; stored as "DD.MM.YYYY HH:MM" (Moscow); an emptied field clears it
       if (!v) { delete x[f]; if (f === "start") { x.dates = ""; delete x.at; } }
       else { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v); if (!m) return render();
@@ -4831,6 +4844,19 @@ const STOPPED = ["soon", "reg", "done"];
 const regKey = (x, p, i) => p.mine ? S.regAt?.[x.id] ?? Infinity : HOSTED ? p.regAt?.[x.id] ?? Infinity : i;
 const regRows = x => stageRows(x).sort(([p, i], [q, j]) => regKey(x, p, i) - regKey(x, q, j));
 // qualifying order: the best run, then (equal best) the other run, then who registered first; no run counts as -1
+// briefing video: YouTube (watch, youtu.be, shorts, live) or a Twitch recording, embedded; any other link opens in a new tab
+const videoEmbed = url => { const u = String(url || "");
+  const yt = u.match(/^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/)|youtu\.be\/)([\w-]{11})/);
+  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
+  const tw = u.match(/^https?:\/\/(?:www\.)?twitch\.tv\/videos\/(\d{5,})/);
+  if (tw) return `https://player.twitch.tv/?video=${tw[1]}&parent=${encodeURIComponent(location.hostname)}&autoplay=false`;
+  return ""; };
+console.assert(videoEmbed("https://youtu.be/dQw4w9WgXcQ").endsWith("/embed/dQw4w9WgXcQ") && videoEmbed("https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=5").endsWith("dQw4w9WgXcQ") && !videoEmbed("javascript:alert(1)"), "videoEmbed");
+const stageMedia = x => { const img = x.trackImg && `<figure class="sm-box"><span class="label">${t("trackMap")}</span><a href="${esc(ruleImgSrc(x.trackImg))}" target="_blank" rel="noopener"><img src="${esc(ruleImgSrc(x.trackImg))}" alt="${esc(t("trackMap"))} ${esc(x.track)}" loading="lazy"></a></figure>`;
+  const emb = videoEmbed(x.brief), vid = x.brief && `<figure class="sm-box"><span class="label">${t("briefVideo")}</span>${emb
+    ? `<div class="sm-video"><iframe src="${esc(emb)}" title="${esc(t("briefVideo"))}" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
+    : `<a class="btn line" href="${esc(safeUrl(x.brief))}" target="_blank" rel="noopener">${t("briefOpen")} ↗</a>`}</figure>`;
+  return img || vid ? `<section class="stage-media ${img && vid ? "two" : ""}">${img || ""}${vid || ""}</section>` : ""; };
 const runKey = (a, b) => ({ best: Math.max(a ?? -1, b ?? -1), second: Math.min(a ?? -1, b ?? -1) });
 const qualCmp = x => (p, q) => q.best - p.best || q.second - p.second || regKey(x, p, p.i) - regKey(x, q, q.i);
 const bcRows = x => stageRows(x).map(([p, i]) => { const a = scoreOf(x, p, i, 0), b = scoreOf(x, p, i, 1); return { ...p, i, a, b, ...runKey(a, b) }; })
@@ -5316,6 +5342,7 @@ document.addEventListener("click", e => {
     brConfirm: () => { const b = bcState(), res = judgeResult(b.votes); if (b.tour !== id || (res !== "leader" && res !== "chaser")) return;
       brRecord(id, b.leader, b.chaser, b[res]); S.bc = { ...b, decidedAt: Date.now() }; save(); }, // the decision stays on air, then the votes clear
     brWin: () => { const x = TOURS.find(z => z.id === id); if (!x) return; brSet(x, el.dataset.v, brOf(x)?.w?.[el.dataset.v] === el.dataset.name ? null : el.dataset.name); save(); toast(t("saved")); },
+    stImgDel: () => { const x = TOURS.find(z => z.id === id); if (!x) return; delete x.trackImg; dbSave(); },
     swapPilots: () => { const x = TOURS.find(z => z.id === id), { a, b } = swapSel; if (!x) return;
       if (!a || !b || a === b) { adminMsg = t("swapPick"); return render(); }
       confirmTwice(`sw${id}`, () => { swapPilots(x, a, b); swapSel = { a: "", b: "" }; toast(t("saved")); dbSave(); }); },
@@ -5511,6 +5538,12 @@ document.addEventListener("change", e => {
     DC[k] = { ...DC[k], ...(f === "on" ? { off: !v } : f === "ping" ? { ping: v } : f === "color" ? { color: v } : { [f]: v.slice(0, { text: 1500, title: 100, link: 40 }[f] || 40) }) }; return dcSave(); }
   if (e.target.dataset.dcimg && isAdmin() && DC) { const k = e.target.dataset.dcimg, f = e.target.files?.[0];
     return f && readBanner(f, blob => dcImgSend(k, blob), big => toast(t(big ? "dcImgBig" : "logoBad"))); }
+  if (e.target.dataset.stimg && can("edit")) { const x = TOURS.find(z => z.id === +e.target.dataset.stimg), f = e.target.files?.[0]; e.target.value = "";
+    return x && f && readBanner(f, blob => {
+      if (!HOSTED) { const r = new FileReader(); r.onload = () => { const id = "d" + Date.now().toString(36); RULE_IMGS[id] = r.result; x.trackImg = id; dbSave(); }; return r.readAsDataURL(blob); }
+      fetch(`${API}/api/rules/img`, { method: "POST", headers: { authorization: "Bearer " + token, "content-type": blob.type }, body: blob })
+        .then(r => r.ok ? r.json() : Promise.reject(new Error(String(r.status)))).then(r => { x.trackImg = r.id; toast(t("saved")); dbSave(); }, e => toast(t(e.message === "413" ? "dcImgBig" : "netErr")));
+    }, big => toast(t(big ? "dcImgBig" : "logoBad"))); }
   if (e.target.matches?.("[data-dcstage]")) { dcTourId = +e.target.value; return render(); }
   if (e.target.dataset.swap) { swapSel[e.target.dataset.swap] = e.target.value; return; }
   if (e.target.matches?.("[data-rimg]") && can("rules")) { const f = e.target.files?.[0], ta = document.getElementById("rule-ta"); e.target.value = "";
