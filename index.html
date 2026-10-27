@@ -1902,6 +1902,7 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .st-form { gap: 1.1rem } .st-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 1rem; align-items: end } .st-row .st-wide { grid-column: span 2 }
 @media (max-width: 640px) { .st-row .st-wide { grid-column: auto } }
 .pp-col { display: grid; gap: 1.2rem; align-content: start; min-width: 0 }
+.tm-sub { margin-top: 1.4rem; padding-top: 1.4rem; border-top: 1px solid var(--line) } .tm-sub-h { margin: 0 0 1rem; font-size: 1rem }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -3916,10 +3917,12 @@ function teamRegBox(tm) {
 }
 // team management sits in its own wide block under the team and garage pair: invites on one side, the stage entry on the other
 let passTo = "";
+// team management sits inside the "My team" panel, under the team itself
+const teamSub = (h, body) => `<div class="tm-sub"><h3 class="tm-sub-h">${h}</h3>${body}</div>`;
 function teamManage() {
   const tm = teamById(S.team);
   // the representative (R) gets the team's look only: description here, logo in the team block; other members see nothing
-  if (!isFounder(tm)) return isRep(tm) ? psec(t("teamLook"), `<div class="tm-desc-ed">${descBlock(tm)}</div><p class="note">${t("repRights")}</p>`) : "";
+  if (!isFounder(tm)) return isRep(tm) ? teamSub(t("teamLook"), `<div class="tm-desc-ed">${descBlock(tm)}</div><p class="note">${t("repRights")}</p>`) : "";
   const others = membersOf(tm).filter(p => p.name !== S.user.name);
   const none = !others.length;
   const roles = `<div class="tm-roles">
@@ -3930,7 +3933,7 @@ function teamManage() {
         <div class="tm-role-row"><select class="field" id="teamfounder" aria-label="${t("founderPass")}" ${none ? "disabled" : ""}><option value="">—</option>${others.map(p => `<option ${p.name === passTo ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
           <button class="btn line sm" data-act="founderPass" ${none ? "disabled" : ""}>${pending === "fpass" ? t("confirmBtn") : t("founderPassBtn")}</button></div>
         <p class="note">${t(none ? "rolesNoMembers" : "founderPassHint")}</p></div></div>`;
-  return psec(t("teamManage"), `<div class="tm-desc-ed">${descBlock(tm)}</div>${roles}<div class="tm-manage two">${leaderTools(tm)}${teamRegBox(tm)}</div>`);
+  return teamSub(t("teamManage"), `<div class="tm-desc-ed">${descBlock(tm)}</div>${roles}<div class="tm-manage two">${leaderTools(tm)}${teamRegBox(tm)}</div>`);
 }
 function myTeamBox() {
   const tm = teamById(S.team);
@@ -4086,18 +4089,17 @@ function profile() {
       <span class="note err" role="status" id="nummsg"></span>`}</div>
     ${locked ? "" : `<div class="numgrid" id="numgrid">${Array.from({ length: 100 }, (_, i) => i + 1).map(v =>
       `<button data-num="${v}" ${tk.has(v) ? "disabled" : ""} aria-pressed="${S.num === v}">${v}</button>`).join("")}</div>`}</div>`)}
+  </div><div class="pp-col">
+    ${psec(t("aboutMe"), `<label class="fieldlabel pp-about"><textarea id="about-ru" aria-label="${t("aboutMe")}" data-about="ru" maxlength="${ABOUT_MAX}" placeholder="${t("aboutPh")}">${esc((about.ru || "").slice(0, ABOUT_MAX))}</textarea>${counter("ru")}</label>
+      <div class="warn">⚠ ${t("aboutRules")}</div>`)}
     ${psec(t("car"), `<div class="car-stack">${partPicker("car", CARS, "car")}${partPicker("engine", ENGINES, "engine")}${partPicker("gearbox", GEARBOXES, "gearbox")}
       <label class="cpick-hp" for="car-hp"><span class="label">${t("hpLong")}</span><input class="field" id="car-hp" type="number" min="${SETTINGS.hpMin}" max="${SETTINGS.hpMax}" step="1" data-car="hp" value="${esc(S.car.hp)}" placeholder="${SETTINGS.hpMin}–${SETTINGS.hpMax}">
         <span class="note ${hpOk() ? "" : "err"}">${t("hpRule")} ${SETTINGS.hpMin}–${SETTINGS.hpMax}</span></label>
       <label class="cpick-hp" for="car-kg"><span class="label">${t("kgLong")}</span><input class="field" id="car-kg" type="number" min="${SETTINGS.kgMin}" max="${SETTINGS.kgMax}" step="1" data-car="kg" value="${esc(S.car.kg ?? "")}" placeholder="${SETTINGS.kgMin}–${SETTINGS.kgMax}">
         <span class="note ${kgOk() ? "" : "err"}">${t("kgRule")} ${SETTINGS.kgMin}–${SETTINGS.kgMax}</span></label></div>
     ${carOk() ? "" : `<p class="note err">${t("needCarHere")}</p>`}`)}
-  </div><div class="pp-col">
-    ${psec(t("aboutMe"), `<label class="fieldlabel pp-about"><textarea id="about-ru" aria-label="${t("aboutMe")}" data-about="ru" maxlength="${ABOUT_MAX}" placeholder="${t("aboutPh")}">${esc((about.ru || "").slice(0, ABOUT_MAX))}</textarea>${counter("ru")}</label>
-      <div class="warn">⚠ ${t("aboutRules")}</div>`)}
-    ${psec(t("myTeam"), myTeamBox())}
   </div></div>
-  ${teamManage()}`;
+  ${psec(t("myTeam"), myTeamBox() + teamManage())}`;
 }
 
 // shortcut: admin role is a client-side demo toggle; real admin rights must be checked on a server
