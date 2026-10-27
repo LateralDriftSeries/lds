@@ -1903,6 +1903,34 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 @media (max-width: 640px) { .st-row .st-wide { grid-column: auto } }
 .pp-col { display: grid; gap: 1.2rem; align-content: start; min-width: 0 }
 .tm-sub { margin-top: 1.4rem; padding-top: 1.4rem; border-top: 1px solid var(--line) } .tm-sub-h { margin: 0 0 1rem; font-size: 1rem }
+/* stage page tabs */
+.stage-tabs { display: grid; gap: .8rem } .st-tabs { justify-self: start; max-width: 100%; overflow-x: auto; scrollbar-width: none } .st-tabs button { white-space: nowrap }
+.st-pane { gap: 1rem }
+/* briefing player: a cover with a play button, then the embedded player; wide = full row above the map */
+.sm-video { cursor: default } .sm-video > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; border-radius: 0 }
+.sm-play { position: absolute; inset: 0; margin: auto; width: 76px; height: 76px; border-radius: 50%; border: 0; display: grid; place-items: center; cursor: pointer; background: var(--accent); color: #fff; box-shadow: 0 12px 40px -8px var(--accent); transition: transform .2s }
+.sm-play:hover { transform: scale(1.08) } .sm-play svg { width: 34px; height: 34px; fill: currentColor; margin-left: 4px } .sm-play-s { width: 44px; height: 44px; pointer-events: none } .sm-play-s svg { width: 20px; height: 20px }
+.sm-video:fullscreen { border-radius: 0 } .sm-tools { gap: .3rem; justify-content: flex-end; flex-wrap: wrap }
+.stage-media.wide { grid-template-columns: minmax(0, 1fr) } .stage-media.wide .sm-vid .sm-video { max-height: 78vh; aspect-ratio: 16 / 9; margin-inline: auto; width: min(100%, calc(78vh * 16 / 9)) }
+/* admin: map and video cards with a preview */
+.st-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); gap: 1rem }
+.st-mcard { display: grid; gap: .6rem; align-content: start; padding: .9rem; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2) }
+.st-prev { position: relative; aspect-ratio: 16 / 9; display: grid; place-items: center; border-radius: 10px; overflow: hidden; background: #0b0b0d; border: 1px solid var(--line) }
+.st-prev a { position: absolute; inset: 0; display: block } .st-prev img { width: 100%; height: 100%; object-fit: cover; display: block }
+/* judges' island: pairs of the round */
+.pairs { display: grid; gap: .5rem } .pairs-head { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap } .pairs-head .btn { margin-left: auto }
+.pair-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; max-height: 24rem; overflow-y: auto }
+.pr-row { width: 100%; display: grid; grid-template-columns: 1.6rem auto minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: center; gap: .6rem; padding: .55rem .7rem; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); color: var(--text); font: inherit; text-align: left }
+button.pr-row { cursor: pointer } button.pr-row:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)) }
+.pr-n { color: var(--muted); font-size: .8rem } .pr-r { font-size: .6rem !important } .pr-p { display: flex; align-items: center; gap: .4rem; min-width: 0 } .pr-p b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600 }
+.pr-seed { flex: none; min-width: 1.4rem; text-align: center; font-size: .72rem; color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: .05rem .2rem } .pr-vs { color: var(--muted); font-size: .8rem }
+.pr-st { justify-self: end; font-size: .8rem; white-space: nowrap } .pair.on .pr-row { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--panel-2)); box-shadow: inset 3px 0 0 var(--accent) }
+.pair.is-next .pr-row { border-style: dashed; border-color: color-mix(in srgb, var(--accent) 50%, var(--line)) } .pair.is-next .pr-st { color: var(--accent) }
+.pr-row.pr-bye { grid-template-columns: 1.6rem auto minmax(0, 1fr) auto }
+.pair.done .pr-row { opacity: .55 } .pair.done .pr-st { color: var(--accent) }
+@media (max-width: 640px) { .pr-row { grid-template-columns: 1.4rem auto minmax(0, 1fr); } .pr-row .pr-vs { display: none } .pr-row > .pr-p:nth-of-type(2) { grid-column: 3 } .pr-st { grid-column: 1 / -1; justify-self: start } }
+/* rules: alignment of rows of pictures */
+.rimg-row[data-al="c"] { justify-content: center } .rimg-row[data-al="r"] { justify-content: flex-end } .md-sep { width: 1px; align-self: stretch; background: var(--line); margin-inline: .2rem }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2197,7 +2225,7 @@ const I18N = {
     soon: "Скоро", reg: "Регистрация", qualifying: "Квалификация", top32: "Топ 32", top16: "Топ 16", top8: "Топ 8", top4: "Топ 4", final: "Финал", done: "Завершён", stage: "Этап", details: "Подробнее",
     archive: "Архив", season: "Сезон", currentStage: "Текущий этап", stStand: "Зачёт этапа", stStandNote: "Очки этапа, как в рейтинге: пилоты и заявленные команды.", stPersonal: "Личный зачёт", stTeam: "Командный зачёт",
     stageTeams: "Командный зачёт этапа", stageTeamsNote: "Сумма двух лучших квалификационных оценок пилотов команды.",
-    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", trackMap: "Схема трассы", imgReplace: "Заменить", briefVideo: "Видео брифинга", briefOpen: "Смотреть брифинг", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
+    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", trackMap: "Схема трассы", briefPlay: "Смотреть брифинг", briefWide: "Развернуть", briefNarrow: "Свернуть", briefFull: "На весь экран", noImage: "Нет изображения", noVideo: "Нет видео", imgLinkPh: "Ссылка на картинку (https://… или Google Диск)", videoLinkPh: "Ссылка: YouTube, Google Диск, VK, Rutube, Twitch", videoOk: "Видео встроится на страницу этапа", videoLinkOnly: "Эта ссылка откроется кнопкой в новой вкладке", prOnAir: "На трассе", prNext: "Следующая", prGoNext: "Следующая пара", prDone: "Решено", mdAlL: "Слева", mdAlC: "По центру", mdAlR: "Справа", mdAlJ: "По ширине", imgReplace: "Заменить", briefVideo: "Видео брифинга", briefOpen: "Смотреть брифинг", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
     pilotsHint: "Снимите галочку, чтобы убрать пилота из этапа: он пропадёт из сетки квалификации.", inStage: "Участвует",
     teamsHint: "Снимите галочку, если команда не подала командную регистрацию на этап — она не попадёт в командный зачёт этапа.", teamScore: "Командный зачёт", onStage: "Пилотов на этапе",
     adminPanel: "Админка", aSeasons: "Сезоны и этапы", aSanctions: "Пилоты и санкции", aSponsors: "Спонсоры", aProtests: "Протесты", aSettings: "Настройки", broadcastBtn: "Пульт трансляции ↗",
@@ -2354,7 +2382,7 @@ const I18N = {
     soon: "Soon", reg: "Registration", qualifying: "Qualifying", top32: "Top 32", top16: "Top 16", top8: "Top 8", top4: "Top 4", final: "Final", done: "Finished", stage: "Round", details: "Details",
     archive: "Archive", season: "Season", currentStage: "Current round", stStand: "Round standings", stStandNote: "Round points as in the rating: drivers and entered teams.", stPersonal: "Drivers", stTeam: "Teams",
     stageTeams: "Round team standings", stageTeamsNote: "Sum of the team's two best qualifying scores.",
-    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", trackMap: "Track map", imgReplace: "Replace", briefVideo: "Briefing video", briefOpen: "Watch the briefing", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
+    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", trackMap: "Track map", briefPlay: "Watch the briefing", briefWide: "Widen", briefNarrow: "Narrow", briefFull: "Full screen", noImage: "No picture", noVideo: "No video", imgLinkPh: "Picture link (https://… or Google Drive)", videoLinkPh: "Link: YouTube, Google Drive, VK, Rutube, Twitch", videoOk: "The video plays on the round page", videoLinkOnly: "This link opens with a button in a new tab", prOnAir: "On track", prNext: "Next", prGoNext: "Next pair", prDone: "Done", mdAlL: "Left", mdAlC: "Centre", mdAlR: "Right", mdAlJ: "Justify", imgReplace: "Replace", briefVideo: "Briefing video", briefOpen: "Watch the briefing", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
     pilotsHint: "Untick a driver to remove them from the round: they disappear from the qualifying grid.", inStage: "Entered",
     teamsHint: "Untick a team that did not file a team entry for the round, so it stays out of the round's team standings.", teamScore: "Team standings", onStage: "Drivers in round",
     adminPanel: "Admin", aSeasons: "Seasons & rounds", aSanctions: "Drivers & sanctions", aSponsors: "Sponsors", aProtests: "Protests", aSettings: "Settings", broadcastBtn: "Broadcast control ↗",
@@ -2651,7 +2679,7 @@ const isOwner = () => !!S.user && isOwnerName(S.user.name);
 const roleLabel = r => t({ owner: "roleOwner", admin: "roleAdmin", judge: "roleJudge", streamer: "roleStreamer", marshal: "roleMarshal", tech: "roleTech" }[r] || "pilot");
 // which permission an admin-panel edit needs, by the first part of its data-a / its data-act
 const KIND_PERM = { rule: "rules", jpart: "judge", jscore: "judge", jd: "judge", protest: "judge", bc: "bc", role: "roles" };
-const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", grpFromBr: "edit", swapPilots: "edit", dcSend: "edit", stImgDel: "edit", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
+const ACT_PERM = { ready: "seasons", teamEdit: "edit", teamRemove: "edit", teamAdd: "edit", reqApprove: "edit", reqReject: "edit", brConfirm: "judge", brPair: "judge", brWin: "judge", brReseed: "judge", grpFromBr: "edit", swapPilots: "edit", dcSend: "edit", stImgDel: "edit", stBriefDel: "edit", vote: "judge", onTrack: "judge", resetVotes: "judge", clearScores: "judge", nextPilot: "judge", bcSwap: "bc", rLang: "rules", docAdd: "rules", docDel: "rules",
   docMove: "rules", ruleAdd: "rules", ruleDel: "rules", ruleMove: "rules", rulesReset: "rules", rSel: "rules", mdIns: "rules", newSeason: "edit", delSeason: "edit", addStage: "edit", delStage: "edit",
   giveSanction: "edit", delSanction: "edit", newSponsor: "edit", delSponsor: "edit", spMove: "edit", faqAdd: "edit", htLang: "edit", faqMove: "edit", faqDel: "edit", spLogoDel: "edit", dcHookDel: "edit", dcBind: "edit", dcImgDel: "edit", dcOpen: "edit", logReload: "edit", logMore: "edit", newAch: "edit", delAch: "edit", achMove: "edit", achTake: "edit", delTeam: "edit", addTest: "edit", delTest: "edit", trackDiff: "edit", trkAdd: "edit", trkConfAdd: "edit", trkConfDel: "edit", trkPartAdd: "edit", trkPartDel: "edit", trkK: "edit", trkDel: "edit", setStatus: "edit", resetDemo: "edit" };
 const canEdit = kind => can(KIND_PERM[kind] || "edit");
@@ -3098,7 +3126,7 @@ function brRecord(tourId, p1, p2, winner) {
 // they stay as given until the final, apart from changes made by hand in the stage's pilot list
 const groupsFromBracket = x => Object.fromEntries((brOf(x)?.slots || slotsOf(x)).flatMap((n, k) => n ? [[n, GROUPS[k >> 3]]] : []));
 // one pilot takes the other's place in a stage: both runs (judges' parts too), the bracket slot and every pair won, the group; a finished stage's podium is redone
-let swapSel = { a: "", b: "" };
+let swapSel = { a: "", b: "" }, stTabs = {}; // stTabs: the open tab on each stage page
 function swapPilots(x, a, b) {
   const sw = n => n === a ? b : n === b ? a : n, ka = `${x.id}:${a}`, kb = `${x.id}:${b}`, sa = S.scores[ka], sb = S.scores[kb];
   if (sb) S.scores[ka] = sb; else delete S.scores[ka];
@@ -3156,29 +3184,32 @@ function tournament(id) {
   <div class="row">${action}${startOf(x) && new Date(startOf(x)) > Date.now() ? `<a class="btn line sm" href="${esc(calUrl(x))}" target="_blank" rel="noopener">${t("addCal")}</a>` : ""}</div></div>
   ${STATUSES.indexOf(x.status) >= STATUSES.indexOf("qualifying") && x.status !== "done" ? twitchBox() : ""}
   ${x.status === "done" ? podiumBox(x) : ""}
-  <details class="box panel br-box" data-topen="br-${x.id}" ${tOpenIs(`br-${x.id}`, liveRound(x) >= 0) ? "open" : ""}><summary class="psec-head"><h3>${t("bracketTitle")}</h3><span class="row" style="gap:1rem">${brOf(x) || x.status === "done" ? "" : `<span class="note br-note">${t("brPreview")}</span>`}<i class="ach-chev" aria-hidden="true"></i></span></summary>${bracketView(x)}</details>
-  ${stageEntries(x).length ? `<section class="stack"><div><h3>${t("stageTeamEntries")} · ${stageEntries(x).filter(r => r.ok).length}/${stageTeamsMax(x)}</h3><p class="note">${t("stageTeamEntriesNote")}</p></div>
-    <div class="treg-list">${stageEntries(x).map((r, i) => `<div class="treg-item ${r.ok ? "" : "over"}"><span class="mono muted">${i + 1}</span>${logo(r.tm)}<span class="stack" style="gap:.15rem;min-width:0"><b>${esc(r.tm.name)}</b>
-      <span class="note">${r.e.pilots.map(p => esc(nickTxt(p.nick))).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div></section>` : ""}
-  ${`<details class="box panel br-box" data-topen="qual-${x.id}" ${tOpenIs(`qual-${x.id}`) ? "open" : ""}><summary class="psec-head"><h3>${t("qual")}</h3><span class="row" style="gap:1rem"><span class="note">${rows.length}</span><i class="ach-chev" aria-hidden="true"></i></span></summary>
-  <div class="tablebox"><table>
+  ${(() => { // the stage's tables as tabs: qualifying, top-32 bracket, stage standings, team entries; the one that matters now opens first
+    const panes = { qual: () => `<div class="tablebox"><table>
     <thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th>${t("group")}</th><th>${t("try1")}</th><th>${t("try2")}</th><th>${t("best")}</th></tr></thead>
     <tbody>${rows.map((p, i) => `<tr class="${p.mine ? "mine" : ""} ${inBr.has(p.name) ? "in-br" : p.a != null && p.b != null ? "out-br" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${pAva(p, "t-ava")}${esc(p.name)}</td><td>${grpTag(x, p.name) || '<span class="muted">—</span>'}</td>
-      <td class="mono">${cell(p.a)}</td><td class="mono">${cell(p.b)}</td><td class="mono best">${p.best < 0 ? "—" : p.best.toFixed(1)}</td></tr>`).join("")}</tbody>
-  </table></div></details>`}
-  ${runs ? (() => {
-    // stage standings in two halves: drivers and entered teams, with the same stage points as the rating
-    const pl = rows.map(p => ({ p, pts: stagePts(x, p.name) })).sort((q, r) => r.pts - q.pts || r.p.best - q.p.best);
-    const tm = stageEntries(x).filter(r => r.ok).map(({ tm, e }) => ({ tm, n: e.pilots.length, pts: teamStagePts(x, tm) })).sort((q, r) => r.pts - q.pts);
-    const none = `<tr><td colspan="4" class="note">${t("nothing")}</td></tr>`;
-    return `<details class="box panel br-box" data-topen="st-${x.id}" ${tOpenIs(`st-${x.id}`) ? "open" : ""}><summary class="psec-head"><span class="stack" style="gap:.3rem"><h3>${t("stStand")}</h3><span class="note">${t(x.status === "done" ? "stStandNote" : "stPending")}</span></span><i class="ach-chev" aria-hidden="true"></i></summary>
+      <td class="mono">${cell(p.a)}</td><td class="mono">${cell(p.b)}</td><td class="mono best">${p.best < 0 ? "—" : p.best.toFixed(1)}</td></tr>`).join("") || `<tr><td colspan="7" class="note">${t("nothing")}</td></tr>`}</tbody>
+  </table></div>`,
+      bracket: () => `${brOf(x) || x.status === "done" ? "" : `<p class="note br-note" style="margin:0">${t("brPreview")}</p>`}${bracketView(x)}`,
+      ...(runs ? { stand: () => {
+        // stage standings in two halves: drivers and entered teams, with the same stage points as the rating
+        const pl = rows.map(p => ({ p, pts: stagePts(x, p.name) })).sort((q, r) => r.pts - q.pts || r.p.best - q.p.best);
+        const tm = stageEntries(x).filter(r => r.ok).map(({ tm, e }) => ({ tm, n: e.pilots.length, pts: teamStagePts(x, tm) })).sort((q, r) => r.pts - q.pts);
+        const none = `<tr><td colspan="4" class="note">${t("nothing")}</td></tr>`;
+        return `<p class="note" style="margin:0">${t(x.status === "done" ? "stStandNote" : "stPending")}</p>
       <div class="st-split">
         <div class="stack" style="gap:.6rem"><span class="label acc">${t("stPersonal")}</span><div class="tablebox"><table><thead><tr><th>#</th><th>${t("no")}</th><th>${t("pilot")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
           <tbody>${pl.map(({ p, pts }, i) => `<tr class="${p.mine ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td class="n">${p.num ?? "—"}</td><td>${pAva(p, "t-ava")}${esc(p.name)}</td><td class="mono best" style="text-align:right">${x.status === "done" ? pts : "—"}</td></tr>`).join("") || none}</tbody></table></div></div>
         <div class="stack" style="gap:.6rem"><span class="label acc">${t("stTeam")}</span><div class="tablebox"><table><thead><tr><th>#</th><th>${t("team")}</th><th>${t("drivers")}</th><th style="text-align:right">${t("points")}</th></tr></thead>
           <tbody>${tm.map((r, i) => `<tr class="${r.tm.id === S.team ? "mine" : ""}"><td class="mono muted">${i + 1}</td><td>${esc(r.tm.name)}</td><td class="mono muted">${r.n}</td><td class="mono best" style="text-align:right">${x.status === "done" ? r.pts : "—"}</td></tr>`).join("") || none}</tbody></table></div></div>
-      </div></details>`;
-  })() : ""}
+      </div>`; } } : {}),
+      ...(stageEntries(x).length ? { teams: () => `<p class="note" style="margin:0">${t("stageTeamEntriesNote")}</p>
+    <div class="treg-list">${stageEntries(x).map((r, i) => `<div class="treg-item ${r.ok ? "" : "over"}"><span class="mono muted">${i + 1}</span>${logo(r.tm)}<span class="stack" style="gap:.15rem;min-width:0"><b>${esc(r.tm.name)}</b>
+      <span class="note">${r.e.pilots.map(p => esc(nickTxt(p.nick))).join(" · ")}</span></span>${r.ok ? "" : `<span class="pill plain err">${t("entryOver")}</span>`}</div>`).join("")}</div>` } : {}) };
+    const label = { qual: `${t("qual")} <span class="muted mono">${rows.length}</span>`, bracket: t("bracketTitle"), stand: t("stStand"), teams: `${t("stageTeamEntries")} <span class="muted mono">${stageEntries(x).filter(r => r.ok).length}/${stageTeamsMax(x)}</span>` };
+    const def = x.status === "done" && panes.stand ? "stand" : liveRound(x) >= 0 ? "bracket" : "qual", cur = panes[stTabs[x.id]] ? stTabs[x.id] : def;
+    return `<section class="stage-tabs"><div class="seg2 st-tabs" role="tablist">${Object.keys(panes).map(k => `<button role="tab" data-act="stTab" data-id="${x.id}" data-v="${k}" aria-selected="${k === cur}">${label[k]}</button>`).join("")}</div>
+      <div class="box panel st-pane" role="tabpanel">${panes[cur]()}</div></section>`; })()}
   ${S.user && (protestOpen(x) || myProtests(x).length) ? `<section class="box panel"><h3>${t("fileProtest")}</h3><p class="note">${t("protestHint")}</p>
     ${!protestOpen(x) ? `<p class="note">${t("protestClosed")}</p>` : !rows.some(p => p.mine) ? `<p class="note">${t("protestOnlyRider")}</p>` : `<form class="stack" id="protestform" data-tour="${x.id}">
       <label class="fieldlabel" for="pagainst">${t("against")}<select class="field" id="pagainst">${rows.filter(p => !p.mine).map(p => `<option>${esc(p.name)}</option>`).join("")}</select></label>
@@ -3630,7 +3661,7 @@ let rulesDoc = null; // set after defaultRulesDoc is defined
 const nickTxt = s => String(s ?? "").replace(/<\/?[a-z]+(=[^>]*)?>/gi, "").trim(); // CarX rich-text tags in nicknames
 const inlineMd = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 // a rules picture: on the hosted site the server stores it; in the demo it lives in the saved data as a data URL
-const ruleImgSrc = id => RULE_IMGS[id] || `${API}/api/img/${id}`;
+const ruleImgSrc = id => /^https?:\/\//.test(id) ? id : RULE_IMGS[id] || `${API}/api/img/${id}`; // an uploaded picture's id, or a link
 function textToHtml(text) {
   const out = [], lines = String(text || "").split(/\r?\n/);
   let list = [], table = [], para = [];
@@ -3646,15 +3677,18 @@ function textToHtml(text) {
       table = [];
     }
   };
+  const AL = { l: "left", c: "center", r: "right", j: "justify" };
   for (const raw of lines) {
-    const l = raw.trim();
+    let l = raw.trim(), al = "";
+    const am = /^\{([lcrj])\}\s*/.exec(l); if (am) { al = ` style="text-align:${AL[am[1]]}"`; l = l.slice(am[0].length); }
     if (!l) { flush(); continue; }
     if (l.startsWith("- ")) { if (para.length || table.length) flush(); list.push(l.slice(2)); continue; }
     if (l.startsWith("|")) { if (para.length || list.length) flush(); table.push(l); continue; }
     flush();
-    if (/^!img(\s+[\w-]{1,40})+$/.test(l)) out.push(`<div class="rimg-row">${l.split(/\s+/).slice(1).map(id => `<img src="${esc(ruleImgSrc(id))}" alt="" loading="lazy">`).join("")}</div>`);
-    else if (l.startsWith("## ")) out.push(`<h4>${inlineMd(l.slice(3))}</h4>`);
-    else if (l.startsWith("! ")) out.push(`<div class="warn">${inlineMd(l.slice(2))}</div>`);
+    if (/^!img(\s+[\w-]{1,40})+$/.test(l)) out.push(`<div class="rimg-row"${al ? ` data-al="${am[1]}"` : ""}>${l.split(/\s+/).slice(1).map(id => `<img src="${esc(ruleImgSrc(id))}" alt="" loading="lazy">`).join("")}</div>`);
+    else if (l.startsWith("## ")) out.push(`<h4${al}>${inlineMd(l.slice(3))}</h4>`);
+    else if (l.startsWith("! ")) out.push(`<div class="warn"${al}>${inlineMd(l.slice(2))}</div>`);
+    else if (al) out.push(`<p${al}>${inlineMd(l)}</p>`);
     else para.push(l);
   }
   flush();
@@ -3725,7 +3759,7 @@ function adminRules() {
         <label class="fieldlabel">${t("sectionN")}<input class="field" data-a="rule:${di}:${k}:title" value="${esc(it.title)}" maxlength="80"></label>
         <div class="md-bar" role="toolbar" aria-label="${t("mdBar")}">${md("h", "mdH")}${md("li", "mdList")}${md("b", "mdBold")}${md("warn", "mdWarn")}${md("table", "mdTable")}
           <label class="md-file" title="${t("mdImgHint")}">${t("mdImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-rimg hidden></label>
-          ${md("up", "mdUp")}${md("down", "mdDown")}</div>
+          ${md("up", "mdUp")}${md("down", "mdDown")}<span class="md-sep" aria-hidden="true"></span>${md("al-l", "mdAlL")}${md("al-c", "mdAlC")}${md("al-r", "mdAlR")}${md("al-j", "mdAlJ")}</div>
         <div class="rule-split">
           <textarea class="field rule-text" id="rule-ta" data-a="rule:${di}:${k}:text" aria-label="${esc(it.title)}">${esc(it.text)}</textarea>
           <div class="rule-prev"><span class="label">${t("rulePreview")}</span><div class="prose" id="rule-prev">${textToHtml(it.text)}</div></div></div>
@@ -4081,7 +4115,6 @@ function profile() {
 
   <details class="psec panel ach-box" id="ach-box" ${S.achOpen ? "open" : ""}><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achCount(S.user.name)}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achBlock(S.user.name)}</details>
   ${stageRegBox()}
-  <div class="pp-pair pp-cols"><div class="pp-col">
     ${psec(t("numReg"), `<div class="num-wrap"><div class="stack" style="gap:.8rem"><div class="numshow ${S.num != null ? "" : "none"}" id="numshow">${numInner(S.num)}${locked ? '<span class="lock" aria-hidden="true">🔒</span>' : ""}</div>
       <p class="note">${locked ? t("numLocked") : t("numHint")}</p>
       ${locked ? "" : `<form class="numcustom" id="numform"><label for="own" class="note">${t("own")}</label>
@@ -4089,7 +4122,7 @@ function profile() {
       <span class="note err" role="status" id="nummsg"></span>`}</div>
     ${locked ? "" : `<div class="numgrid" id="numgrid">${Array.from({ length: 100 }, (_, i) => i + 1).map(v =>
       `<button data-num="${v}" ${tk.has(v) ? "disabled" : ""} aria-pressed="${S.num === v}">${v}</button>`).join("")}</div>`}</div>`)}
-  </div><div class="pp-col">
+  <div class="pp-pair">
     ${psec(t("aboutMe"), `<label class="fieldlabel pp-about"><textarea id="about-ru" aria-label="${t("aboutMe")}" data-about="ru" maxlength="${ABOUT_MAX}" placeholder="${t("aboutPh")}">${esc((about.ru || "").slice(0, ABOUT_MAX))}</textarea>${counter("ru")}</label>
       <div class="warn">⚠ ${t("aboutRules")}</div>`)}
     ${psec(t("car"), `<div class="car-stack">${partPicker("car", CARS, "car")}${partPicker("engine", ENGINES, "engine")}${partPicker("gearbox", GEARBOXES, "gearbox")}
@@ -4098,7 +4131,7 @@ function profile() {
       <label class="cpick-hp" for="car-kg"><span class="label">${t("kgLong")}</span><input class="field" id="car-kg" type="number" min="${SETTINGS.kgMin}" max="${SETTINGS.kgMax}" step="1" data-car="kg" value="${esc(S.car.kg ?? "")}" placeholder="${SETTINGS.kgMin}–${SETTINGS.kgMax}">
         <span class="note ${kgOk() ? "" : "err"}">${t("kgRule")} ${SETTINGS.kgMin}–${SETTINGS.kgMax}</span></label></div>
     ${carOk() ? "" : `<p class="note err">${t("needCarHere")}</p>`}`)}
-  </div></div>
+  </div>
   ${psec(t("myTeam"), myTeamBox() + teamManage())}`;
 }
 
@@ -4157,10 +4190,17 @@ function adminTour(x) {
       <div class="st-row">${[["start", "startAt"], ["qStart", "qStartAt"], ["tStart", "tStartAt"]].map(([k, l]) =>
         `<label class="fieldlabel">${t(l)} · ${t("msk")}<input class="field" type="datetime-local" data-a="tour:${x.id}:${k}" value="${startOf({ start: x[k] })?.slice(0, 16) || ""}"></label>`).join("")}</div>
       <p class="note" style="margin:0">${t("timesHint")}</p>
-      <div class="st-row"><div class="fieldlabel">${t("trackMap")}<div class="row" style="gap:.6rem">${x.trackImg ? `<img class="sm-thumb" src="${esc(ruleImgSrc(x.trackImg))}" alt="">` : ""}
-          <label class="btn line sm">${t(x.trackImg ? "imgReplace" : "mdImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-stimg="${x.id}" hidden></label>
-          ${x.trackImg ? `<button class="btn text sm danger" data-act="stImgDel" data-id="${x.id}">${t("removeLogo")}</button>` : ""}</div></div>
-        <label class="fieldlabel st-wide">${t("briefVideo")}<input class="field" data-a="tour:${x.id}:brief" value="${esc(x.brief || "")}" maxlength="200" placeholder="https://youtu.be/… · https://twitch.tv/videos/…"></label></div>
+      <div class="st-media">${(() => { const ve = videoEmbed(x.brief), isLink = /^https?:\/\//.test(x.trackImg || "");
+        return `<div class="st-mcard"><span class="label">${t("trackMap")}</span>
+          <div class="st-prev">${x.trackImg ? `<a href="${esc(ruleImgSrc(x.trackImg))}" target="_blank" rel="noopener"><img src="${esc(ruleImgSrc(x.trackImg))}" alt=""></a>` : `<span class="note">${t("noImage")}</span>`}</div>
+          <input class="field" data-a="tour:${x.id}:trackImg" value="${isLink ? esc(x.trackImg) : ""}" maxlength="300" placeholder="${t("imgLinkPh")}" aria-label="${t("trackMap")}">
+          <div class="row" style="gap:.5rem"><label class="btn line sm">${t(x.trackImg ? "imgReplace" : "mdImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-stimg="${x.id}" hidden></label>
+            ${x.trackImg ? `<button class="btn text sm danger" data-act="stImgDel" data-id="${x.id}">${t("removeLogo")}</button>` : ""}</div></div>
+        <div class="st-mcard"><span class="label">${t("briefVideo")}</span>
+          <div class="st-prev">${x.brief ? ve?.thumb ? `<a href="${esc(safeUrl(x.brief))}" target="_blank" rel="noopener"><img src="${esc(ve.thumb)}" alt=""><span class="sm-play sm-play-s" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></a>`
+            : `<span class="note">${t(ve ? "videoOk" : "videoLinkOnly")}</span>` : `<span class="note">${t("noVideo")}</span>`}</div>
+          <input class="field" data-a="tour:${x.id}:brief" value="${esc(x.brief || "")}" maxlength="300" placeholder="${t("videoLinkPh")}" aria-label="${t("briefVideo")}">
+          <div class="row" style="gap:.5rem">${x.brief ? `<a class="btn line sm" href="${esc(safeUrl(x.brief))}" target="_blank" rel="noopener">${t("briefOpen")} ↗</a><button class="btn text sm danger" data-act="stBriefDel" data-id="${x.id}">${t("removeLogo")}</button>` : ""}</div></div>`; })()}</div>
 </div>`;
   if (aSub === "qual") {
     const inp = (p, i, k) => { const v = scoreOf(x, p, i, k); return `<input class="ai" type="number" min="0" max="100" step="0.1" data-a="score:${x.id}:${k}:${i}" value="${v ?? ""}" aria-label="${esc(p.name)} ${k + 1}">`; };
@@ -4457,7 +4497,8 @@ function adminEdit([kind, id, f, k], v) {
       if (v === "done") (S.podiums ??= {})[x.id] = podiumOf(x); } // the bracket freezes from the qualifying as entered, before the status moves on
     else if (f === "max") { const n = Math.round(Number(v)); if (n >= 2 && n <= 256) x.max = n; else return render(); }
     else if (f === "maxTeams") { const n = Math.round(Number(v)); if (n >= 1 && n <= 64) x.maxTeams = n; else return render(); }
-    else if (f === "brief") { const u = v.trim().slice(0, 200); if (u && !/^https?:\/\//i.test(u)) { adminMsg = t("urlBad"); return render(); } if (u) x.brief = u; else delete x.brief; }
+    else if (f === "trackImg") { const u = v.trim().slice(0, 300); if (u && !/^https?:\/\//i.test(u)) { adminMsg = t("urlBad"); return render(); } if (u) x.trackImg = imgUrl(u); else delete x.trackImg; }
+    else if (f === "brief") { const u = v.trim().slice(0, 300); if (u && !/^https?:\/\//i.test(u)) { adminMsg = t("urlBad"); return render(); } if (u) x.brief = u; else delete x.brief; }
     else if (["start", "qStart", "tStart"].includes(f)) { // the picker gives "YYYY-MM-DDTHH:MM"; stored as "DD.MM.YYYY HH:MM" (Moscow); an emptied field clears it
       if (!v) { delete x[f]; if (f === "start") { x.dates = ""; delete x.at; } }
       else { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v); if (!m) return render();
@@ -4852,19 +4893,31 @@ const STOPPED = ["soon", "reg", "done"];
 const regKey = (x, p, i) => p.mine ? S.regAt?.[x.id] ?? Infinity : HOSTED ? p.regAt?.[x.id] ?? Infinity : i;
 const regRows = x => stageRows(x).sort(([p, i], [q, j]) => regKey(x, p, i) - regKey(x, q, j));
 // qualifying order: the best run, then (equal best) the other run, then who registered first; no run counts as -1
-// briefing video: YouTube (watch, youtu.be, shorts, live) or a Twitch recording, embedded; any other link opens in a new tab
-const videoEmbed = url => { const u = String(url || "");
-  const yt = u.match(/^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/)|youtu\.be\/)([\w-]{11})/);
-  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
-  const tw = u.match(/^https?:\/\/(?:www\.)?twitch\.tv\/videos\/(\d{5,})/);
-  if (tw) return `https://player.twitch.tv/?video=${tw[1]}&parent=${encodeURIComponent(location.hostname)}&autoplay=false`;
-  return ""; };
-console.assert(videoEmbed("https://youtu.be/dQw4w9WgXcQ").endsWith("/embed/dQw4w9WgXcQ") && videoEmbed("https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=5").endsWith("dQw4w9WgXcQ") && !videoEmbed("javascript:alert(1)"), "videoEmbed");
+// briefing video: YouTube, Google Drive, VK Video, Rutube or a Twitch recording, played on the page; src = the player, thumb = a cover for the facade
+const videoEmbed = url => { const u = String(url || ""); let m;
+  if ((m = u.match(/^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/)|youtu\.be\/)([\w-]{11})/)))
+    return { src: `https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=1&rel=0&modestbranding=1`, thumb: `https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg` };
+  if ((m = u.match(/^https?:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/)))
+    return { src: `https://drive.google.com/file/d/${m[1]}/preview`, thumb: `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1280` };
+  if ((m = u.match(/^https?:\/\/(?:www\.|m\.)?vk(?:video)?\.(?:com|ru)\/(?:.*[?&]z=)?video(-?\d+)_(\d+)/)))
+    return { src: `https://vk.com/video_ext.php?oid=${m[1]}&id=${m[2]}&hd=2&autoplay=1` };
+  if ((m = u.match(/^https?:\/\/(?:www\.)?rutube\.ru\/video\/([a-f0-9]{32})/))) return { src: `https://rutube.ru/play/embed/${m[1]}` };
+  if ((m = u.match(/^https?:\/\/(?:www\.)?twitch\.tv\/videos\/(\d{5,})/))) return { src: `https://player.twitch.tv/?video=${m[1]}&parent=${encodeURIComponent(location.hostname)}&autoplay=true` };
+  return null; };
+console.assert(videoEmbed("https://youtu.be/dQw4w9WgXcQ").src.includes("/embed/dQw4w9WgXcQ") && videoEmbed("https://drive.google.com/file/d/1zAy0y0wDkI647YRyfLU9jQs_0uso__yR/view?usp=sharing").src.endsWith("/preview")
+  && videoEmbed("https://vk.com/video-123_456").src.includes("oid=-123&id=456") && !videoEmbed("javascript:alert(1)"), "videoEmbed");
+// a picture given as a link: Google Drive share links become a direct image
+const imgUrl = u => { const m = String(u).match(/^https?:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/); return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1600` : u; };
+let vPlaying = {}, vWide = false; // which stage's briefing is playing (the cover is swapped for the player), and the wide layout
+const videoBox = (x, ve) => ve ? `<div class="sm-video" id="vbox-${x.id}">${vPlaying[x.id] || !ve.thumb
+    ? `<iframe class="keep-frame" src="${esc(ve.src)}" title="${esc(t("briefVideo"))}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`
+    : `<img src="${esc(ve.thumb)}" alt="" loading="lazy"><button class="sm-play" data-act="vPlay" data-id="${x.id}" aria-label="${t("briefPlay")}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>`}</div>
+  <div class="row sm-tools"><button class="btn text sm" data-act="vWide">${t(vWide ? "briefNarrow" : "briefWide")}</button><button class="btn text sm" data-act="vFull" data-id="${x.id}">⛶ ${t("briefFull")}</button>
+    <a class="btn text sm" href="${esc(safeUrl(x.brief))}" target="_blank" rel="noopener">${t("briefOpen")} ↗</a></div>`
+  : `<a class="btn line" href="${esc(safeUrl(x.brief))}" target="_blank" rel="noopener">${t("briefOpen")} ↗</a>`;
 const stageMedia = x => { const img = x.trackImg && `<figure class="sm-box"><span class="label">${t("trackMap")}</span><a href="${esc(ruleImgSrc(x.trackImg))}" target="_blank" rel="noopener"><img src="${esc(ruleImgSrc(x.trackImg))}" alt="${esc(t("trackMap"))} ${esc(x.track)}" loading="lazy"></a></figure>`;
-  const emb = videoEmbed(x.brief), vid = x.brief && `<figure class="sm-box"><span class="label">${t("briefVideo")}</span>${emb
-    ? `<div class="sm-video"><iframe src="${esc(emb)}" title="${esc(t("briefVideo"))}" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
-    : `<a class="btn line" href="${esc(safeUrl(x.brief))}" target="_blank" rel="noopener">${t("briefOpen")} ↗</a>`}</figure>`;
-  return img || vid ? `<section class="stage-media ${img && vid ? "two" : ""}">${img || ""}${vid || ""}</section>` : ""; };
+  const vid = x.brief && `<figure class="sm-box sm-vid"><span class="label">${t("briefVideo")}</span>${videoBox(x, videoEmbed(x.brief))}</figure>`;
+  return img || vid ? `<section class="stage-media ${img && vid ? "two" : ""} ${vWide ? "wide" : ""}">${vid && vWide ? vid + (img || "") : (img || "") + (vid || "")}</section>` : ""; };
 const runKey = (a, b) => ({ best: Math.max(a ?? -1, b ?? -1), second: Math.min(a ?? -1, b ?? -1) });
 const qualCmp = x => (p, q) => q.best - p.best || q.second - p.second || regKey(x, p, p.i) - regKey(x, q, q.i);
 const bcRows = x => stageRows(x).map(([p, i]) => { const a = scoreOf(x, p, i, 0), b = scoreOf(x, p, i, 1); return { ...p, i, a, b, ...runKey(a, b) }; })
@@ -5026,14 +5079,21 @@ function judgeIsland(x) {
       <div class="cols" style="gap:.8rem;grid-template-columns:repeat(2,minmax(0,1fr))">
         <label class="fieldlabel">${t("leader")}<select class="field" data-a="jd:leader:0:${x.id}">${opts(st.leader, st.chaser)}</select></label>
         <label class="fieldlabel">${t("chaser")}<select class="field" data-a="jd:chaser:0:${x.id}">${opts(st.chaser, st.leader)}</select></label></div>
-      ${(() => { // pairs of the current round, by group; decided pairs stay listed with their winner
+      ${(() => { // the pairs of the current round in bracket order: tap one to put it on air; decided pairs show the winner; the next undecided one is marked
         const r = liveRound(x), cur = bracketOf(x).flat().filter(m => (m.a && m.b || m.bye) && (r < 0 || Math.min(m.r, 4) === r));
-        const parts = [...GROUPS.map(g => [`${t("group")} ${g}`, cur.filter(m => m.g === g)]), [t("playoff"), cur.filter(m => !m.g)]].filter(([, l]) => l.length);
-        const row = m => m.bye ? (m.win ? `<div class="br-done"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)}</span>✓ <b>${esc(m.win)}</b> <span class="muted">${t("bye")}</span></div>`
-            : `<button class="br-bye" data-act="brWin" data-id="${x.id}" data-v="${m.r}-${m.m}" data-name="${esc(m.a || m.b)}"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)} · ${t("bye")}</span>${esc(m.a || m.b)}<span class="acc">${t("byeConfirm")} →</span></button>`)
-          : m.win ? `<div class="br-done"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)}</span>✓ <b>${esc(m.win)}</b> <span class="muted">${t("beat")} ${esc(m.win === m.a ? m.b : m.a)}</span></div>`
-          : `<button class="${st.leader === m.a && st.chaser === m.b ? "on" : ""}" data-act="brPair" data-id="${x.id}" data-v="${m.r}-${m.m}"><span class="label">${m.g ? t(m.r ? "grpR2" : "grpR1") : brLabel(m)}</span>${esc(m.a)} <span class="muted">vs</span> ${esc(m.b)}</button>`;
-        return parts.length ? `<div class="stack" style="gap:.5rem"><span class="label">${t("brPairs")}</span><div class="br-isl">${parts.map(([h, l]) => `<div class="br-isl-g"><b>${h}</b>${l.map(row).join("")}</div>`).join("")}</div></div>` : ""; })()}
+        if (!cur.length) return "";
+        const same = m => !!st.leader && !!st.chaser && [m.a, m.b].includes(st.leader) && [m.a, m.b].includes(st.chaser); // either order: a swap keeps the pair
+        const next = cur.find(m => !m.win && !m.bye && !same(m)), done = cur.filter(m => m.win).length;
+        const nm = (n, s) => `<span class="pr-p">${s ? `<span class="pr-seed mono">${s}</span>` : ""}<b>${esc(n)}</b></span>`;
+        const item = (m, k) => { const tag = `<span class="pr-n mono">${k + 1}</span>${m.g ? `<span class="grp">${m.g}</span>` : `<span class="label pr-r">${brLabel(m)}</span>`}`;
+          if (m.bye) return `<li class="pair ${m.win ? "done" : ""}">${m.win ? `<div class="pr-row pr-bye">${tag}${nm(m.win, m.win === m.a ? m.sa : m.sb)}<span class="pr-st muted">${t("bye")}</span></div>`
+            : `<button class="pr-row pr-bye" data-act="brWin" data-id="${x.id}" data-v="${m.r}-${m.m}" data-name="${esc(m.a || m.b)}">${tag}${nm(m.a || m.b, m.a ? m.sa : m.sb)}<span class="pr-st acc">${t("bye")} · ${t("byeConfirm")} →</span></button>`}</li>`;
+          if (m.win) return `<li class="pair done"><div class="pr-row">${tag}${nm(m.a, m.sa)}<span class="pr-vs">vs</span>${nm(m.b, m.sb)}<span class="pr-st">✓ ${esc(m.win)}</span></div></li>`;
+          const on = same(m), nx = m === next;
+          return `<li class="pair ${on ? "on" : nx ? "is-next" : ""}"><button class="pr-row" data-act="brPair" data-id="${x.id}" data-v="${m.r}-${m.m}" aria-pressed="${on}">${tag}${nm(m.a, m.sa)}<span class="pr-vs">vs</span>${nm(m.b, m.sb)}<span class="pr-st">${on ? `<span class="livebadge">${t("prOnAir")}</span>` : nx ? t("prNext") : ""}</span></button></li>`; };
+        return `<div class="pairs"><div class="pairs-head"><span class="label">${t("brPairs")}</span><span class="note mono">${t("prDone")} ${done} / ${cur.length}</span>
+            ${next ? `<button class="btn line sm" data-act="brPair" data-id="${x.id}" data-v="${next.r}-${next.m}">${t("prGoNext")} →</button>` : ""}</div>
+          <ol class="pair-list">${cur.map(item).join("")}</ol></div>`; })()}
       <label class="fieldlabel">${t("pairLabel")}<input class="field" data-a="jd:label:0:${x.id}" value="${esc(st.label)}" maxlength="40" placeholder="${t("top16")} · ${t("pairN")} 3"></label>
       ${JUDGES.map((k, j) => `<div class="judge-row"><span class="note">${t(k)}</span>${seg(j)}</div>`).join("")}
       <div class="row" style="justify-content:space-between"><span class="ov-result ${res}" style="width:auto">${t({ pending: "pending", leader: "winLeader", chaser: "winChaser", omt: "omt" }[res])}</span>
@@ -5230,6 +5290,14 @@ function fitHeroNum() {
 addEventListener("resize", fitHeroNum);
 document.fonts?.ready.then(fitHeroNum);
 let lastRoute = null;
+// inner scroll boxes (lists, tables) by class and position, so a re-render puts them back where they were
+const scrollState = root => [...root.querySelectorAll("[class]")].filter(e => e.scrollTop > 0 || e.scrollLeft > 0).map(e => [e.className, [...root.getElementsByClassName(e.classList[0])].filter(z => z.className === e.className).indexOf(e), e.scrollTop, e.scrollLeft]);
+const scrollRestore = (root, kept) => kept.forEach(([cls, i, top, left]) => { const el = [...root.getElementsByClassName(cls.split(" ")[0])].filter(z => z.className === cls)[i]; if (el) { el.scrollTop = top; el.scrollLeft = left; } });
+// the judges' lists scroll to the pilot on track / the pair on air when it changes
+let followKey = {};
+function autoFollow(root) { root.querySelectorAll(".mini-grid, .pair-list").forEach(c => { const on = c.querySelector(".on"), k = c.classList[0], key = on?.textContent || "";
+  if (!on || followKey[k] === key) { followKey[k] = key; return; } followKey[k] = key;
+  c.scrollTop += on.getBoundingClientRect().top - c.getBoundingClientRect().top - (c.clientHeight - on.offsetHeight) / 2; }); }
 function render(animate = false) {
   document.documentElement.lang = S.lang;
   const route = location.hash.slice(1) || "home";
@@ -5243,9 +5311,13 @@ function render(animate = false) {
   const m = route.match(/^t-(\d+)$/), tmm = route.match(/^tm-(\d+)$/), app = document.getElementById("app");
   const pp = route.startsWith("p-") ? (() => { try { return decodeURIComponent(route.slice(2)); } catch { return ""; } })() : null;
   // a playing stream survives live updates: the old player is moved (not reloaded) into the new page where the browser can (moveBefore)
-  const tw = document.body.moveBefore && app.querySelector(".tw-frame"); if (tw) document.body.moveBefore(tw, null);
+  // players survive re-renders: moved out and back (moveBefore) instead of reloading; scroll positions are kept on the same page
+  const frames = document.body.moveBefore ? [...app.querySelectorAll("iframe.tw-frame, iframe.keep-frame")] : []; frames.forEach(fr => document.body.moveBefore(fr, null));
+  const same = !animate && route === lastRoute, winY = scrollY, kept = same ? scrollState(app) : [];
   app.innerHTML = m ? tournament(+m[1]) : tmm ? teamPage(+tmm[1]) : pp !== null ? pilotPage(pp) : ({ tournaments, tracks, rating, teams, rules, profile, admin, broadcast }[route] || home)();
-  if (tw) { const fresh = app.querySelector(".tw-frame"); if (fresh && fresh.src === tw.src) { fresh.parentNode.moveBefore(tw, fresh); fresh.remove(); } else tw.remove(); }
+  frames.forEach(fr => { const fresh = [...app.querySelectorAll("iframe")].find(z => z.src === fr.src && z !== fr); if (fresh) { fresh.parentNode.moveBefore(fr, fresh); fresh.remove(); } else fr.remove(); });
+  if (same) { scrollRestore(app, kept); if (Math.abs(scrollY - winY) > 2) window.scrollTo({ top: winY, behavior: "instant" }); }
+  autoFollow(app);
   app.classList.remove("enter");
   // entry animations (rise, admIn...) only play on navigation; in the admin only the part that changed (and the tab marker) plays
   if (!animate && route === lastRoute) app.getAnimations({ subtree: true }).forEach(a => { if (!a.animationName || a.effect.getTiming().iterations === Infinity) return;
@@ -5326,6 +5398,10 @@ document.addEventListener("click", e => {
     mdIns: () => { const ta = document.getElementById("rule-ta"); if (!ta) return;
       const v = el.dataset.v, a = ta.selectionStart, b = ta.selectionEnd, line = ta.value.lastIndexOf("\n", a - 1) + 1;
       if (v === "b") ta.setRangeText(`**${ta.value.slice(a, b) || t("mdBold")}**`, a, b, "end");
+      else if (v.startsWith("al-")) { // alignment for every line the selection touches; "left" just drops the marker
+        const ls = ta.value.lastIndexOf("\n", a - 1) + 1, le = (ta.value.indexOf("\n", Math.max(b - 1, a)) + 1 || ta.value.length + 1) - 1, k = v.slice(3);
+        const out = ta.value.slice(ls, le).split("\n").map(x => { const y = x.replace(/^\{[lcrj]\}\s*/, ""); return !y.trim() || k === "l" ? y : `{${k}} ${y}`; }).join("\n");
+        ta.setRangeText(out, ls, le, "select"); }
       else if (v === "up" || v === "down") { // move the caret's line (a text line or a row of pictures) one place up or down
         const L = ta.value.split("\n"), i = ta.value.slice(0, a).split("\n").length - 1, j = v === "up" ? i - 1 : i + 1;
         if (j < 0 || j >= L.length) return; [L[i], L[j]] = [L[j], L[i]]; ta.value = L.join("\n");
@@ -5351,6 +5427,11 @@ document.addEventListener("click", e => {
       brRecord(id, b.leader, b.chaser, b[res]); S.bc = { ...b, decidedAt: Date.now() }; save(); }, // the decision stays on air, then the votes clear
     brWin: () => { const x = TOURS.find(z => z.id === id); if (!x) return; brSet(x, el.dataset.v, brOf(x)?.w?.[el.dataset.v] === el.dataset.name ? null : el.dataset.name); save(); toast(t("saved")); },
     stImgDel: () => { const x = TOURS.find(z => z.id === id); if (!x) return; delete x.trackImg; dbSave(); },
+    vPlay: () => { vPlaying[id] = true; render(); },
+    vWide: () => { vWide = !vWide; render(); },
+    vFull: () => { const b = document.getElementById("vbox-" + id); if (!b) return; vPlaying[id] = true; render(); document.getElementById("vbox-" + id)?.requestFullscreen?.(); },
+    stBriefDel: () => { const x = TOURS.find(z => z.id === id); if (!x) return; delete x.brief; dbSave(); },
+    stTab: () => { stTabs[id] = el.dataset.v; render(); },
     swapPilots: () => { const x = TOURS.find(z => z.id === id), { a, b } = swapSel; if (!x) return;
       if (!a || !b || a === b) { adminMsg = t("swapPick"); return render(); }
       confirmTwice(`sw${id}`, () => { swapPilots(x, a, b); swapSel = { a: "", b: "" }; toast(t("saved")); dbSave(); }); },
