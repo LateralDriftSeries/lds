@@ -235,6 +235,8 @@ textarea { min-height: 96px }
 .doc-head { display: grid; gap: .6rem }
 .doc-head h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; letter-spacing: -.02em }
 .doc { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 3rem; align-items: start }
+.doc .prose { max-width: none }
+.doc-head, .doc { width: min(100%, calc(240px + 3rem + 60rem)); margin-inline: auto } /* rules: title, contents and text share one centred column */
 .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 84px); display: grid; border-left: 1px solid var(--line) }
 .toc button { background: none; border: 0; border-left: 2px solid transparent; margin-left: -1px; text-align: left; padding: .4rem .9rem; font-size: .84rem; color: var(--muted); cursor: pointer }
 .toc button:hover { color: var(--text); border-left-color: var(--accent) }
@@ -661,7 +663,7 @@ nav a::after { height: 1px; bottom: -4px; box-shadow: none }
 .lang { font-size: .7rem } .lang button[aria-pressed="true"] { color: var(--text) }
 .ava { border-width: 1px; background: transparent; font-family: var(--f-display); font-weight: 500 }
 
-main { padding-block: 4rem 6rem; gap: 4.5rem }
+main { padding-block: 2.5rem 4rem; gap: 2.75rem }
 
 /* home */
 .hero { padding-block: 3rem 1.5rem; gap: 4rem; grid-template-columns: minmax(0, 1fr) minmax(0, 360px) }
@@ -774,7 +776,7 @@ footer.site { border-top: 1px solid var(--line); background: var(--bg) }
 #app.enter > * { animation-duration: .7s }
 /* responsive (restated after the v2 rules so they win on small screens) */
 @media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 2.5rem } }
-@media (max-width: 760px) { .bar { padding-block: .75rem .45rem } nav { gap: 1.5rem } main { padding-block: 1.75rem 4rem; gap: 3.25rem } .hero { padding-block: 1rem 0 } .logo { font-size: 1.55rem }
+@media (max-width: 760px) { .bar { padding-block: .75rem .45rem } nav { gap: 1.5rem } main { padding-block: 1.25rem 3rem; gap: 2.25rem } .hero { padding-block: 1rem 0 } .logo { font-size: 1.55rem }
   .about { padding: 1.5rem } .cta { padding: 1.75rem } .box { padding: 1.35rem } .pcard-big { padding: 1.75rem 1.4rem } }
 
 /* ================= driver cards by league (rating + profile banner) =================
@@ -1104,9 +1106,10 @@ nav a:hover::after, nav a[aria-current]::after { transform: translateX(-50%) sca
 .partner b { font: 500 1.35rem/1.1 var(--f-display); letter-spacing: .02em }
 .partner.gen { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); background: radial-gradient(100% 120% at 100% 100%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 65%), var(--panel) }
 a.partner:hover { transform: translateY(-3px); border-color: var(--accent) }
-.faq-sec { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: start; gap: 2rem 4rem; padding-top: 2.2rem; border-top: 1px solid var(--line) }
+.faq-sec { display: grid; grid-template-columns: minmax(14rem, 24rem) minmax(0, 1fr); align-items: start; gap: 2rem 4rem; padding-top: 2.2rem; border-top: 1px solid var(--line) }
 .faq-sec > .stack { gap: 1rem }
 .faq-sec h2, .faq-sec p { margin: 0 }
+.faq { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 28rem), 1fr)); column-gap: 2.5rem; align-items: start }
 .faq details { border-bottom: 1px solid var(--line) }
 .faq summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.15rem 0; cursor: pointer; list-style: none; font: 400 1.12rem/1.35 var(--f-display); letter-spacing: -.02em; transition: color .2s }
 .faq summary::-webkit-details-marker { display: none }
@@ -1565,7 +1568,7 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 .num-wrap { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); align-items: start; gap: 1.4rem }
 .num-wrap .numshow { height: 112px; font-size: 3.4rem !important }
 .num-wrap .numgrid { grid-template-columns: repeat(20, minmax(0, 1fr)) }
-.pp-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: 1.2rem }
+.pp-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1.2rem }
 .pp-pair > .psec { align-content: start }
 .pp-pair textarea { min-height: 180px }
 @media (max-width: 900px) { .num-wrap, .pp-pair { grid-template-columns: 1fr } .num-wrap .numgrid { grid-template-columns: repeat(10, minmax(0, 1fr)) } }
@@ -1599,7 +1602,7 @@ h1 em, h2 em { font-family: inherit !important; font-style: normal !important; f
 /* profile pairs: number grid fits a half-width card, the about textarea fills its card */
 .pp-pair .num-wrap { grid-template-columns: 1fr } .pp-pair .num-wrap .numgrid { grid-template-columns: repeat(10, minmax(0, 1fr)) }
 .pp-pair > .psec:has(.pp-about) { display: flex; flex-direction: column }
-.pp-about { flex: 1; display: flex; flex-direction: column } .pp-about textarea { flex: 1 }
+.pp-about { display: flex; flex-direction: column } .pp-about textarea { min-height: 160px }
 
 /* car parts: a list with five visible rows, scrolls inside */
 .car-form > .fieldlabel { align-content: start }
@@ -1896,6 +1899,9 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 .sm-video { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000 } .sm-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0 }
 .sm-thumb { width: 72px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line) }
 @media (max-width: 760px) { .stage-media.two { grid-template-columns: minmax(0, 1fr) } }
+.st-form { gap: 1.1rem } .st-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 1rem; align-items: end } .st-row .st-wide { grid-column: span 2 }
+@media (max-width: 640px) { .st-row .st-wide { grid-column: auto } }
+.pp-col { display: grid; gap: 1.2rem; align-content: start; min-width: 0 }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2190,7 +2196,7 @@ const I18N = {
     soon: "Скоро", reg: "Регистрация", qualifying: "Квалификация", top32: "Топ 32", top16: "Топ 16", top8: "Топ 8", top4: "Топ 4", final: "Финал", done: "Завершён", stage: "Этап", details: "Подробнее",
     archive: "Архив", season: "Сезон", currentStage: "Текущий этап", stStand: "Зачёт этапа", stStandNote: "Очки этапа, как в рейтинге: пилоты и заявленные команды.", stPersonal: "Личный зачёт", stTeam: "Командный зачёт",
     stageTeams: "Командный зачёт этапа", stageTeamsNote: "Сумма двух лучших квалификационных оценок пилотов команды.",
-    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", trackMap: "Схема трассы", briefVideo: "Видео брифинга", briefOpen: "Смотреть брифинг", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
+    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", trackMap: "Схема трассы", imgReplace: "Заменить", briefVideo: "Видео брифинга", briefOpen: "Смотреть брифинг", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
     pilotsHint: "Снимите галочку, чтобы убрать пилота из этапа: он пропадёт из сетки квалификации.", inStage: "Участвует",
     teamsHint: "Снимите галочку, если команда не подала командную регистрацию на этап — она не попадёт в командный зачёт этапа.", teamScore: "Командный зачёт", onStage: "Пилотов на этапе",
     adminPanel: "Админка", aSeasons: "Сезоны и этапы", aSanctions: "Пилоты и санкции", aSponsors: "Спонсоры", aProtests: "Протесты", aSettings: "Настройки", broadcastBtn: "Пульт трансляции ↗",
@@ -2347,7 +2353,7 @@ const I18N = {
     soon: "Soon", reg: "Registration", qualifying: "Qualifying", top32: "Top 32", top16: "Top 16", top8: "Top 8", top4: "Top 4", final: "Final", done: "Finished", stage: "Round", details: "Details",
     archive: "Archive", season: "Season", currentStage: "Current round", stStand: "Round standings", stStandNote: "Round points as in the rating: drivers and entered teams.", stPersonal: "Drivers", stTeam: "Teams",
     stageTeams: "Round team standings", stageTeamsNote: "Sum of the team's two best qualifying scores.",
-    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", trackMap: "Track map", briefVideo: "Briefing video", briefOpen: "Watch the briefing", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
+    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", trackMap: "Track map", imgReplace: "Replace", briefVideo: "Briefing video", briefOpen: "Watch the briefing", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
     pilotsHint: "Untick a driver to remove them from the round: they disappear from the qualifying grid.", inStage: "Entered",
     teamsHint: "Untick a team that did not file a team entry for the round, so it stays out of the round's team standings.", teamScore: "Team standings", onStage: "Drivers in round",
     adminPanel: "Admin", aSeasons: "Seasons & rounds", aSanctions: "Drivers & sanctions", aSponsors: "Sponsors", aProtests: "Protests", aSettings: "Settings", broadcastBtn: "Broadcast control ↗",
@@ -4072,7 +4078,7 @@ function profile() {
 
   <details class="psec panel ach-box" id="ach-box" ${S.achOpen ? "open" : ""}><summary class="psec-head"><h3>${t("achievements")}</h3><span class="row" style="gap:1rem">${achCount(S.user.name)}<i class="ach-chev" aria-hidden="true"></i></span></summary>${achBlock(S.user.name)}</details>
   ${stageRegBox()}
-  <div class="pp-pair">
+  <div class="pp-pair pp-cols"><div class="pp-col">
     ${psec(t("numReg"), `<div class="num-wrap"><div class="stack" style="gap:.8rem"><div class="numshow ${S.num != null ? "" : "none"}" id="numshow">${numInner(S.num)}${locked ? '<span class="lock" aria-hidden="true">🔒</span>' : ""}</div>
       <p class="note">${locked ? t("numLocked") : t("numHint")}</p>
       ${locked ? "" : `<form class="numcustom" id="numform"><label for="own" class="note">${t("own")}</label>
@@ -4080,18 +4086,17 @@ function profile() {
       <span class="note err" role="status" id="nummsg"></span>`}</div>
     ${locked ? "" : `<div class="numgrid" id="numgrid">${Array.from({ length: 100 }, (_, i) => i + 1).map(v =>
       `<button data-num="${v}" ${tk.has(v) ? "disabled" : ""} aria-pressed="${S.num === v}">${v}</button>`).join("")}</div>`}</div>`)}
-    ${psec(t("aboutMe"), `<label class="fieldlabel pp-about"><textarea id="about-ru" aria-label="${t("aboutMe")}" data-about="ru" maxlength="${ABOUT_MAX}" placeholder="${t("aboutPh")}">${esc((about.ru || "").slice(0, ABOUT_MAX))}</textarea>${counter("ru")}</label>
-      <div class="warn">⚠ ${t("aboutRules")}</div>`)}
-  </div>
-  <div class="pp-pair">
-    ${psec(t("myTeam"), myTeamBox())}
     ${psec(t("car"), `<div class="car-stack">${partPicker("car", CARS, "car")}${partPicker("engine", ENGINES, "engine")}${partPicker("gearbox", GEARBOXES, "gearbox")}
       <label class="cpick-hp" for="car-hp"><span class="label">${t("hpLong")}</span><input class="field" id="car-hp" type="number" min="${SETTINGS.hpMin}" max="${SETTINGS.hpMax}" step="1" data-car="hp" value="${esc(S.car.hp)}" placeholder="${SETTINGS.hpMin}–${SETTINGS.hpMax}">
         <span class="note ${hpOk() ? "" : "err"}">${t("hpRule")} ${SETTINGS.hpMin}–${SETTINGS.hpMax}</span></label>
       <label class="cpick-hp" for="car-kg"><span class="label">${t("kgLong")}</span><input class="field" id="car-kg" type="number" min="${SETTINGS.kgMin}" max="${SETTINGS.kgMax}" step="1" data-car="kg" value="${esc(S.car.kg ?? "")}" placeholder="${SETTINGS.kgMin}–${SETTINGS.kgMax}">
         <span class="note ${kgOk() ? "" : "err"}">${t("kgRule")} ${SETTINGS.kgMin}–${SETTINGS.kgMax}</span></label></div>
     ${carOk() ? "" : `<p class="note err">${t("needCarHere")}</p>`}`)}
-  </div>
+  </div><div class="pp-col">
+    ${psec(t("aboutMe"), `<label class="fieldlabel pp-about"><textarea id="about-ru" aria-label="${t("aboutMe")}" data-about="ru" maxlength="${ABOUT_MAX}" placeholder="${t("aboutPh")}">${esc((about.ru || "").slice(0, ABOUT_MAX))}</textarea>${counter("ru")}</label>
+      <div class="warn">⚠ ${t("aboutRules")}</div>`)}
+    ${psec(t("myTeam"), myTeamBox())}
+  </div></div>
   ${teamManage()}`;
 }
 
@@ -4139,22 +4144,22 @@ function adminTour(x) {
       <div class="row" style="gap:.5rem"><button class="btn line sm" data-act="grpFromBr" data-id="${x.id}" title="${t("grpFromBrHint")}">${pending === `gb${x.id}` ? t("grpFromBrSure") : t("grpFromBr")}</button><button class="btn text danger sm" data-act="brReseed" data-id="${x.id}">${pending === `br${x.id}` ? t("delSure") : t("brReseed")}</button></div></div>
     <div class="box panel">${bracketView(x, true)}</div></div>`;
   if (aSub === "judge") body = `<div class="${can("judge") ? "rw" : ""}">${judgeIsland(x)}</div>`;
-  if (aSub === "main") body = `<div class="box panel"><div class="cols" style="gap:1rem">
-      <div class="cols" style="gap:1rem"><label class="fieldlabel">${t("track")}<select class="field" data-a="tour:${x.id}:track">${[...new Set([...trackNames(), x.track])].map(n =>
+  if (aSub === "main") body = `<div class="box panel st-form">
+      <div class="st-row"><label class="fieldlabel">${t("track")}<select class="field" data-a="tour:${x.id}:track">${[...new Set([...trackNames(), x.track])].map(n =>
         `<option value="${esc(n)}" ${n === x.track ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></label>
       ${confOf(x.track).length ? `<label class="fieldlabel">${t("trkConf")}<select class="field" data-a="tour:${x.id}:conf"><option value="">${t("trkMain")}</option>${partsOf(x.track).map(p => { const o = p.conf.map(c =>
         `<option value="${esc(confLabel(p, c))}" ${confLabel(p, c) === x.conf ? "selected" : ""}>${esc(c.n)}</option>`).join("");
-        return p.n ? `<optgroup label="${esc(p.n)}">${o}</optgroup>` : o; }).join("")}</select></label>` : ""}</div>
-      <div class="cols" style="gap:1rem">${[["start", "startAt"], ["qStart", "qStartAt"], ["tStart", "tStartAt"]].map(([k, l]) =>
+        return p.n ? `<optgroup label="${esc(p.n)}">${o}</optgroup>` : o; }).join("")}</select></label>` : ""}
+        <label class="fieldlabel">${t("seatsL")}<input class="field" type="number" min="2" max="256" data-a="tour:${x.id}:max" value="${stageMax(x)}"></label>
+        <label class="fieldlabel">${t("maxTeamsStageL")}<input class="field" type="number" min="1" max="64" data-a="tour:${x.id}:maxTeams" value="${stageTeamsMax(x)}"></label></div>
+      <div class="st-row">${[["start", "startAt"], ["qStart", "qStartAt"], ["tStart", "tStartAt"]].map(([k, l]) =>
         `<label class="fieldlabel">${t(l)} · ${t("msk")}<input class="field" type="datetime-local" data-a="tour:${x.id}:${k}" value="${startOf({ start: x[k] })?.slice(0, 16) || ""}"></label>`).join("")}</div>
       <p class="note" style="margin:0">${t("timesHint")}</p>
-      <div class="cols" style="gap:1rem"><div class="fieldlabel">${t("trackMap")}<div class="row" style="gap:.6rem">${x.trackImg ? `<img class="sm-thumb" src="${esc(ruleImgSrc(x.trackImg))}" alt="">` : ""}
-          <label class="btn line sm">${t(x.trackImg ? "spLogoChange" : "mdImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-stimg="${x.id}" hidden></label>
+      <div class="st-row"><div class="fieldlabel">${t("trackMap")}<div class="row" style="gap:.6rem">${x.trackImg ? `<img class="sm-thumb" src="${esc(ruleImgSrc(x.trackImg))}" alt="">` : ""}
+          <label class="btn line sm">${t(x.trackImg ? "imgReplace" : "mdImg")}<input type="file" accept="image/png,image/jpeg,image/webp" data-stimg="${x.id}" hidden></label>
           ${x.trackImg ? `<button class="btn text sm danger" data-act="stImgDel" data-id="${x.id}">${t("removeLogo")}</button>` : ""}</div></div>
-        <label class="fieldlabel">${t("briefVideo")}<input class="field" data-a="tour:${x.id}:brief" value="${esc(x.brief || "")}" maxlength="200" placeholder="https://youtu.be/… · https://twitch.tv/videos/…"></label></div>
-      <div class="cols" style="gap:1rem"><label class="fieldlabel">${t("seatsL")}<input class="field" type="number" min="2" max="256" data-a="tour:${x.id}:max" value="${stageMax(x)}"></label>
-      <label class="fieldlabel">${t("maxTeamsStageL")}<input class="field" type="number" min="1" max="64" data-a="tour:${x.id}:maxTeams" value="${stageTeamsMax(x)}"></label></div>
-</div></div>`;
+        <label class="fieldlabel st-wide">${t("briefVideo")}<input class="field" data-a="tour:${x.id}:brief" value="${esc(x.brief || "")}" maxlength="200" placeholder="https://youtu.be/… · https://twitch.tv/videos/…"></label></div>
+</div>`;
   if (aSub === "qual") {
     const inp = (p, i, k) => { const v = scoreOf(x, p, i, k); return `<input class="ai" type="number" min="0" max="100" step="0.1" data-a="score:${x.id}:${k}:${i}" value="${v ?? ""}" aria-label="${esc(p.name)} ${k + 1}">`; };
     const opts = k => `<option value="">—</option>${stageRows(x).map(([p]) => p.name).sort((m, n) => m.localeCompare(n)).map(n => `<option ${swapSel[k] === n ? "selected" : ""}>${esc(n)}</option>`).join("")}`;
