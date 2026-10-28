@@ -1920,17 +1920,20 @@ a.pd:hover { transform: translateY(-2px); border-color: var(--c); box-shadow: 0 
 /* judges' island: pairs of the round */
 .pairs { display: grid; gap: .5rem } .pairs-head { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap } .pairs-head .btn { margin-left: auto }
 .pair-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; max-height: 24rem; overflow-y: auto }
-.pr-row { width: 100%; display: grid; grid-template-columns: 1.6rem auto minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: center; gap: .6rem; padding: .55rem .7rem; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); color: var(--text); font: inherit; text-align: left }
+.pr-row { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: "meta meta st" "a vs b"; align-items: center; gap: .35rem .6rem; padding: .55rem .7rem; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); color: var(--text); font: inherit; text-align: left }
 button.pr-row { cursor: pointer } button.pr-row:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)) }
 .pr-n { color: var(--muted); font-size: .8rem } .pr-r { font-size: .6rem !important } .pr-p { display: flex; align-items: center; gap: .4rem; min-width: 0 } .pr-p b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600 }
 .pr-seed { flex: none; min-width: 1.4rem; text-align: center; font-size: .72rem; color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: .05rem .2rem } .pr-vs { color: var(--muted); font-size: .8rem }
 .pr-st { justify-self: end; font-size: .8rem; white-space: nowrap } .pair.on .pr-row { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--panel-2)); box-shadow: inset 3px 0 0 var(--accent) }
 .pair.is-next .pr-row { border-style: dashed; border-color: color-mix(in srgb, var(--accent) 50%, var(--line)) } .pair.is-next .pr-st { color: var(--accent) }
-.pr-row.pr-bye { grid-template-columns: 1.6rem auto minmax(0, 1fr) auto }
+.pr-meta { grid-area: meta; display: flex; align-items: center; gap: .5rem } .pr-row > .pr-st { grid-area: st } .pr-row > .pr-vs { grid-area: vs }
+.pr-row > .pr-p:first-of-type { grid-area: a } .pr-row > .pr-p:last-of-type { grid-area: b; justify-content: flex-end }
+.pr-row.pr-bye { grid-template-areas: "meta meta st" "a a a" } .pr-row.pr-bye > .pr-p { grid-area: a; justify-content: flex-start }
+.pr-round { font: 700 .66rem/1 var(--f-body); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); white-space: nowrap }
 .pair.done .pr-row { opacity: .55 } .pair.done .pr-st { color: var(--accent) }
-@media (max-width: 640px) { .pr-row { grid-template-columns: 1.4rem auto minmax(0, 1fr); } .pr-row .pr-vs { display: none } .pr-row > .pr-p:nth-of-type(2) { grid-column: 3 } .pr-st { grid-column: 1 / -1; justify-self: start } }
 /* rules: alignment of rows of pictures */
 .rimg-row[data-al="c"] { justify-content: center } .rimg-row[data-al="r"] { justify-content: flex-end } .md-sep { width: 1px; align-self: stretch; background: var(--line); margin-inline: .2rem }
+.treg-p.off { opacity: .5 } .treg-p.off input { cursor: not-allowed }
 /* sponsors editor */
 .sp-eds { display: grid; grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr)); gap: 1rem }
 .sp-ed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start }
@@ -2225,7 +2228,7 @@ const I18N = {
     soon: "Скоро", reg: "Регистрация", qualifying: "Квалификация", top32: "Топ 32", top16: "Топ 16", top8: "Топ 8", top4: "Топ 4", final: "Финал", done: "Завершён", stage: "Этап", details: "Подробнее",
     archive: "Архив", season: "Сезон", currentStage: "Текущий этап", stStand: "Зачёт этапа", stStandNote: "Очки этапа, как в рейтинге: пилоты и заявленные команды.", stPersonal: "Личный зачёт", stTeam: "Командный зачёт",
     stageTeams: "Командный зачёт этапа", stageTeamsNote: "Сумма двух лучших квалификационных оценок пилотов команды.",
-    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", trackMap: "Схема трассы", briefPlay: "Смотреть брифинг", briefWide: "Развернуть", briefNarrow: "Свернуть", briefFull: "На весь экран", noImage: "Нет изображения", noVideo: "Нет видео", imgLinkPh: "Ссылка на картинку (https://… или Google Диск)", videoLinkPh: "Ссылка: YouTube, Google Диск, VK, Rutube, Twitch", videoOk: "Видео встроится на страницу этапа", videoLinkOnly: "Эта ссылка откроется кнопкой в новой вкладке", prOnAir: "На трассе", prNext: "Следующая", prGoNext: "Следующая пара", prDone: "Решено", mdAlL: "Слева", mdAlC: "По центру", mdAlR: "Справа", mdAlJ: "По ширине", imgReplace: "Заменить", briefVideo: "Видео брифинга", briefOpen: "Смотреть брифинг", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
+    pickStage: "Выберите этап, чтобы открыть подробную настройку.", configure: "Настроить", allStages: "Все этапы", aMain: "Основное", startAt: "Старт (дата и время)", qStartAt: "Начало квалификации", trackMap: "Схема трассы", briefPlay: "Смотреть брифинг", briefWide: "Развернуть", briefNarrow: "Свернуть", briefFull: "На весь экран", noImage: "Нет изображения", noVideo: "Нет видео", imgLinkPh: "Ссылка на картинку (https://… или Google Диск)", videoLinkPh: "Ссылка: YouTube, Google Диск, VK, Rutube, Twitch", videoOk: "Видео встроится на страницу этапа", videoLinkOnly: "Эта ссылка откроется кнопкой в новой вкладке", prOnAir: "На трассе", thirdShort: "За 3 место", entryNotReg: "не записан на этап", entryNotRegHint: "Пилот должен сам записаться на этап, тогда его можно заявить от команды", entryNotRegMsg: "Сначала эти пилоты должны сами записаться на этап", prNext: "Следующая", prGoNext: "Следующая пара", prDone: "Решено", mdAlL: "Слева", mdAlC: "По центру", mdAlR: "Справа", mdAlJ: "По ширине", imgReplace: "Заменить", briefVideo: "Видео брифинга", briefOpen: "Смотреть брифинг", tStartAt: "Начало топ-32", qualL: "Квалификация", top32L: "Топ-32", timesHint: "Очистите поле, чтобы убрать время. Квалификация и топ-32 показываются на странице этапа и в объявлениях Discord.",
     pilotsHint: "Снимите галочку, чтобы убрать пилота из этапа: он пропадёт из сетки квалификации.", inStage: "Участвует",
     teamsHint: "Снимите галочку, если команда не подала командную регистрацию на этап — она не попадёт в командный зачёт этапа.", teamScore: "Командный зачёт", onStage: "Пилотов на этапе",
     adminPanel: "Админка", aSeasons: "Сезоны и этапы", aSanctions: "Пилоты и санкции", aSponsors: "Спонсоры", aProtests: "Протесты", aSettings: "Настройки", broadcastBtn: "Пульт трансляции ↗",
@@ -2382,7 +2385,7 @@ const I18N = {
     soon: "Soon", reg: "Registration", qualifying: "Qualifying", top32: "Top 32", top16: "Top 16", top8: "Top 8", top4: "Top 4", final: "Final", done: "Finished", stage: "Round", details: "Details",
     archive: "Archive", season: "Season", currentStage: "Current round", stStand: "Round standings", stStandNote: "Round points as in the rating: drivers and entered teams.", stPersonal: "Drivers", stTeam: "Teams",
     stageTeams: "Round team standings", stageTeamsNote: "Sum of the team's two best qualifying scores.",
-    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", trackMap: "Track map", briefPlay: "Watch the briefing", briefWide: "Widen", briefNarrow: "Narrow", briefFull: "Full screen", noImage: "No picture", noVideo: "No video", imgLinkPh: "Picture link (https://… or Google Drive)", videoLinkPh: "Link: YouTube, Google Drive, VK, Rutube, Twitch", videoOk: "The video plays on the round page", videoLinkOnly: "This link opens with a button in a new tab", prOnAir: "On track", prNext: "Next", prGoNext: "Next pair", prDone: "Done", mdAlL: "Left", mdAlC: "Centre", mdAlR: "Right", mdAlJ: "Justify", imgReplace: "Replace", briefVideo: "Briefing video", briefOpen: "Watch the briefing", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
+    pickStage: "Pick a round to open its settings.", configure: "Configure", allStages: "All rounds", aMain: "General", startAt: "Start (date and time)", qStartAt: "Qualifying starts", trackMap: "Track map", briefPlay: "Watch the briefing", briefWide: "Widen", briefNarrow: "Narrow", briefFull: "Full screen", noImage: "No picture", noVideo: "No video", imgLinkPh: "Picture link (https://… or Google Drive)", videoLinkPh: "Link: YouTube, Google Drive, VK, Rutube, Twitch", videoOk: "The video plays on the round page", videoLinkOnly: "This link opens with a button in a new tab", prOnAir: "On track", thirdShort: "3rd place", entryNotReg: "not registered for the round", entryNotRegHint: "The driver has to register for the round first, then the team can enter them", entryNotRegMsg: "These drivers have to register for the round first", prNext: "Next", prGoNext: "Next pair", prDone: "Done", mdAlL: "Left", mdAlC: "Centre", mdAlR: "Right", mdAlJ: "Justify", imgReplace: "Replace", briefVideo: "Briefing video", briefOpen: "Watch the briefing", tStartAt: "Top 32 starts", qualL: "Qualifying", top32L: "Top 32", timesHint: "Clear a field to remove the time. Qualifying and top-32 times show on the round page and in the Discord posts.",
     pilotsHint: "Untick a driver to remove them from the round: they disappear from the qualifying grid.", inStage: "Entered",
     teamsHint: "Untick a team that did not file a team entry for the round, so it stays out of the round's team standings.", teamScore: "Team standings", onStage: "Drivers in round",
     adminPanel: "Admin", aSeasons: "Seasons & rounds", aSanctions: "Drivers & sanctions", aSponsors: "Sponsors", aProtests: "Protests", aSettings: "Settings", broadcastBtn: "Broadcast control ↗",
@@ -3901,8 +3904,9 @@ const founderOf = tm => {
 const isFounder = tm => !!tm && !!S.user && founderOf(tm)?.name === S.user.name;
 const isRep = tm => !!tm && !!S.user && !tm.staff && repName(tm) === S.user.name;
 const teamEntry = (x, tm) => { const o = TEAM_ENTRIES[x.id]?.[tm.id], e = o ? (o.removed ? null : o) : founderOf(tm)?.regs?.[x.id] || null;
-  return e && { ...e, pilots: (e.pilots || []).map(p => ({ ...p, name: nickTxt(p.name) || p.name })) }; }; // entries filed before names lost their game colour tags still match the pilot
-const stageEntries = x => allTeams().map(tm => ({ tm, e: teamEntry(x, tm) })).filter(r => r.e?.pilots?.length).sort((a, b) => a.e.at - b.e.at)
+  if (!e) return null; const inStage = new Set(stageRows(x).map(([p]) => p.name)), all = (e.pilots || []).map(p => ({ ...p, name: nickTxt(p.name) || p.name }));
+  return { ...e, all, pilots: all.filter(p => inStage.has(p.name)) }; }; // "all" keeps the filed line-up: the team keeps its place while its pilots come and go // entries filed before names lost their game colour tags still match the pilot
+const stageEntries = x => allTeams().map(tm => ({ tm, e: teamEntry(x, tm) })).filter(r => r.e?.all?.length).sort((a, b) => a.e.at - b.e.at)
   .map((r, i) => ({ ...r, ok: i < stageTeamsMax(x) }));
 // a pilot can be entered for one team per stage
 const inOtherEntry = (x, tm, names) => stageEntries(x).filter(r => r.tm.id !== tm.id).flatMap(r => r.e.pilots.map(p => p.name)).filter(n => names.includes(n));
@@ -3920,8 +3924,8 @@ function entryForm(id, x, tm, e, off = false) {
     <div class="treg-row"><label class="fieldlabel">${t("teamName")}<input class="field" value="${esc(tm.name)}" disabled></label>
       <label class="fieldlabel">${t("founderNick")}<input class="field" name="founder" maxlength="32" value="${esc(e?.founderNick || founderOf(tm)?.name || "")}"></label></div>
     <span class="label">${t("entryPilots")} · ${t("upTo")} ${SETTINGS.teamStageMax}</span>
-    <div class="treg-pilots">${names.map(n => { const p = roster().find(z => z.name === n) || { name: n };
-      return `<label class="treg-p"><input type="checkbox" name="p" value="${esc(n)}" ${picked.has(n) ? "checked" : ""}>${pAva(p, "t-ava")}<span class="treg-n">${esc(n)}</span>
+    <div class="treg-pilots">${names.map(n => { const p = roster().find(z => z.name === n) || { name: n }, reg = !x || stageRows(x).some(([q]) => q.name === n);
+      return `<label class="treg-p ${reg ? "" : "off"}" ${reg ? "" : `title="${t("entryNotRegHint")}"`}><input type="checkbox" name="p" value="${esc(n)}" ${picked.has(n) && reg ? "checked" : ""} ${reg ? "" : "disabled"}>${pAva(p, "t-ava")}<span class="treg-n">${esc(n)}${reg ? "" : ` <span class="note">· ${t("entryNotReg")}</span>`}</span>
         <input class="field" name="nick:${esc(n)}" maxlength="32" value="${esc(picked.get(n) || n)}" placeholder="${t("gameNick")}" aria-label="${t("gameNick")}: ${esc(n)}"></label>`; }).join("") || `<p class="note">${t("noMembers")}</p>`}</div>
     <p class="note">${t("entryCheck")}</p>
     <div class="row"><button class="btn sm">${t(e ? "entrySave" : "entrySend")}</button><span class="note err" role="status" id="${id}-msg"></span></div></fieldset></form>`;
@@ -5080,14 +5084,15 @@ function judgeIsland(x) {
         <label class="fieldlabel">${t("leader")}<select class="field" data-a="jd:leader:0:${x.id}">${opts(st.leader, st.chaser)}</select></label>
         <label class="fieldlabel">${t("chaser")}<select class="field" data-a="jd:chaser:0:${x.id}">${opts(st.chaser, st.leader)}</select></label></div>
       ${(() => { // the pairs of the current round in bracket order: tap one to put it on air; decided pairs show the winner; the next undecided one is marked
-        const r = liveRound(x), cur = bracketOf(x).flat().filter(m => (m.a && m.b || m.bye) && (r < 0 || Math.min(m.r, 4) === r));
+        const r = liveRound(x), rr = m => Math.min(m.r, 4); // the 3rd-place match (r 5) goes with the final
+        const cur = bracketOf(x).flat().filter(m => (m.a && m.b || m.bye) && (r < 0 || rr(m) === r || (rr(m) > r && m.a && m.b))).sort((p, q) => rr(p) - rr(q) || p.r - q.r || p.m - q.m);
         if (!cur.length) return "";
         const same = m => !!st.leader && !!st.chaser && [m.a, m.b].includes(st.leader) && [m.a, m.b].includes(st.chaser); // either order: a swap keeps the pair
         const next = cur.find(m => !m.win && !m.bye && !same(m)), done = cur.filter(m => m.win).length;
         const nm = (n, s) => `<span class="pr-p">${s ? `<span class="pr-seed mono">${s}</span>` : ""}<b>${esc(n)}</b></span>`;
-        const item = (m, k) => { const tag = `<span class="pr-n mono">${k + 1}</span>${m.g ? `<span class="grp">${m.g}</span>` : `<span class="label pr-r">${brLabel(m)}</span>`}`;
+        const item = (m, k) => { const tag = `<span class="pr-meta"><span class="pr-round">${t(m.r === 5 ? "thirdShort" : BR_ROUNDS[m.r])}</span>${m.g ? `<span class="grp">${m.g}</span>` : ""}</span>`;
           if (m.bye) return `<li class="pair ${m.win ? "done" : ""}">${m.win ? `<div class="pr-row pr-bye">${tag}${nm(m.win, m.win === m.a ? m.sa : m.sb)}<span class="pr-st muted">${t("bye")}</span></div>`
-            : `<button class="pr-row pr-bye" data-act="brWin" data-id="${x.id}" data-v="${m.r}-${m.m}" data-name="${esc(m.a || m.b)}">${tag}${nm(m.a || m.b, m.a ? m.sa : m.sb)}<span class="pr-st acc">${t("bye")} · ${t("byeConfirm")} →</span></button>`}</li>`;
+            : `<button class="pr-row pr-bye" data-act="brWin" data-id="${x.id}" data-v="${m.r}-${m.m}" data-name="${esc(m.a || m.b)}">${tag}${nm(m.a || m.b, m.a ? m.sa : m.sb)}<span class="pr-st acc" title="${t("byeConfirm")}">${t("bye")} →</span></button>`}</li>`;
           if (m.win) return `<li class="pair done"><div class="pr-row">${tag}${nm(m.a, m.sa)}<span class="pr-vs">vs</span>${nm(m.b, m.sb)}<span class="pr-st">✓ ${esc(m.win)}</span></div></li>`;
           const on = same(m), nx = m === next;
           return `<li class="pair ${on ? "on" : nx ? "is-next" : ""}"><button class="pr-row" data-act="brPair" data-id="${x.id}" data-v="${m.r}-${m.m}" aria-pressed="${on}">${tag}${nm(m.a, m.sa)}<span class="pr-vs">vs</span>${nm(m.b, m.sb)}<span class="pr-st">${on ? `<span class="livebadge">${t("prOnAir")}</span>` : nx ? t("prNext") : ""}</span></button></li>`; };
@@ -5422,7 +5427,7 @@ document.addEventListener("click", e => {
     clearScores: () => { const x = TOURS.find(z => z.id === id); if (!x) return; confirmTwice(`cs${id}`, () => { stageRows(x).forEach(([p]) => S.scores[`${id}:${p.name}`] = { 0: null, 1: null }); save(); toast(t("scoresCleared")); }); },
     nextPilot: () => nextPilot(id),
     brPair: () => { const x = TOURS.find(z => z.id === id), [r, m] = el.dataset.v.split("-").map(Number), mt = x && bracketOf(x)[r]?.[m]; if (!mt?.a || !mt.b) return;
-      S.bc = { ...bcState(), tour: id, leader: mt.a, chaser: mt.b, label: `${brLabel(mt)} · ${t("pairN")} ${(mt.g ? m % (4 >> r) : m) + 1}`, votes: [null, null, null], decidedAt: null }; save(); },
+      S.bc = { ...bcState(), tour: id, leader: mt.a, chaser: mt.b, label: `${t(mt.r === 5 ? "thirdShort" : BR_ROUNDS[mt.r])}${mt.g ? ` · ${t("group")} ${mt.g}` : ""}`, votes: [null, null, null], decidedAt: null }; save(); },
     brConfirm: () => { const b = bcState(), res = judgeResult(b.votes); if (b.tour !== id || (res !== "leader" && res !== "chaser")) return;
       brRecord(id, b.leader, b.chaser, b[res]); S.bc = { ...b, decidedAt: Date.now() }; save(); }, // the decision stays on air, then the votes clear
     brWin: () => { const x = TOURS.find(z => z.id === id); if (!x) return; brSet(x, el.dataset.v, brOf(x)?.w?.[el.dataset.v] === el.dataset.name ? null : el.dataset.name); save(); toast(t("saved")); },
@@ -5543,6 +5548,8 @@ document.addEventListener("submit", e => {
     if (!founderNick) return msg(t("entryNeedFounder"));
     if (!names.length) return msg(t("entryNeedPilots"));
     if (names.length > SETTINGS.teamStageMax) return msg(`${t("entryTooMany")} ${SETTINGS.teamStageMax}`);
+    const notReg = names.filter(n => !stageRows(x).some(([q]) => q.name === n));
+    if (notReg.length) return msg(`${t("entryNotRegMsg")}: ${notReg.join(", ")}`);
     const pilots = names.map(n => ({ name: n, nick: nickTxt(fd.get(`nick:${n}`)).slice(0, 32) || n }));
     const dup = inOtherEntry(x, tm, names);
     if (dup.length) return msg(`${t("entryDup")}: ${dup.join(", ")}`);
